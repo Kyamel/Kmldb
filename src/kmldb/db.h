@@ -19,11 +19,9 @@ typedef struct {
     TableMeta tables[TABLE_MAX_COUNT]; // Suportamos até 10 tabelas
 } DatabaseHeader;
 
-int TM_size();
-
-int DH_size();
-
 FILE* DB_Init(const char* filename);
+
+void DB_Welcome();
 
 int DB_FindTable(FILE* file, const char* table_name);
 

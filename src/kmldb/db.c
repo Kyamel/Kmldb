@@ -15,14 +15,44 @@ FILE* DB_Init(const char* filename) {
 
         // Inicializa o cabeçalho com valores vazios
         DatabaseHeader header = {0};
-    
+
         fwrite(&header, sizeof(DatabaseHeader), 1, file);
         fflush(file);
+        
     } else {
         fseek(file, 0, SEEK_SET); // Garante que estamos no início do arquivo
     }
     return file; // Retorna o ponteiro para o arquivo aberto
 }
+
+void DB_Welcome() {
+    printf("                                                                               \n");
+    printf("                                                                               \n");
+    printf("                                                                               \n");
+    printf("$$\\   $$\\ $$\\      $$\\ $$\\       $$$$$$$\\  $$$$$$$\\                            \n");
+    printf("$$ | $$  |$$$\\     $$ |$$ |      $$  __$$\\ $$  __$$\\                           \n");
+    printf("$$ |$$  / $$$\\$$\\ $$$ |$$ |      $$ |  $$ |$$ |  $$ |                          \n");
+    printf("$$$$$  /  $$\\$$\\$$ $$ |$$ |      $$ |  $$ |$$$$$$$\\ |                          \n");
+    printf("$$  $$<   $$ \\$$$  $$ |$$ |      $$ |  $$ |$$  __$$\\                            \n");
+    printf("$$ |\\$$\\  $$ |\\$  /$$ |$$ |      $$ |  $$ |$$ |  $$ |                          \n");
+    printf("$$ | \\$$\\ $$ | \\_/ $$ |$$$$$$$$\\ $$$$$$$  |$$$$$$$  |                          \n");
+    printf("\\__|  \\__|\\__|     \\__|\\________|\\_______/ \\_______/                           \n");
+    printf("                                                                               \n");
+    printf("                                                                               \n");
+    printf("                                                                               \n");
+    printf("$$$$$$$\\   $$$$$$\\ $$$$$$$$\\  $$$$$$\\  $$$$$$$\\    $$$$\\    $$$$$\\   $$$$$$$$\\ \n");
+    printf("$$  __$$\\ $$  __$$\\\\__$$  __|$$  __$$\\ $$  __$$\\ $$  __$$\\ $$  __$$\\ $$  _____|\n");
+    printf("$$ |  $$ |$$ /  $$ |  $$ |   $$ /  $$ |$$ |  $$ |$$ /  $$ |$$ /  \\__|$$ |      \n");
+    printf("$$ |  $$ |$$$$$$$$ |  $$ |   $$$$$$$$ |$$$$$$$\\ | $$$$$$$$ |\\$$$$$$\\  $$$$$\\    \n");
+    printf("$$ |  $$ |$$  __$$ |  $$ |   $$  __$$ |$$  __$$\\ $$  __$$ | \\____$$\\ $$  __|   \n");
+    printf("$$ |  $$ |$$ |  $$ |  $$ |   $$ |  $$ |$$ |  $$ |$$ |  $$ |$$\\   $$ |$$ |      \n");
+    printf("$$$$$$$  |$$ |  $$ |  $$ |   $$ |  $$ |$$$$$$$  |$$ |  $$ |\\$$$$$$  |$$$$$$$$\\ \n");
+    printf("\\_______/ \\__|  \\__|  \\__|   \\__|  \\__|\\_______/ \\__|  \\__| \\______/ \\________|\n");
+    printf("                                                                               \n");
+    printf("                                                                               \n");
+    printf("                                                                               \n");
+}
+
 
 int DB_FindTable(FILE* file, const char* table_name) {
     DatabaseHeader header;
@@ -44,7 +74,7 @@ void DB_CreateTable(FILE* file, const char* table_name) {
 
     if (header.table_count >= TABLE_MAX_COUNT) {
         perror("Número máximo de tabelas atingido");
-        exit(EXIT_FAILURE);
+        return;
     }
     if (DB_FindTable(file, table_name) != -1) {
         perror("Tabela já existe");
@@ -128,7 +158,7 @@ void DB_AddMember(FILE* file, const char* table_name, void* member, size_t membe
     // Atualiza o end_offset da tabela atual
     header.tables[index].end_offset = new_end_offset;
 
-    // Atualiza os offsets das tabelas subsequentes
+    // Atualiza os offsets das tabelas subsequentes (empurrando para a direita)
     for (int i = index + 1; i < header.table_count; ++i) {
         header.tables[i].start_offset += offset_difference;
         header.tables[i].end_offset += offset_difference;

@@ -12,6 +12,7 @@ int main() {
     const char* db_filename = "data/database.dat";
 
     FILE *file = DB_Init(db_filename);
+    DB_Welcome();
     DB_CreateTable(file, func_table);
     DB_CreateTable(file, prod_table);
 
