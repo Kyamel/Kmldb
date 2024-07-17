@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run C Program",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/programa.exe", // Use "${workspaceFolder}/build/programa" no Linux ou MacOS
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "build",
+      "miDebuggerPath": "C:/msys64/ucrt64/bin/gdb.exe", // Caminho do gdb no Windows com MSYS2
+      "logging": {
+        "moduleLoad": false,
+        "trace": false
+      }
+    }
+  ]
+}

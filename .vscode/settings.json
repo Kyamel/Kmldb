@@ -1,0 +1,15 @@
+{
+    "C_Cpp.default.compilerArgs": [
+        "-Wall",
+        "-Wextra",
+        "-Wunreachable-code"
+    ],
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+    "C_Cpp.codeAnalysis.clangTidy.checks": [
+        "*"
+    ],
+    "files.associations": {
+        "stdlib.h": "c",
+        "stdio.h": "c"
+    }
+}

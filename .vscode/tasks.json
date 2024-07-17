@@ -1,0 +1,25 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "build",
+        "type": "shell",
+        "command": "gcc",
+        "args": [
+            "src/*.c",
+            "src/model/*.c",
+            "src/kmldb/*.c",
+            "-I", "src/model",
+            "-I", "src/kmldb",
+            "-o", "build/programa"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": ["$gcc"],
+        "detail": "Compile C program"
+      }
+    ]
+  }
+  
