@@ -9,7 +9,7 @@
 #define B_DATA_NASCIMENTO 11
 
 typedef struct {
-    int id; // id autogerado e único
+    long unsigned pk; // id autogerado e único
     char nome[B_NOME];
     char cpf[B_CPF];
     char data_nascimento[B_DATA_NASCIMENTO];
@@ -18,7 +18,7 @@ typedef struct {
 
 TFunc TFunc_New(FILE *file, const char* table_name, const char* nome, const char* cpf, const char* data_nascimento, double salario);
 
-TFunc TFunc_GetByPK(FILE *file, const char* table_name, int id);
+TFunc TFunc_GetByPK(FILE *file, const char* table_name, long unsigned pk);
 
 void TFunc_Print(TFunc func);
 

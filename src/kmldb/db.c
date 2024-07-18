@@ -67,7 +67,7 @@ int DB_FindTable(FILE* file, const char* table_name) {
     return -1; // Tabela não encontrada
 }
 
-void DB_CreateTable(FILE* file, const char* table_name) {
+void DB_CreateTable(FILE* file, const char* table_name, size_t size) {
     DatabaseHeader header;
     fseek(file, 0, SEEK_SET);
     fread(&header, sizeof(DatabaseHeader), 1, file);
@@ -87,9 +87,10 @@ void DB_CreateTable(FILE* file, const char* table_name) {
 
     TableMeta new_table;
     strcpy(new_table.table_name, table_name);
-    new_table.next_id = 1; // Inicializa o ID com 1
+    new_table.next_pk = 1; // Inicializa o ID com 1
     new_table.start_offset = sizeof(DatabaseHeader);
     new_table.end_offset = new_table.start_offset; // Inicialmente sem registros
+    new_table.size = size;
 
     header.tables[header.table_count++] = new_table;
 
@@ -119,9 +120,10 @@ void DB_PrintHeader(DatabaseHeader* header) {
     for (int i = 0; i < header->table_count; ++i) {
         printf("> TABLE %d:\n", i);
         printf("| Name: %s\n", header->tables[i].table_name);
-        printf("| Next ID: %d\n", header->tables[i].next_id);
+        printf("| Next PK: %lu\n", header->tables[i].next_pk);
         printf("| Start offset: %ld\n", header->tables[i].start_offset);
         printf("| End offset: %ld\n", header->tables[i].end_offset);
+        printf("| Size: %zu\n", header->tables[i].size);
     }
 }
 
@@ -139,21 +141,23 @@ void DB_AddMember(FILE* file, const char* table_name, void* member, size_t membe
             break;
         }
     }
-
     if (index == -1) {
         perror("Tabela não encontrada");
         fclose(file);
         exit(EXIT_FAILURE);
     }
-
+    if (header.tables[index].size != member_size){
+        perror("Tamanho do membro incomatível com a tabela");
+        return;
+    }
     // Posiciona no final da tabela e escreve o membro no arquivo
     fseek(file, header.tables[index].end_offset, SEEK_SET);
     fwrite(member, member_size, 1, file);
     fflush(file);
 
     // Calcula a nova posição atual
-    long new_end_offset = ftell(file);
-    long offset_difference = new_end_offset - header.tables[index].end_offset;
+    long unsigned new_end_offset = ftell(file);
+    long unsigned offset_difference = new_end_offset - header.tables[index].end_offset;
 
     // Atualiza o end_offset da tabela atual
     header.tables[index].end_offset = new_end_offset;

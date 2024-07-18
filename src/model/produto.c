@@ -5,7 +5,7 @@
 #include "../kmldb/db.h"
 
 int TProd_Size() {
-    return sizeof(int)
+    return sizeof(long unsigned)
           + sizeof(char) * B_NOME
           + sizeof(char) * B_DESCRICAO
           + sizeof(char) * B_CATEGORIA
@@ -35,7 +35,7 @@ TProd TProd_New(FILE* file, const char* table_name, const char* nome, const char
         return prod;
     }
     // Atribuir o próximo ID disponível da tabela
-    prod.id = header->tables[index].next_id++;
+    prod.pk = header->tables[index].next_pk++;
     // Copiar os dados para a estrutura TProd
     strncpy(prod.nome, nome, B_NOME);
     prod.nome[B_NOME - 1] = '\0';        
@@ -57,7 +57,7 @@ TProd TProd_New(FILE* file, const char* table_name, const char* nome, const char
 }
 
 // Função para buscar um produto pelo ID na tabela
-TProd TProd_GetByPK(FILE *file, const char* table_name, int id) {
+TProd TProd_GetByPK(FILE *file, const char* table_name, long unsigned pk) {
     TProd prod = {0}; // Inicializa com valores padrão
     DatabaseHeader *header = DB_LoadHeader(file);
     if (header == NULL) {
@@ -69,30 +69,39 @@ TProd TProd_GetByPK(FILE *file, const char* table_name, int id) {
         perror("Tabela não encontrada");
         return prod;
     }
-    // Posicionar no início da tabela
-    fseek(file, header->tables[index].start_offset, SEEK_SET);
-    TProd *p = NULL;
-    while (ftell(file) < header->tables[index].end_offset) {
-        if (p != NULL) {
-            free(p);
+    // binary search
+    // Obter os offsets de início e fim da tabela
+    long start_offset = header->tables[index].start_offset;
+    long end_offset = header->tables[index].end_offset;
+    // Calcular o número de registros
+    long start = 0;
+    long end = (end_offset - start_offset) / header->tables[index].size - 1;
+    while (start <= end) {
+        long middle = (start + end) / 2;
+        long middle_offset = start_offset + middle * header->tables[index].size;
+        fseek(file, middle_offset, SEEK_SET);
+        TProd *p = TProd_Read(file);
+        if (p == NULL) {
+            break;
         }
-        p = TProd_Read(file);
-        if (p->id == id) {
+        if (p->pk == pk) {
             prod = *p;
             free(p);
             free(header);
             return prod;
         }
+        if (p->pk < pk) start = middle + 1;
+        else end = middle - 1;
+        free(p);
     }
-    free(p);  // Libera o último alocado, se houver
     free(header);
     return prod;
 }
 
-TProd *TProd_Read(FILE *(file)) {
+TProd *TProd_Read(FILE *file) {
     TProd *prod = (TProd *) malloc(sizeof(TProd));
 
-    if (0 >= fread(&prod->id, sizeof(int), 1, file)){
+    if (0 >= fread(&prod->pk, sizeof(long unsigned), 1, file)){
         free(prod);
         return NULL;
     }
@@ -101,19 +110,21 @@ TProd *TProd_Read(FILE *(file)) {
     fread(prod->descricao, sizeof(char), sizeof(prod->descricao), file);
     fread(prod->categoria, sizeof(char), sizeof(prod->categoria), file);
     fread(prod->codigo_barras, sizeof(char), sizeof(prod->codigo_barras), file);
-    fread(&prod->preco, sizeof(double), 1, file);
-    fread(&prod->quantidade, sizeof(int), 1, file);
+    
+    fread(&prod->preco, sizeof(prod->preco), 1, file);  // Corrigido para sizeof(prod->preco)
+    fread(&prod->quantidade, sizeof(prod->quantidade), 1, file);  // Corrigido para sizeof(prod->quantidade)
+    
     return prod;
-
 }
+
 
 void TProd_Print(TProd prod){
     printf("# Produto:\n");
-    printf("| id: %d\n", prod.id);
-    printf("| nome: %s\n", prod.nome);
-    printf("| descricao: %s\n", prod.descricao);
-    printf("| categoria: %s\n", prod.categoria);
-    printf("| codigo_barras: %s\n", prod.codigo_barras);
-    printf("| preco: %lf\n", prod.preco);
-    printf("| quantidade: %d\n", prod.quantidade);
+    printf("| PK: %lu\n", prod.pk);
+    printf("| Nome: %s\n", prod.nome);
+    printf("| Descricao: %s\n", prod.descricao);
+    printf("| Categoria: %s\n", prod.categoria);
+    printf("| Código de Barras: %s\n", prod.codigo_barras);
+    printf("| Preço: %.2lf\n", prod.preco);
+    printf("| Quantidade: %d\n", prod.quantidade);
 }

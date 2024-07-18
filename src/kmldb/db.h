@@ -9,9 +9,10 @@
 
 typedef struct {
     char table_name[B_TABLE_NAME];
-    int next_id;
-    long start_offset;
-    long end_offset;
+    long unsigned next_pk;
+    long unsigned start_offset;
+    long unsigned end_offset;
+    size_t size;
 } TableMeta;
 
 typedef struct {
@@ -25,7 +26,7 @@ void DB_Welcome();
 
 int DB_FindTable(FILE* file, const char* table_name);
 
-void DB_CreateTable(FILE* file, const char* table_name);
+void DB_CreateTable(FILE* file, const char* table_name, size_t size);
 
 DatabaseHeader *DB_LoadHeader(FILE *file);
 

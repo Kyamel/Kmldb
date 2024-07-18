@@ -5,7 +5,7 @@
 #include "../kmldb/db.h"
 
 int TFunc_Size() {
-    return sizeof(int) 
+    return sizeof(long unsigned) 
          + sizeof(char)*B_NOME 
          + sizeof(char)*B_CPF 
          + sizeof(char)*B_DATA_NASCIMENTO 
@@ -32,7 +32,7 @@ TFunc TFunc_New(FILE *file, const char* table_name, const char* nome, const char
         return func;
     }
     // Atribuir o próximo ID disponível da tabela
-    func.id = header->tables[index].next_id++;
+    func.pk = header->tables[index].next_pk++;
     // Copiar os dados para a estrutura TFunc
     strncpy(func.nome, nome, B_NOME - 1);  // Garantir que a string seja terminada com \0
     func.nome[B_NOME - 1] = '\0';          // Garantir terminação nula
@@ -51,7 +51,7 @@ TFunc TFunc_New(FILE *file, const char* table_name, const char* nome, const char
 }
 
 // Função para buscar um funcionário pelo ID na tabela
-TFunc TFunc_GetByPK(FILE *file, const char* table_name, int id) {
+TFunc TFunc_GetByPK(FILE *file, const char* table_name, long unsigned pk) {
     TFunc func = {0}; // Inicializa com valores padrão
     DatabaseHeader *header = DB_LoadHeader(file);
     if (header == NULL) {
@@ -64,22 +64,31 @@ TFunc TFunc_GetByPK(FILE *file, const char* table_name, int id) {
         free(header);
         return func;
     }
-    // Posicionar no início da tabela
-    fseek(file, header->tables[index].start_offset, SEEK_SET);
-    TFunc *f = NULL;
-    while (ftell(file) < header->tables[index].end_offset) {
-        if (f != NULL) {
-            free(f);
+    // binary search
+    // Obter os offsets de início e fim da tabela
+    long start_offset = header->tables[index].start_offset;
+    long end_offset = header->tables[index].end_offset;
+    // Calcular o número de registros
+    long start = 0;
+    long end = (end_offset - start_offset) / header->tables[index].size - 1;
+    while (start <= end) {
+        long middle = (start + end) / 2;
+        long middle_offset = start_offset + middle * header->tables[index].size;
+        fseek(file, middle_offset, SEEK_SET);
+        TFunc *f = TFunc_Read(file);
+        if (f == NULL) {
+            break;
         }
-        f = TFunc_Read(file);
-        if (f->id == id) {
+        if (f->pk == pk) {
             func = *f;
             free(f);
             free(header);
             return func;
         }
+        if (f->pk < pk) start = middle + 1;
+        else end = middle - 1;
+        free(f);
     }
-    free(f);  // Libera o último alocado, se houver
     free(header);
     return func;
 }
@@ -87,7 +96,7 @@ TFunc TFunc_GetByPK(FILE *file, const char* table_name, int id) {
 TFunc *TFunc_Read(FILE *(file)){
     TFunc *func = (TFunc *) malloc(sizeof(TFunc));
 
-    if (0 >= fread(&func->id, sizeof(int), 1, file)){
+    if (0 >= fread(&func->pk, sizeof(long unsigned), 1, file)){
         free(func);
         return NULL;
     }
@@ -101,7 +110,7 @@ TFunc *TFunc_Read(FILE *(file)){
 
 void TFunc_Print(TFunc func) {
     printf("# Funcionário:\n");
-    printf("| ID: %d\n", func.id);
+    printf("| PK: %lu\n", func.pk);
     printf("| Nome: %s\n", func.nome);
     printf("| CPF: %s\n", func.cpf);
     printf("| Data de Nascimento: %s\n", func.data_nascimento);

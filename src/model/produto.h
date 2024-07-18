@@ -9,7 +9,7 @@
 #define B_CODIGO_BARRAS 20
 
 typedef struct {
-    int id; // id autogerado e único
+    long unsigned pk; // id autogerado e único
     char nome[B_NOME];
     char descricao[B_DESCRICAO];
     char categoria[B_CATEGORIA];
@@ -22,7 +22,7 @@ int TProd_Size();
 
 TProd TProd_New(FILE *file, const char* table_name, const char* nome, const char* descricao, const char* categoria, const char* codigo_barras, double preco, int quantidade);
 
-TProd TProd_GetByPK(FILE *file, const char* table_name, int id);
+TProd TProd_GetByPK(FILE *file, const char* table_name, long unsigned pk);
 
 void TProd_Print(TProd prod);
 
