@@ -28,6 +28,8 @@ typedef struct {
 
 FILE* DB_Init(const char* filename);
 
+void DB_Close(FILE* file);
+
 void DB_Welcome();
 
 int DB_FindTable(FILE* file, const char* table_name);

@@ -3,28 +3,44 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define EXT ".dat"
+#define B_FILE 256
+
 FILE* DB_Init(const char* filename) {
-    FILE* file = fopen(filename, "rb+");
+    char full_filename[B_FILE];
+    size_t len = strlen(filename);
+    // Verifica se o nome do arquivo já possui a extensão ".dat"
+    if (len < strlen(EXT) || strcmp(filename + len - strlen(EXT), EXT) != 0) {
+        _snprintf_s(full_filename, sizeof(full_filename), _TRUNCATE, "%s%s", filename, EXT);
+    } else {
+        _snprintf_s(full_filename, sizeof(full_filename), _TRUNCATE, "%s", filename);
+    }
+    // Tenta abrir o arquivo em modo leitura e escrita binária
+    FILE* file = fopen(full_filename, "rb+");
     if (file == NULL) {
         // Se o arquivo não existe, cria um novo banco de dados
-        file = fopen(filename, "wb+");
+        file = fopen(full_filename, "wb+");
         if (file == NULL) {
             perror("Erro ao criar o banco de dados");
             exit(EXIT_FAILURE);
         }
-
-        // Inicializa o cabeçalho com valores vazios
         DatabaseHeader header = {0};
-
         fwrite(&header, sizeof(DatabaseHeader), 1, file);
         fflush(file);
-        
     } else {
-        fseek(file, 0, SEEK_SET); // Garante que estamos no início do arquivo
+        fseek(file, 0, SEEK_SET); // Garante que o cursor está no início do arquivo
     }
-    return file; // Retorna o ponteiro para o arquivo aberto
+    return file;
 }
 
+void DB_Close(FILE* file) {
+    if (file != NULL) {
+        if (fclose(file) != 0) {
+            perror("Erro ao fechar o arquivo");
+        }
+        printf("Database encerrado com sucesso\n");
+    }
+}
 void DB_Welcome() {
     printf("                                                                               \n");
     printf("                                                                               \n");

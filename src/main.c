@@ -8,7 +8,7 @@
 int main() {
     const char *func_table = "funcionarios";
     const char *prod_table = "produto";
-    const char *db_filename = "data/database.dat";
+    const char *db_filename = "data/database";
 
     FILE *file = DB_Init(db_filename);
     
@@ -65,7 +65,9 @@ int main() {
     f = TFunc_Read(file);
     printf("4");
     TFunc_Print(&f);
+
     // 408 + (88*4) = 760 Onde que está o erro? Pq o prod 3 e 4 funcionam enquanto 1 e 2 não?
+
     fseek(file, 760, SEEK_SET);
     TProd p = TProd_Read(file);
     printf("1");
@@ -86,6 +88,6 @@ int main() {
     printf("4");
     TProd_Print(&p);
         
-    fclose(file);
+    DB_Close(file);
     return 0;
 }
