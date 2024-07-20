@@ -16,13 +16,13 @@ typedef struct {
     double salario;
 } TFunc;
 
-TFunc TFunc_New(FILE *file, const char* table_name, const char* nome, const char* cpf, const char* data_nascimento, double salario);
+TFunc TFunc_New(const char* nome, const char* cpf, const char* data_nascimento, double salario);
 
 TFunc TFunc_GetByPK(FILE *file, const char* table_name, long unsigned pk);
 
-void TFunc_Print(TFunc func);
+void TFunc_Print(TFunc *func);
 
-TFunc *TFunc_Read(FILE *(in));
+TFunc TFunc_Read(FILE *(in));
 
 int TFunc_Size();
 

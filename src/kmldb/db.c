@@ -85,29 +85,18 @@ void DB_CreateTable(FILE* file, const char* table_name, size_t size) {
         return;
     }
 
-    TableMeta new_table;
-    strcpy(new_table.table_name, table_name);
-    new_table.next_pk = 1; // Inicializa o ID com 1
-    new_table.start_offset = sizeof(DatabaseHeader);
-    new_table.end_offset = new_table.start_offset; // Inicialmente sem registros
-    new_table.size = size;
+    TableMeta* meta = &header.tables[header.table_count];
+    strncpy_s(meta->table_name, sizeof(meta->table_name), table_name, _TRUNCATE);
+    meta->next_pk = 1; // Define o próximo PK
+    meta->start_offset = (header.table_count == 0) ? sizeof(DatabaseHeader) : header.tables[header.table_count - 1].end_offset;
+    meta->end_offset = meta->start_offset;
+    meta->size = size;
 
-    header.tables[header.table_count++] = new_table;
+    header.table_count++;
 
     fseek(file, 0, SEEK_SET);
     fwrite(&header, sizeof(DatabaseHeader), 1, file);
     fflush(file);
-}
-
-DatabaseHeader* DB_LoadHeader(FILE* file) {
-    DatabaseHeader* header = malloc(sizeof(DatabaseHeader));
-    if (header == NULL) {
-        perror("Erro ao alocar memória para o cabeçalho");
-        return NULL;
-    }
-    fseek(file, 0, SEEK_SET);
-    fread(header, sizeof(DatabaseHeader), 1, file);
-    return header;
 }
 
 void DB_PrintHeader(DatabaseHeader* header) {
@@ -127,49 +116,59 @@ void DB_PrintHeader(DatabaseHeader* header) {
     }
 }
 
-void DB_AddMember(FILE* file, const char* table_name, void* member, size_t member_size) {
+void DB_AddMember(FILE* file, const char* table_name, void* member, size_t member_size, size_t pk_offset) {
     // Carrega o cabeçalho do arquivo
     DatabaseHeader header;
     fseek(file, 0, SEEK_SET);
-    fread(&header, sizeof(DatabaseHeader), 1, file);
-
-    // Encontra a tabela pelo nome
-    int index = -1;
-    for (int i = 0; i < header.table_count; ++i) {
-        if (strcmp(header.tables[i].table_name, table_name) == 0) {
-            index = i;
-            break;
-        }
-    }
-    if (index == -1) {
-        perror("Tabela não encontrada");
-        fclose(file);
-        exit(EXIT_FAILURE);
-    }
-    if (header.tables[index].size != member_size){
-        perror("Tamanho do membro incomatível com a tabela");
+    if (fread(&header, sizeof(DatabaseHeader), 1, file) != 1) {
+        perror("Erro ao ler o cabeçalho do arquivo");
         return;
     }
+    // Encontra a tabela pelo nome
+    int index = DB_FindTable(file, table_name);
+    if (index == -1) {
+        perror("Tabela não encontrada");
+        return;
+    }
+    // Verifica se o tamanho do membro é compatível com a tabela
+    if (header.tables[index].size != member_size) {
+        perror("Tamanho do membro incompatível com a tabela");
+        return;
+    }
+    // Verifica se o campo pk está presente na struct membro e também se é o primeiro campo dessa struct
+    if (pk_offset != 0) {
+        perror("A estrutura deve conter o campo pk como o primeiro");
+        return;
+    }
+    // Atualiza a PK do novo membro
+    memcpy_s(member, sizeof(unsigned long), &header.tables[index].next_pk, sizeof(header.tables[index].next_pk));
+    header.tables[index].next_pk++;
     // Posiciona no final da tabela e escreve o membro no arquivo
-    fseek(file, header.tables[index].end_offset, SEEK_SET);
-    fwrite(member, member_size, 1, file);
-    fflush(file);
-
-    // Calcula a nova posição atual
-    long unsigned new_end_offset = ftell(file);
-    long unsigned offset_difference = new_end_offset - header.tables[index].end_offset;
-
+    if (fseek(file, header.tables[index].end_offset, SEEK_SET) != 0) {
+        perror("Erro ao posicionar o ponteiro do arquivo");
+        return;
+    }
+    if (fwrite(member, member_size, 1, file) != 1) {
+        perror("Erro ao escrever o membro no arquivo");
+        return;
+    }
     // Atualiza o end_offset da tabela atual
-    header.tables[index].end_offset = new_end_offset;
-
+    size_t size = header.tables[index].size;
+    header.tables[index].end_offset += size;
     // Atualiza os offsets das tabelas subsequentes (empurrando para a direita)
     for (int i = index + 1; i < header.table_count; ++i) {
-        header.tables[i].start_offset += offset_difference;
-        header.tables[i].end_offset += offset_difference;
+        header.tables[i].start_offset += size;
+        header.tables[i].end_offset += size;
     }
-
     // Reposiciona para escrever o cabeçalho de volta no arquivo
-    fseek(file, 0, SEEK_SET);
-    fwrite(&header, sizeof(DatabaseHeader), 1, file);
+    if (fseek(file, 0, SEEK_SET) != 0) {
+        perror("Erro ao reposicionar o ponteiro do arquivo para o início");
+        return;
+    }
+    if (fwrite(&header, sizeof(DatabaseHeader), 1, file) != 1) {
+        perror("Erro ao escrever o cabeçalho atualizado no arquivo");
+        return;
+    }
     fflush(file);
+    printf("Nova posição final da tabela '%s': %lu\n", table_name, header.tables[index].end_offset);
 }
