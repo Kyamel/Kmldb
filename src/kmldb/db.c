@@ -4,10 +4,10 @@
 #include <string.h>
 
 #define EXT ".dat"
-#define B_FILE 256
+#define B_FILENAME 256
 
 FILE* DB_Init(const char* filename) {
-    char full_filename[B_FILE];
+    char full_filename[B_FILENAME];
     size_t len = strlen(filename);
     // Verifica se o nome do arquivo já possui a extensão ".dat"
     if (len < strlen(EXT) || strcmp(filename + len - strlen(EXT), EXT) != 0) {
