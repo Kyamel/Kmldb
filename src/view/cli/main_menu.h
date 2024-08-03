@@ -7,6 +7,12 @@
 #include "../model/treino.h"
 #include "../model/funcionario.h"
 
+#define DB_FOLDER "./data"
+#define CLIENTES "clientes"
+#define FUNCIONARIOS "funcionarios"
+#define TREINOS "treinos"
+#define EXERCICIOS "exercicios"
+
 // Funções para interação com o menu principal
 void cadastrarCliente(FILE *file);
 

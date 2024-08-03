@@ -55,22 +55,22 @@ int teste() {
 
     // Imprime clientes
     TCliente cliente;
-    cliente = readCliente(fcli, "clientes.dat");
+    cliente = readCliente(fcli, "clientes.dat", 1);
     printCliente(&cliente);
     
     // Imprime funcionários
     TFunc func;
-    func = readFunc(ffunc, "funcionarios.dat");
+    func = readFunc(ffunc, "funcionarios.dat", 1);
     printFunc(&func);
 
     // Imprime exercícios
     TExerc exerc;
-    exerc = readExerc(fexec, "exercicios.dat");
+    exerc = readExerc(fexec, "exercicios.dat", 1);
     printExerc(&exerc);
 
     // Imprime treinos
     TTreino treino;
-    treino = readTreino(ftreino, "treinos.dat");
+    treino = readTreino(ftreino, "treinos.dat", 1);
     printTreino(&treino);
 
     // Fecha os arquivos

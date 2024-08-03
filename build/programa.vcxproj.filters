@@ -31,9 +31,6 @@
     <ClCompile Include="C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\src\model\treino.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\src\teste.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\src\view\cli\main_menu.c">
       <Filter>Source Files</Filter>
     </ClCompile>

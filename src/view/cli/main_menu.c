@@ -10,7 +10,7 @@
 #include "../model/treino.h"
 #include "../model/funcionario.h"
 
-#define DB_FOLDER "./data"
+#include "main_menu.h"
 
 // Funções auxiliares
 void clearInputBuffer() {
@@ -42,7 +42,7 @@ void cadastrarCliente(FILE *file) {
     fgets(exp_date, sizeof(exp_date), stdin);
     exp_date[strcspn(exp_date, "\n")] = 0;
 
-    addCliente(file, "clientes.dat", nome, cpf, email, telefone, exp_date);
+    addCliente(file, CLIENTES, nome, cpf, email, telefone, exp_date);
     printf("Cliente cadastrado com sucesso!\n");
 }
 
@@ -50,11 +50,11 @@ void buscarCliente(FILE *file) {
     char cpf[BC_CPF];
 
     printf("Buscar Cliente:\n");
-    printf("CPF: ");
-    fgets(cpf, sizeof(cpf), stdin);
-    cpf[strcspn(cpf, "\n")] = 0;
+    printf("PK: ");
+    long unsigned pk;
+    scanf_s("%lu", &pk);
 
-    TCliente cliente = TCliente_GetByPK(file, "clientes.dat", strtoul(cpf, NULL, 10));
+    TCliente cliente = TCliente_GetByPK(file, CLIENTES, pk);
     if (cliente.pk != 0) {
         printCliente(&cliente);
     } else {
@@ -91,7 +91,7 @@ void cadastrarFuncionario(FILE *file) {
     scanf_s("%lf", &salario);
     clearInputBuffer();
 
-    addFunc(file, "funcionarios.dat", nome, cpf, email, telefone, data_nascimento, salario);
+    addFunc(file, FUNCIONARIOS, nome, cpf, email, telefone, data_nascimento, salario);
     printf("Funcionario cadastrado com sucesso!\n");
 }
 
@@ -99,11 +99,11 @@ void buscarFuncionario(FILE *file) {
     char cpf[BF_CPF];
 
     printf("Buscar Funcionário:\n");
-    printf("CPF: ");
-    fgets(cpf, sizeof(cpf), stdin);
-    cpf[strcspn(cpf, "\n")] = 0;
+    printf("PK: ");
+    long unsigned pk;
+    scanf_s("%lu", &pk);
 
-    TFunc func = TFunc_GetByPK(file, "funcionarios.dat", strtoul(cpf, NULL, 10));
+    TFunc func = TFunc_GetByPK(file, FUNCIONARIOS, pk);
     if (func.pk != 0) {
         printFunc(&func);
     } else {
@@ -128,7 +128,7 @@ void cadastrarExercicio(FILE *file) {
     scanf_s("%d", &duration);
     clearInputBuffer();
 
-    addExerc(file, "exercicios.dat", nome, tipo, duration);
+    addExerc(file, EXERCICIOS, nome, tipo, duration);
     printf("Exercicio cadastrado com sucesso!\n");
 }
 
@@ -136,11 +136,11 @@ void buscarExercicio(FILE *file) {
     char nome[BE_NOME];
 
     printf("Buscar Exercicio:\n");
-    printf("Nome: ");
-    fgets(nome, sizeof(nome), stdin);
-    nome[strcspn(nome, "\n")] = 0;
+    printf("PK: ");
+    long unsigned pk;
+    scanf_s("%lu", &pk);
 
-    TExerc exerc = readExerc(file, "exercicios.dat");
+    TExerc exerc = readExerc(file, EXERCICIOS, pk);
     if (strcmp(exerc.nome, nome) == 0) {
         printExerc(&exerc);
     } else {
@@ -169,7 +169,7 @@ void cadastrarTreino(FILE *file, FILE *fexerc, FILE *fcli) {
     scanf_s("%d", &epk);
     clearInputBuffer();
 
-    addTreinoDoC(file, "treinos.dat", nome, tipo, epk, cpk);
+    addTreinoDoC(file, TREINOS, nome, tipo, epk, cpk);
     printf("Treino cadastrado com sucesso!\n");
 }
 
@@ -177,11 +177,11 @@ void buscarTreino(FILE *file) {
     char nome[BT_NOME];
 
     printf("Buscar Treino:\n");
-    printf("Nome: ");
-    fgets(nome, sizeof(nome), stdin);
-    nome[strcspn(nome, "\n")] = 0;
+    printf("PK: ");
+    long unsigned pk;
+    scanf_s("%lu", &pk);
 
-    TTreino treino = readTreino(file, "treinos.dat");
+    TTreino treino = readTreino(file, TREINOS, pk);
     if (strcmp(treino.nome, nome) == 0) {
         printTreino(&treino);
     } else {
@@ -189,11 +189,21 @@ void buscarTreino(FILE *file) {
     }
 }
 
+void initTables(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexec) {
+    cCreateTable(fcli, CLIENTES, sizeof(TCliente));
+    cCreateTable(ffunc, FUNCIONARIOS, sizeof(TFunc));
+    cCreateTable(ftreino, TREINOS, sizeof(TTreino));
+    cCreateTable(fexec, EXERCICIOS, sizeof(TExerc));
+}
+
+
 int main_menu() {
     FILE *fcli = cInit(DB_FOLDER"/clientes.dat");
     FILE *ffunc = cInit(DB_FOLDER"/funcionarios.dat");
     FILE *ftreino = cInit(DB_FOLDER"/treinos.dat");
     FILE *fexec = cInit(DB_FOLDER"/exercicios.dat");
+
+    initTables(fcli, ffunc, ftreino, fexec);
 
     int opcao;
 

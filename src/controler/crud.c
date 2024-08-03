@@ -18,7 +18,7 @@ int addTreinoNotC(FILE* file, const char* table_name, const char* nome, const ch
 }
 
 // Faz checagem da existeência do cliente e do exercicio
-int addTreinoDoC(FILE* file, const char* table_name, const char* nome, const char* tipo, int epk, int cpk) {
+int addTreinoDoC(FILE* file, const char* table_name, const char* nome, const char* tipo, long unsigned epk, long unsigned cpk) {
     TExerc e = TExerc_GetByPK(file, table_name, epk);
     if (e.pk == 0) {
         printf("Exercicio inexistente\n");
@@ -34,8 +34,8 @@ int addTreinoDoC(FILE* file, const char* table_name, const char* nome, const cha
     return 0;
 }
 
-TTreino readTreino(FILE* file, const char* table_name) {
-    TTreino treino = TTreino_Read(file);
+TTreino readTreino(FILE* file, const char* table_name, long unsigned pk) {
+    TTreino treino = TTreino_GetByPK(file, table_name, pk);
     return treino;
 }
 
@@ -53,8 +53,8 @@ int addFunc(FILE* file, const char* table_name, const char* nome, const char* cp
     return 0;
 }
 
-TFunc readFunc(FILE* file, const char* table_name) {
-    TFunc func = TFunc_Read(file);
+TFunc readFunc(FILE* file, const char* table_name, long unsigned pk) {
+    TFunc func = TFunc_GetByPK(file, table_name, pk);
     return func;
 }
 
@@ -72,8 +72,8 @@ int addExerc(FILE* file, const char* table_name, const char* nome, const char* t
     return 0;
 }
 
-TExerc readExerc(FILE* file, const char* table_name) {
-    TExerc exerc = TExerc_Read(file);
+TExerc readExerc(FILE* file, const char* table_name, long unsigned pk) {
+    TExerc exerc = TExerc_GetByPK(file, table_name, pk);
     return exerc;
 }
 
@@ -91,8 +91,8 @@ int addCliente(FILE* file, const char* table_name, const char* nome, const char 
     return 0;
 }
 
-TCliente readCliente(FILE* file, const char* table_name) {
-    TCliente cliente = TCliente_Read(file);
+TCliente readCliente(FILE* file, const char* table_name, long unsigned pk) {
+    TCliente cliente = TCliente_GetByPK(file, table_name, pk);
     return cliente;
 }
 

@@ -14,12 +14,12 @@
 // ########
 
 // Não faz checagem da existeência do cliente e do exercicio
-int addTreinoDoC(FILE* file, const char* table_name, const char* nome, const char* tipo, int epk, int cpk);
+int addTreinoDoC(FILE* file, const char* table_name, const char* nome, const char* tipo, long unsigned epk, long unsigned cpk);
 
 // Faz checagem da existeência do cliente e do exercicio
 int addTreinoNotC(FILE* file, const char* table_name, const char* nome, const char* tipo, TExerc* exerc, TCliente* cliente);
 
-TTreino readTreino(FILE* file, const char* table_name);
+TTreino readTreino(FILE* file, const char* table_name, long unsigned pk);
 
 void printTreino(TTreino* treino);
 
@@ -30,7 +30,7 @@ void printTreino(TTreino* treino);
 // Adiciona um novo funcionário
 int addFunc(FILE* file, const char* table_name, const char* nome, const char* cpf, const char* email, const char* tel, const char* data_nascimento, double salario);
 
-TFunc readFunc(FILE* file, const char* table_name);
+TFunc readFunc(FILE* file, const char* table_name, long unsigned pk);
 
 void printFunc(TFunc* func);
 
@@ -41,7 +41,7 @@ void printFunc(TFunc* func);
 // Adiciona um novo exercício
 int addExerc(FILE* file, const char* table_name, const char* nome, const char* tipo, int duration);
 
-TExerc readExerc(FILE* file, const char* table_name);
+TExerc readExerc(FILE* file, const char* table_name, long unsigned pk);
 
 void printExerc(TExerc* exec);
 
@@ -52,7 +52,7 @@ void printExerc(TExerc* exec);
 // Adiciona um novo cliente
 int addCliente(FILE* file, const char* table_name, const char* nome, const char *cpf, const char* email, const char* tel, const char* exp_date);
 
-TCliente readCliente(FILE* file, const char* table_name);
+TCliente readCliente(FILE* file, const char* table_name, long unsigned pk);
 
 void printCliente(TCliente* cliente);
 

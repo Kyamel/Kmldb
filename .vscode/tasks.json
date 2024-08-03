@@ -7,7 +7,7 @@
         "command": "gcc",
         "args": [
             "-g", // Flag para modo de depuração
-            "src/*.c",
+            "src/main.c",
             "src/model/*.c",
             "src/kmldb/*.c",
             "src/controler/*.c",
