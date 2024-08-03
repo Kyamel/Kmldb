@@ -47,8 +47,6 @@ void cadastrarCliente(FILE *file) {
 }
 
 void buscarCliente(FILE *file) {
-    char cpf[BC_CPF];
-
     printf("Buscar Cliente:\n");
     printf("PK: ");
     long unsigned pk;
@@ -96,8 +94,6 @@ void cadastrarFuncionario(FILE *file) {
 }
 
 void buscarFuncionario(FILE *file) {
-    char cpf[BF_CPF];
-
     printf("Buscar Funcionário:\n");
     printf("PK: ");
     long unsigned pk;
@@ -196,6 +192,19 @@ void initTables(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexec) {
     cdbCreateTable(fexec, EXERCICIOS, sizeof(TExerc));
 }
 
+int closeDatabase(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer) {
+    printf("Cliente ");
+    cdbClose(fcli);
+    printf("Funcionario ");
+    cdbClose(ffunc);
+    printf("Treino ");
+    cdbClose(ftreino);
+    printf("Exercicio ");
+    cdbClose(fexer);
+    printf("Saindo... Pressione ENTER\n");
+    clearInputBuffer();
+    exit(EXIT_SUCCESS);
+}
 
 int cli_main_menu() {
     FILE *fcli = cdbInit(DB_FOLDER"/"CLIENTES".dat");
@@ -248,17 +257,7 @@ int cli_main_menu() {
                 buscarTreino(ftreino);
                 break;
             case 9:
-                printf("Cliente ");
-                cdbClose(fcli);
-                printf("Funcionario ");
-                cdbClose(ffunc);
-                printf("Treino ");
-                cdbClose(ftreino);
-                printf("Exercicio ");
-                cdbClose(fexer);
-                printf("Saindo... Pressione ENTER\n");
-                clearInputBuffer();
-                exit(EXIT_SUCCESS);
+                return closeDatabase(fcli, ffunc, ftreino, fexer);
             default:
                 printf("Opcao invalida. Tente novamente.\n");
                 break;
