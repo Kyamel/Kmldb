@@ -1,1 +1,2 @@
-build/*
+# Ignorar a pasta build e todos os seus conteúdos
+build/
