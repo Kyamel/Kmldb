@@ -94,10 +94,10 @@ void TTreino_Print(TTreino *treino) {
         perror("TTreino nulo\n");
         return;
     }
-    printf("# TTreino:\n");
+    printf("# Treino:\n");
     printf("| PK: %lu\n", treino->pk);
     printf("| Cliente PK: %lu\n", treino->cpk);
-    printf("| Exercício PK: %lu\n", treino->epk);
+    printf("| Exercicio PK: %lu\n", treino->epk);
     printf("| Nome: %s\n", treino->nome);
     printf("| Tipo: %s\n", treino->tipo);
 }

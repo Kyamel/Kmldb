@@ -119,5 +119,5 @@ void TCliente_Print(TCliente *cliente) {
     printf("| CPF: %s\n", cliente->cpf);
     printf("| Email: %s\n", cliente->email);
     printf("| Telefone: %s\n", cliente->telefone);
-    printf("| Data de Expiração: %s\n", cliente->exp_date);
+    printf("| Data de Expiracao: %s\n", cliente->exp_date);
 }

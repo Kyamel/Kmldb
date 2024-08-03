@@ -116,12 +116,12 @@ void TFunc_Print(TFunc *func) {
         perror("Funcionário nulo\n");
         return;
     }
-    printf("# Funcionário:\n");
+    printf("# Funcionario:\n");
     printf("| PK: %lu\n", func->pk);
     printf("| Nome: %s\n", func->nome);
     printf("| CPF: %s\n", func->cpf);
     printf("| Email: %s\n", func->email);
     printf("| Telefone: %s\n", func->telefone);
     printf("| Data de Nascimento: %s\n", func->data_nascimento);
-    printf("| Salário: %.2lf\n", func->salario);
+    printf("| Salario: %.2lf\n", func->salario);
 }

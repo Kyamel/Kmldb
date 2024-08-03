@@ -84,9 +84,9 @@ void TExerc_Print(TExerc *exec) {
         perror("Exercício nula\n");
         return;
     }
-    printf("# Exercício:\n");
+    printf("# Exercicio:\n");
     printf("| PK: %lu\n", exec->pk);
     printf("| Nome: %s\n", exec->nome);
     printf("| Tipo: %s\n", exec->tipo);
-    printf("| Duração: %d segundos\n", exec->duration);
+    printf("| Duracao: %d segundos\n", exec->duration);
 }
