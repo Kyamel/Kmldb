@@ -1,0 +1,3 @@
+C:/Users/lucas/programs/CPrograms/AEDS2/Kmldb/build/CMakeFiles/programa.dir
+C:/Users/lucas/programs/CPrograms/AEDS2/Kmldb/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/lucas/programs/CPrograms/AEDS2/Kmldb/build/CMakeFiles/ZERO_CHECK.dir

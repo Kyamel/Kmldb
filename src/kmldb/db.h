@@ -26,18 +26,70 @@ typedef struct {
     TableMeta tables[TABLE_MAX_COUNT]; // Suportamos até 10 tabelas
 } DatabaseHeader;
 
-FILE* DB_Init(const char* filename);
+// Um ERR é definido por um inteiro negativo
+// 0 indica que não houve erro
+// A primeira casa indica a origem do erro
+// A segunda indica o tipo de erro
+// A terceira indica o erros associados a bibliotecas C (fwrite, fread, etc)
 
-void DB_Close(FILE* file);
+// REGISTER 1
+// TABLE 2
+// HEADER 3
+// DB 4
 
-void DB_Welcome();
+// NOT_FOUND 1
+// EXISTS 2
+// INCOMPATIBLE_SIZE 3
+// INVALID_STRUCT 4
+// MAX_SIZE_EXCEEDED 5
+// INVALID_NAME 6
 
-int DB_FindTable(FILE* file, const char* table_name);
+// READ_FAILED 1
+// WRITE_FAILED 2
+// CLOSE_FAILED 3
 
-void DB_CreateTable(FILE* file, const char* table_name, size_t size);
+#define DB_OK 0
+#define ERR_DB_CLOSE_FAILED -403
 
-void DB_PrintHeader(DatabaseHeader* header);
+#define ERR_REGISTER_NOT_FOUND -110
+#define ERR_REGISTER_EXISTS -120
+#define ERR_REGISTER_INCOMPATIBLE_SIZE -130
+#define ERR_REGISTER_INVALID_STRUCT -140
+#define ERR_REGISTER_READ_FAILED -101
+#define ERR_REGISTER_WRITE_FAILED -102
 
-void DB_AddMember(FILE* file, const char* table_name, void* member, size_t member_size, size_t offset);
+#define ERR_TABLE_NOT_FOUND -210
+#define ERR_TABLE_EXISTS -220
+#define ERR_TABLE_READ_FAILED -201
+#define ERR_TABLE_WRITE_FAILED -202
+#define ERR_TABLE_MAX_SIZE_EXCEEDED -250
+#define ERR_TABLE_INVALID_NAME -260
+
+#define ERR_HEADER_NOT_FOUND -310
+#define ERR_HEADER_EXISTS -320
+#define ERR_HEADER_READ_FAILED -301
+#define ERR_HEADER_WRITE_FAILED -302
+
+// Inicializa o Banco de Dados
+FILE* dbInit(const char* filename);
+
+// Encerra o Banco de Dados
+int dbClose(FILE* file);
+
+void dbWelcome();
+
+// Procura uma tabela no Banco de Dados, retorna -1 se a tabela não existir
+int dbFindTable(FILE* file, const char* table_name);
+
+// Cria uma tabela no Banco de Dados
+int dbCreateTable(FILE* file, const char* table_name, size_t size);
+
+// Imprime o cabeçalho do Banco de Dados
+void dbPrintHeader(DatabaseHeader* header);
+
+// Insere novo registro na tabela indicada
+int dbAdd(FILE* file, const char* table_name, void* member, size_t member_size, size_t pk_offset);
+
+void dbAddMember2(FILE* file, const char* table_name, void* member, size_t member_size, size_t pk_offset);
 
 #endif

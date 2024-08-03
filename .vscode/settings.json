@@ -10,6 +10,12 @@
     ],
     "files.associations": {
         "stdlib.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "cliente.h": "c",
+        "treino.h": "c",
+        "funcionario.h": "c",
+        "db.h": "c",
+        "crud.h": "c",
+        "db_wrapper.h": "c"
     }
 }

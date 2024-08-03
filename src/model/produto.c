@@ -6,10 +6,10 @@
 
 int TProd_Size() {
     return sizeof(long unsigned)
-          + sizeof(char) * B_NOME
-          + sizeof(char) * B_DESCRICAO
-          + sizeof(char) * B_CATEGORIA
-          + sizeof(char) * B_CODIGO_BARRAS
+          + sizeof(char) * BP_NOME
+          + sizeof(char) * BP_DESCRICAO
+          + sizeof(char) * BP_CATEGORIA
+          + sizeof(char) * BP_CODIGO_BARRAS
           + sizeof(double)
           + sizeof(int);
 }
@@ -17,7 +17,7 @@ int TProd_Size() {
 TProd TProd_New(const char* nome, const char* descricao, const char* categoria, const char* codigo_barras, double preco, int quantidade) {
     TProd prod = {0};
     // Verifica se as strings são muito grandes
-    if (strlen(nome) >= B_NOME || strlen(descricao) >= B_DESCRICAO || strlen(categoria) >= B_CATEGORIA || strlen(codigo_barras) >= B_CODIGO_BARRAS) {
+    if (strlen(nome) >= BP_NOME || strlen(descricao) >= BP_DESCRICAO || strlen(categoria) >= BP_CATEGORIA || strlen(codigo_barras) >= BP_CODIGO_BARRAS) {
         perror("TProd buffer overflow");
         return prod;
     }
@@ -40,7 +40,7 @@ TProd TProd_GetByPK(FILE *file, const char* table_name, long unsigned pk) {
         perror("Erro ao ler o cabeçalho do arquivo");
         return prod;
     }
-    int index = DB_FindTable(file, table_name);
+    int index = dbFindTable(file, table_name);
     if (index == -1) {
         perror("Tabela não encontrada");
         return prod;

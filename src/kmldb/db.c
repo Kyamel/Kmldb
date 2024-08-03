@@ -6,7 +6,7 @@
 #define EXT ".dat"
 #define B_FILENAME 256
 
-FILE* DB_Init(const char* filename) {
+FILE* dbInit(const char* filename) {
     char full_filename[B_FILENAME];
     size_t len = strlen(filename);
     // Verifica se o nome do arquivo já possui a extensão ".dat"
@@ -33,15 +33,18 @@ FILE* DB_Init(const char* filename) {
     return file;
 }
 
-void DB_Close(FILE* file) {
+int dbClose(FILE* file) {
     if (file != NULL) {
         if (fclose(file) != 0) {
             perror("Erro ao fechar o arquivo");
+            return ERR_DB_CLOSE_FAILED;
         }
         printf("Database encerrado com sucesso\n");
+        return DB_OK;
     }
+    return ERR_DB_CLOSE_FAILED;
 }
-void DB_Welcome() {
+void dbWelcome() {
     printf("                                                                               \n");
     printf("                                                                               \n");
     printf("                                                                               \n");
@@ -70,7 +73,7 @@ void DB_Welcome() {
 }
 
 
-int DB_FindTable(FILE* file, const char* table_name) {
+int dbFindTable(FILE* file, const char* table_name) {
     DatabaseHeader header;
     fseek(file, 0, SEEK_SET);
     fread(&header, sizeof(DatabaseHeader), 1, file);
@@ -83,22 +86,22 @@ int DB_FindTable(FILE* file, const char* table_name) {
     return -1; // Tabela não encontrada
 }
 
-void DB_CreateTable(FILE* file, const char* table_name, size_t size) {
+int dbCreateTable(FILE* file, const char* table_name, size_t size) {
     DatabaseHeader header;
     fseek(file, 0, SEEK_SET);
     fread(&header, sizeof(DatabaseHeader), 1, file);
 
     if (header.table_count >= TABLE_MAX_COUNT) {
         perror("Número máximo de tabelas atingido");
-        return;
+        return ERR_TABLE_MAX_SIZE_EXCEEDED;
     }
-    if (DB_FindTable(file, table_name) != -1) {
+    if (dbFindTable(file, table_name) != -1) {
         perror("Tabela já existe");
-        return;
+        return ERR_TABLE_EXISTS;
     }
     if (strlen(table_name) >= B_TABLE_NAME - 1) {
         perror("Nome da tabela muito grande ou sem terminação nula");
-        return;
+        return ERR_TABLE_INVALID_NAME;
     }
 
     TableMeta* meta = &header.tables[header.table_count];
@@ -113,9 +116,10 @@ void DB_CreateTable(FILE* file, const char* table_name, size_t size) {
     fseek(file, 0, SEEK_SET);
     fwrite(&header, sizeof(DatabaseHeader), 1, file);
     fflush(file);
+    return DB_OK;
 }
 
-void DB_PrintHeader(DatabaseHeader* header) {
+void dbPrintHeader(DatabaseHeader* header) {
     printf("\n# DATABASE HEADER:\n");
     if (header == NULL) {
         perror("Null Header\n");
@@ -132,29 +136,25 @@ void DB_PrintHeader(DatabaseHeader* header) {
     }
 }
 
-void DB_AddMember(FILE* file, const char* table_name, void* member, size_t member_size, size_t pk_offset) {
-    // Carrega o cabeçalho do arquivo
+int dbAdd(FILE* file, const char* table_name, void* member, size_t member_size, size_t pk_offset) {
     DatabaseHeader header;
     fseek(file, 0, SEEK_SET);
     if (fread(&header, sizeof(DatabaseHeader), 1, file) != 1) {
         perror("Erro ao ler o cabeçalho do arquivo");
-        return;
+        return ERR_HEADER_NOT_FOUND;
     }
-    // Encontra a tabela pelo nome
-    int index = DB_FindTable(file, table_name);
+    int index = dbFindTable(file, table_name);
     if (index == -1) {
         perror("Tabela não encontrada");
-        return;
+        return ERR_REGISTER_NOT_FOUND;
     }
-    // Verifica se o tamanho do membro é compatível com a tabela
     if (header.tables[index].size != member_size) {
         perror("Tamanho do membro incompatível com a tabela");
-        return;
+        return ERR_REGISTER_INCOMPATIBLE_SIZE;
     }
-    // Verifica se o campo pk está presente na struct membro e também se é o primeiro campo dessa struct
     if (pk_offset != 0) {
-        perror("A estrutura deve conter o campo pk como o primeiro");
-        return;
+        perror("A struct deve conter o campo pk no início");
+        return ERR_REGISTER_INVALID_STRUCT;
     }
     // Atualiza a PK do novo membro
     memcpy_s(member, sizeof(unsigned long), &header.tables[index].next_pk, sizeof(header.tables[index].next_pk));
@@ -162,11 +162,11 @@ void DB_AddMember(FILE* file, const char* table_name, void* member, size_t membe
     // Posiciona no final da tabela e escreve o membro no arquivo
     if (fseek(file, header.tables[index].end_offset, SEEK_SET) != 0) {
         perror("Erro ao posicionar o ponteiro do arquivo");
-        return;
+        return ERR_REGISTER_READ_FAILED;
     }
     if (fwrite(member, member_size, 1, file) != 1) {
         perror("Erro ao escrever o membro no arquivo");
-        return;
+        return ERR_REGISTER_WRITE_FAILED;
     }
     // Atualiza o end_offset da tabela atual
     size_t size = header.tables[index].size;
@@ -179,12 +179,114 @@ void DB_AddMember(FILE* file, const char* table_name, void* member, size_t membe
     // Reposiciona para escrever o cabeçalho de volta no arquivo
     if (fseek(file, 0, SEEK_SET) != 0) {
         perror("Erro ao reposicionar o ponteiro do arquivo para o início");
-        return;
+        return ERR_HEADER_READ_FAILED;
     }
     if (fwrite(&header, sizeof(DatabaseHeader), 1, file) != 1) {
         perror("Erro ao escrever o cabeçalho atualizado no arquivo");
+        return ERR_HEADER_WRITE_FAILED;
+    }
+    fflush(file);
+    return DB_OK;
+}
+
+void dbAddMember2(FILE* file, const char* table_name, void* member, size_t member_size, size_t pk_offset) {
+    DatabaseHeader header;
+    FILE* temp_file;
+    char temp_filename[] = "data/temp_database.dat";
+    char buffer[1024];
+    
+    // Ler o cabeçalho do arquivo original
+    fseek(file, 0, SEEK_SET);
+    if (fread(&header, sizeof(DatabaseHeader), 1, file) != 1) {
+        perror("Erro ao ler o cabeçalho do arquivo");
+        return;
+    }
+    if (pk_offset != 0) {
+        perror("A struct deve conter o campo pk no início");
+        return;
+    }
+
+    // Encontrar a tabela e obter a posição de inserção
+    int index = dbFindTable(file, table_name);
+    if (index == -1) {
+        perror("Tabela não encontrada");
+        return;
+    }
+
+    // Abrir o arquivo auxiliar para escrita
+    temp_file = fopen(temp_filename, "wb");
+    if (!temp_file) {
+        perror("Erro ao criar arquivo auxiliar");
+        return;
+    }
+
+    size_t insert_pos = header.tables[index].end_offset;
+    size_t current_pos = 0;
+    fseek(file, current_pos, SEEK_SET);
+
+    // Copiar os dados do arquivo original para o arquivo auxiliar
+    while (current_pos < insert_pos) {
+        size_t bytes_to_copy = (insert_pos - current_pos > sizeof(buffer)) ? sizeof(buffer) : insert_pos - current_pos;
+        size_t bytes_read = fread(buffer, 1, bytes_to_copy, file);
+        if (bytes_read != bytes_to_copy && ferror(file)) {
+            perror("Erro ao ler do arquivo original");
+            fclose(temp_file);
+            return;
+        }
+        fwrite(buffer, 1, bytes_read, temp_file);
+        if (ferror(temp_file)) {
+            perror("Erro ao escrever no arquivo auxiliar");
+            fclose(temp_file);
+            return;
+        }
+        current_pos = ftell(file);
+    }
+
+    // Escrever o novo membro no arquivo auxiliar
+    fwrite(member, member_size, 1, temp_file);
+    if (ferror(temp_file)) {
+        perror("Erro ao escrever o novo membro no arquivo auxiliar");
+        fclose(temp_file);
+        return;
+    }
+
+    // Continuar copiando os dados restantes do arquivo original para o arquivo auxiliar
+    while (fread(buffer, 1, sizeof(buffer), file) > 0) {
+        fwrite(buffer, 1, sizeof(buffer), temp_file);
+        if (ferror(temp_file)) {
+            perror("Erro ao escrever dados restantes no arquivo auxiliar");
+            fclose(temp_file);
+            return;
+        }
+    }
+
+    // Atualiza o end_offset da tabela atual
+    size_t size = header.tables[index].size;
+    header.tables[index].end_offset += size;
+    // Atualiza os offsets das tabelas subsequentes (empurrando para a direita)
+    for (int i = index + 1; i < header.table_count; ++i) {
+        header.tables[i].start_offset += size;
+        header.tables[i].end_offset += size;
+    }
+    // Reposiciona para escrever o cabeçalho de volta no arquivo
+    if (fseek(temp_file, 0, SEEK_SET) != 0) {
+        perror("Erro ao reposicionar o ponteiro do arquivo para o início");
+        return;
+    }
+    if (fwrite(&header, sizeof(DatabaseHeader), 1, temp_file) != 1) {
+        perror("Erro ao escrever o cabeçalho atualizado no arquivo");
+        return;
+    }
+    fflush(temp_file);
+
+    // Substituir o arquivo original pelo arquivo auxiliar
+    if (remove("data/database.dat") != 0) {
+        perror("Erro ao remover o arquivo original");
+        return;
+    }
+    if (rename(temp_filename, "data/database.dat") != 0) {
+        perror("Erro ao renomear o arquivo auxiliar");
         return;
     }
     fflush(file);
-    printf("Nova posição final da tabela '%s': %lu\n", table_name, header.tables[index].end_offset);
 }

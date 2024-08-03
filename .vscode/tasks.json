@@ -6,11 +6,16 @@
         "type": "shell",
         "command": "gcc",
         "args": [
+            "-g", // Flag para modo de depuração
             "src/*.c",
             "src/model/*.c",
             "src/kmldb/*.c",
+            "src/controler/*.c",
+            "src/view/cli/*.c",
             "-I", "src/model",
             "-I", "src/kmldb",
+            "-I", "src/controler",
+            "-I", "src/view",
             "-o", "build/programa"
         ],
         "group": {

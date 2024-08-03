@@ -1,0 +1,12 @@
+C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\src\controler\crud.c;C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\build\programa.dir\Debug\crud.obj
+C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\src\controler\db_wrapper.c;C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\build\programa.dir\Debug\db_wrapper.obj
+C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\src\controler\handler.c;C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\build\programa.dir\Debug\handler.obj
+C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\src\kmldb\db.c;C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\build\programa.dir\Debug\db.obj
+C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\src\main.c;C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\build\programa.dir\Debug\main.obj
+C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\src\model\cliente.c;C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\build\programa.dir\Debug\cliente.obj
+C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\src\model\exercicio.c;C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\build\programa.dir\Debug\exercicio.obj
+C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\src\model\funcionario.c;C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\build\programa.dir\Debug\funcionario.obj
+C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\src\model\produto.c;C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\build\programa.dir\Debug\produto.obj
+C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\src\model\treino.c;C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\build\programa.dir\Debug\treino.obj
+C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\src\teste.c;C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\build\programa.dir\Debug\teste.obj
+C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\src\view\cli\main_menu.c;C:\Users\lucas\programs\CPrograms\AEDS2\Kmldb\build\programa.dir\Debug\main_menu.obj
