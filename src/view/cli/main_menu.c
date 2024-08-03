@@ -42,7 +42,7 @@ void cadastrarCliente(FILE *file) {
     fgets(exp_date, sizeof(exp_date), stdin);
     exp_date[strcspn(exp_date, "\n")] = 0;
 
-    addCliente(file, CLIENTES, nome, cpf, email, telefone, exp_date);
+    cAddCliente(file, CLIENTES, nome, cpf, email, telefone, exp_date);
     printf("Cliente cadastrado com sucesso!\n");
 }
 
@@ -56,7 +56,7 @@ void buscarCliente(FILE *file) {
 
     TCliente cliente = TCliente_GetByPK(file, CLIENTES, pk);
     if (cliente.pk != 0) {
-        printCliente(&cliente);
+        cPrintCliente(&cliente);
     } else {
         printf("Cliente nao encontrado.\n");
     }
@@ -91,7 +91,7 @@ void cadastrarFuncionario(FILE *file) {
     scanf_s("%lf", &salario);
     clearInputBuffer();
 
-    addFunc(file, FUNCIONARIOS, nome, cpf, email, telefone, data_nascimento, salario);
+    cAddFunc(file, FUNCIONARIOS, nome, cpf, email, telefone, data_nascimento, salario);
     printf("Funcionario cadastrado com sucesso!\n");
 }
 
@@ -105,7 +105,7 @@ void buscarFuncionario(FILE *file) {
 
     TFunc func = TFunc_GetByPK(file, FUNCIONARIOS, pk);
     if (func.pk != 0) {
-        printFunc(&func);
+        cPrintFunc(&func);
     } else {
         printf("Funcionario nao encontrado.\n");
     }
@@ -128,7 +128,7 @@ void cadastrarExercicio(FILE *file) {
     scanf_s("%d", &duration);
     clearInputBuffer();
 
-    addExerc(file, EXERCICIOS, nome, tipo, duration);
+    CAddExerc(file, EXERCICIOS, nome, tipo, duration);
     printf("Exercicio cadastrado com sucesso!\n");
 }
 
@@ -140,9 +140,9 @@ void buscarExercicio(FILE *file) {
     long unsigned pk;
     scanf_s("%lu", &pk);
 
-    TExerc exerc = readExerc(file, EXERCICIOS, pk);
+    TExerc exerc = cReadExerc(file, EXERCICIOS, pk);
     if (strcmp(exerc.nome, nome) == 0) {
-        printExerc(&exerc);
+        cPrintExerc(&exerc);
     } else {
         printf("Exercicio nao encontrado.\n");
     }
@@ -169,7 +169,7 @@ void cadastrarTreino(FILE *file, FILE *fexerc, FILE *fcli) {
     scanf_s("%d", &epk);
     clearInputBuffer();
 
-    addTreinoDoC(file, TREINOS, nome, tipo, epk, cpk);
+    cAddTreinoDoC(file, TREINOS, nome, tipo, epk, cpk);
     printf("Treino cadastrado com sucesso!\n");
 }
 
@@ -181,27 +181,27 @@ void buscarTreino(FILE *file) {
     long unsigned pk;
     scanf_s("%lu", &pk);
 
-    TTreino treino = readTreino(file, TREINOS, pk);
+    TTreino treino = cReadTreino(file, TREINOS, pk);
     if (strcmp(treino.nome, nome) == 0) {
-        printTreino(&treino);
+        cPrintTreino(&treino);
     } else {
         printf("Treino nao encontrado.\n");
     }
 }
 
 void initTables(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexec) {
-    cCreateTable(fcli, CLIENTES, sizeof(TCliente));
-    cCreateTable(ffunc, FUNCIONARIOS, sizeof(TFunc));
-    cCreateTable(ftreino, TREINOS, sizeof(TTreino));
-    cCreateTable(fexec, EXERCICIOS, sizeof(TExerc));
+    cdbCreateTable(fcli, CLIENTES, sizeof(TCliente));
+    cdbCreateTable(ffunc, FUNCIONARIOS, sizeof(TFunc));
+    cdbCreateTable(ftreino, TREINOS, sizeof(TTreino));
+    cdbCreateTable(fexec, EXERCICIOS, sizeof(TExerc));
 }
 
 
 int main_menu() {
-    FILE *fcli = cInit(DB_FOLDER"/clientes.dat");
-    FILE *ffunc = cInit(DB_FOLDER"/funcionarios.dat");
-    FILE *ftreino = cInit(DB_FOLDER"/treinos.dat");
-    FILE *fexec = cInit(DB_FOLDER"/exercicios.dat");
+    FILE *fcli = cdbInit(DB_FOLDER"/"CLIENTES".dat");
+    FILE *ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
+    FILE *ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
+    FILE *fexec = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
 
     initTables(fcli, ffunc, ftreino, fexec);
 
@@ -249,13 +249,13 @@ int main_menu() {
                 break;
             case 9:
                 printf("Cliente ");
-                cClose(fcli);
+                cdbClose(fcli);
                 printf("Funcionario ");
-                cClose(ffunc);
+                cdbClose(ffunc);
                 printf("Treino ");
-                cClose(ftreino);
+                cdbClose(ftreino);
                 printf("Exercicio ");
-                cClose(fexec);
+                cdbClose(fexec);
                 printf("Saindo... Pressione ENTER\n");
                 clearInputBuffer();
                 exit(EXIT_SUCCESS);

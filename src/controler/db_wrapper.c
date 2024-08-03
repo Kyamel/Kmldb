@@ -1,22 +1,22 @@
 #include "../kmldb/db.h"
 #include <stdio.h>
 
-FILE* cInit(const char *filename) {
+FILE* cdbInit(const char *filename) {
     return dbInit(filename);
 }
 
-void cClose(FILE *file) {
+void cdbClose(FILE *file) {
     dbClose(file);
 }
 
-void cWelcome() {
+void cdbWelcome() {
     dbWelcome();
 }
 
-int cCreateTable(FILE *file, const char *table_name, size_t size) {
+int cdbCreateTable(FILE *file, const char *table_name, size_t size) {
     return dbCreateTable(file, table_name, size);
 }
 
-int cAdd(FILE *file, const char *table_name, void *reg, size_t reg_size, size_t pk_offset) {
+int cdbAdd(FILE *file, const char *table_name, void *reg, size_t reg_size, size_t pk_offset) {
     return dbAdd(file, table_name, reg, reg_size, pk_offset);
 }

@@ -3,14 +3,14 @@
 
 #include <stdio.h>
 
-FILE* cInit(const char *filename);
+FILE* cdbInit(const char *filename);
 
-void cClose(FILE *file);
+void cdbClose(FILE *file);
 
-void cWelcome();
+void cdbWelcome();
 
-int cCreateTable(FILE *file, const char *table_name, size_t size);
+int cdbCreateTable(FILE *file, const char *table_name, size_t size);
 
-int cAdd(FILE *file, const char *table_name, void *reg, size_t reg_size, size_t pk_offset);
+int cdbAdd(FILE *file, const char *table_name, void *reg, size_t reg_size, size_t pk_offset);
 
 #endif

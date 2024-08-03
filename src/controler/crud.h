@@ -14,46 +14,46 @@
 // ########
 
 // Não faz checagem da existeência do cliente e do exercicio
-int addTreinoDoC(FILE* file, const char* table_name, const char* nome, const char* tipo, long unsigned epk, long unsigned cpk);
+int cAddTreinoDoC(FILE* file, const char* table_name, const char* nome, const char* tipo, long unsigned epk, long unsigned cpk);
 
 // Faz checagem da existeência do cliente e do exercicio
-int addTreinoNotC(FILE* file, const char* table_name, const char* nome, const char* tipo, TExerc* exerc, TCliente* cliente);
+int cAddTreinoNotC(FILE* file, const char* table_name, const char* nome, const char* tipo, TExerc* exerc, TCliente* cliente);
 
-TTreino readTreino(FILE* file, const char* table_name, long unsigned pk);
+TTreino cReadTreino(FILE* file, const char* table_name, long unsigned pk);
 
-void printTreino(TTreino* treino);
+void cPrintTreino(TTreino* treino);
 
 // #############
 // #FUNCIONARIO#
 // #############
 
 // Adiciona um novo funcionário
-int addFunc(FILE* file, const char* table_name, const char* nome, const char* cpf, const char* email, const char* tel, const char* data_nascimento, double salario);
+int cAddFunc(FILE* file, const char* table_name, const char* nome, const char* cpf, const char* email, const char* tel, const char* data_nascimento, double salario);
 
-TFunc readFunc(FILE* file, const char* table_name, long unsigned pk);
+TFunc cReadFunc(FILE* file, const char* table_name, long unsigned pk);
 
-void printFunc(TFunc* func);
+void cPrintFunc(TFunc* func);
 
 // ###########
 // #EXERCICIO#
 // ###########
 
 // Adiciona um novo exercício
-int addExerc(FILE* file, const char* table_name, const char* nome, const char* tipo, int duration);
+int CAddExerc(FILE* file, const char* table_name, const char* nome, const char* tipo, int duration);
 
-TExerc readExerc(FILE* file, const char* table_name, long unsigned pk);
+TExerc cReadExerc(FILE* file, const char* table_name, long unsigned pk);
 
-void printExerc(TExerc* exec);
+void cPrintExerc(TExerc* exec);
 
 // #########
 // #CLIENTE#
 // #########
 
 // Adiciona um novo cliente
-int addCliente(FILE* file, const char* table_name, const char* nome, const char *cpf, const char* email, const char* tel, const char* exp_date);
+int cAddCliente(FILE* file, const char* table_name, const char* nome, const char *cpf, const char* email, const char* tel, const char* exp_date);
 
-TCliente readCliente(FILE* file, const char* table_name, long unsigned pk);
+TCliente cReadCliente(FILE* file, const char* table_name, long unsigned pk);
 
-void printCliente(TCliente* cliente);
+void cPrintCliente(TCliente* cliente);
 
 #endif
