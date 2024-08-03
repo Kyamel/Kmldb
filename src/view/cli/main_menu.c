@@ -197,13 +197,13 @@ void initTables(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexec) {
 }
 
 
-int main_menu() {
+int cli_main_menu() {
     FILE *fcli = cdbInit(DB_FOLDER"/"CLIENTES".dat");
     FILE *ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
     FILE *ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
-    FILE *fexec = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
+    FILE *fexer = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
 
-    initTables(fcli, ffunc, ftreino, fexec);
+    initTables(fcli, ffunc, ftreino, fexer);
 
     int opcao;
 
@@ -236,13 +236,13 @@ int main_menu() {
                 buscarFuncionario(ffunc);
                 break;
             case 5:
-                cadastrarExercicio(fexec);
+                cadastrarExercicio(fexer);
                 break;
             case 6:
-                buscarExercicio(fexec);
+                buscarExercicio(fexer);
                 break;
             case 7:
-                cadastrarTreino(ftreino, fexec, fcli);
+                cadastrarTreino(ftreino, fexer, fcli);
                 break;
             case 8:
                 buscarTreino(ftreino);
@@ -255,7 +255,7 @@ int main_menu() {
                 printf("Treino ");
                 cdbClose(ftreino);
                 printf("Exercicio ");
-                cdbClose(fexec);
+                cdbClose(fexer);
                 printf("Saindo... Pressione ENTER\n");
                 clearInputBuffer();
                 exit(EXIT_SUCCESS);

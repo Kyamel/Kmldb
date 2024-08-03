@@ -30,6 +30,6 @@ void cadastrarTreino(FILE *file, FILE *fexerc, FILE *fcli);
 
 void buscarTreino(FILE *file);
 
-int main_menu();
+int cli_main_menu();
 
 #endif // MAIN_MENU_H
