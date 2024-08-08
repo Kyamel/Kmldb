@@ -15,7 +15,7 @@ int TCliente_Size() {
 }
 
 // Cria uma nova instância de TCliente
-TCliente TCliente_New(const char* nome, const char* cpf, const char* email, const char* telefone, const char* exp_date) {
+TCliente TCliente_New(unsigned long pk, const char* nome, const char* cpf, const char* email, const char* telefone, const char* exp_date) {
     TCliente cliente = {0};
 
     // Verifica se os tamanhos das strings são válidos
@@ -27,6 +27,7 @@ TCliente TCliente_New(const char* nome, const char* cpf, const char* email, cons
     // Dependendo do ambiente, usa strncpy_s ou strncpy
     #ifdef _MSC_VER
         // Ambiente Microsoft
+        cliente.pk = pk;
         strncpy_s(cliente.nome, sizeof(cliente.nome), nome, _TRUNCATE);
         strncpy_s(cliente.cpf, sizeof(cliente.cpf), cpf, _TRUNCATE);
         strncpy_s(cliente.email, sizeof(cliente.email), email, _TRUNCATE);
@@ -34,6 +35,7 @@ TCliente TCliente_New(const char* nome, const char* cpf, const char* email, cons
         strncpy_s(cliente.exp_date, sizeof(cliente.exp_date), exp_date, _TRUNCATE);
     #else
         // Ambiente Unix/Linux
+        cliente.pk = pk;
         strncpy(cliente.nome, nome, BC_NOME - 1);
         cliente.nome[BC_NOME - 1] = '\0'; // Garantir que a string está terminada
 

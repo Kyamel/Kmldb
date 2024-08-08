@@ -23,6 +23,7 @@ endif()
 # Coletar todos os arquivos de código fonte
 file(GLOB_RECURSE SOURCES
     src/main.c
+    src/teste.c
     src/model/*.c
     src/kmldb/*.c
     src/controler/*.c

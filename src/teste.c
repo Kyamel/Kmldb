@@ -1,83 +1,100 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include "../controler/db_wrapper.h"
 #include "../controler/crud.h"
-
 #include "../model/exercicio.h"
 #include "../model/cliente.h"
 #include "../model/treino.h"
 #include "../model/funcionario.h"
 
-#define DB_FOLDER "./data" // Corrigido para o diretório correto
+#include <stdlib.h>
+#include <time.h>
 
-// Função para inicializar as tabelas
-void initTables(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexec) {
-    cdbCreateTable(fcli, "clientes.dat", sizeof(TCliente));
-    cdbCreateTable(ffunc, "funcionarios.dat", sizeof(TFunc));
-    cdbCreateTable(ftreino, "treinos.dat", sizeof(TTreino));
-    cdbCreateTable(fexec, "exercicios.dat", sizeof(TExerc));
+void embaralha(int *vet, int tam, int qtdTrocas) {
+    srand((unsigned)time(NULL));
+    for (int i = 0; i < qtdTrocas; i++) {
+        int a = rand() % tam;
+        int b = rand() % tam;
+        int temp = vet[a];
+        vet[a] = vet[b];
+        vet[b] = temp;
+    }
 }
 
-// Função principal para teste
-int teste() {
-    FILE *fcli = cdbInit(DB_FOLDER"/clientes.dat");
-    FILE *ffunc = cdbInit(DB_FOLDER"/funcionarios.dat");
-    FILE *ftreino = cdbInit(DB_FOLDER"/treinos.dat");
-    FILE *fexec = cdbInit(DB_FOLDER"/exercicios.dat");
+// Função para executar o teste
+void run_test() {
+    // Abrir os arquivos de banco de dados
+    FILE *fcli = cdbInit(DB_FOLDER"/"CLIENTES".dat");
+    FILE *ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
+    FILE *ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
+    FILE *fexer = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
 
-    // Inicializa as tabelas
-    initTables(fcli, ffunc, ftreino, fexec);
+    // Inicializar tabelas
+    cInitTables(fcli, ffunc, ftreino, fexer);
 
-    // Adiciona clientes
-    cAddCliente(fcli, "clientes.dat", "João Silva", "12345678900", "joao@example.com", "123456789", "2025-12-31");
-    cAddCliente(fcli, "clientes.dat", "Maria Oliveira", "98765432100", "maria@example.com", "987654321", "2024-05-20");
+    // Inserir dados
+    printf("Inserindo dados...\n");
 
-    // Adiciona funcionários
-    cAddFunc(ffunc, "funcionarios.dat", "Carlos Santos", "11122233344", "carlos@example.com", "321654987", "1985-11-10", 3000.00);
-    cAddFunc(ffunc, "funcionarios.dat", "Ana Costa", "55566677788", "ana@example.com", "456789123", "1990-04-25", 3500.00);
+    // Cadastro de clientes
+    cAddCliente(fcli, CLIENTES, 0, "Alice", "12345678901", "alice@example.com", "1234567890", "2024-12-31");
+    cAddCliente(fcli, CLIENTES, 0, "Bob", "98765432100", "bob@example.com", "0987654321", "2025-12-31");
 
-    // Adiciona exercícios
-    TExerc exerc1 = TExerc_New("Flexão", "Peito", 30);
-    TExerc exerc2 = TExerc_New("Agachamento", "Perna", 45);
-    CAddExerc(fexec, "exercicios.dat", exerc1.nome, exerc1.tipo, exerc1.duration);
-    CAddExerc(fexec, "exercicios.dat", exerc2.nome, exerc2.tipo, exerc2.duration);
+    // Cadastro de funcionários
+    cAddFunc(ffunc, FUNCIONARIOS, 0, "Charlie", "11223344556", "charlie@example.com", "1112233445", "1985-07-30", 3500.50);
+    cAddFunc(ffunc, FUNCIONARIOS, 0, "Dana", "66554433221", "dana@example.com", "5544332211", "1990-11-15", 4200.75);
 
-    // Adiciona treinos
-    TCliente cliente1 = TCliente_New("João Silva", "12345678900", "joao@example.com", "123456789", "2025-12-31");
-    TCliente cliente2 = TCliente_New("Maria Oliveira", "98765432100", "maria@example.com", "987654321", "2024-05-20");
-    cAddTreinoNotC(ftreino, "treinos.dat", "Treino de Peito", "Hipertrofia", &exerc1, &cliente1);
-    cAddTreinoNotC(ftreino, "treinos.dat", "Treino de Perna", "Força", &exerc2, &cliente2);
+    // Cadastro de exercícios
+    cAddExerc(fexer, EXERCICIOS, 0, "Push-up", "Strength", 60);
+    cAddExerc(fexer, EXERCICIOS, 0, "Squat", "Strength", 90);
 
-    // Leitura e impressão dos registros
-    printf("Leitura e impressão dos registros:\n");
+    // Buscar e imprimir dados
+    printf("\nBuscando e imprimindo dados...\n");
 
-    // Imprime clientes
-    TCliente cliente;
-    cliente = cReadCliente(fcli, "clientes.dat", 1);
+    // Buscar e imprimir funcionários
+    printf("\nFuncionários:\n");
+    TFunc funcionario = TFunc_GetByPK(ffunc, FUNCIONARIOS, 1);  // ID 1 para Charlie
+    cPrintFunc(&funcionario);
+    funcionario = TFunc_GetByPK(ffunc, FUNCIONARIOS, 2);  // ID 2 para Dana
+    cPrintFunc(&funcionario);
+
+    // Buscar e imprimir clientes
+    printf("\nClientes:\n");
+    TCliente cliente = TCliente_GetByPK(fcli, CLIENTES, 1);  // ID 1 para Alice
     cPrintCliente(&cliente);
-    
-    // Imprime funcionários
-    TFunc func;
-    func = cReadFunc(ffunc, "funcionarios.dat", 1);
-    cPrintFunc(&func);
+    TCliente cliente2 = TCliente_GetByPK(fcli, CLIENTES, 2);  // ID 2 para Bob
+    cPrintCliente(&cliente);
 
-    // Imprime exercícios
-    TExerc exerc;
-    exerc = cReadExerc(fexec, "exercicios.dat", 1);
-    cPrintExerc(&exerc);
+    // Buscar e imprimir exercícios
+    printf("\nExercícios:\n");
+    TExerc exercicio = cSearchExerc(fexer, EXERCICIOS, 1);  // ID 1 para Push-up
+    cPrintExerc(&exercicio);
+    TExerc exercicio2 = cSearchExerc(fexer, EXERCICIOS, 2);  // ID 2 para Squat
+    cPrintExerc(&exercicio);
 
-    // Imprime treinos
-    TTreino treino;
-    treino = cReadTreino(ftreino, "treinos.dat", 1);
+    // Cadastro de treinos
+    cAddTreinoNotC(ftreino, TREINOS, 0, "Morning Routine", "Strength", &exercicio, &cliente);  // Cliente 1, Exercício 1
+    cAddTreinoNotC(ftreino, TREINOS, 0, "Evening Routine", "Strength", &exercicio2, &cliente2);  // Cliente 2, Exercício 2
+
+    // Buscar e imprimir treinos
+    printf("\nTreinos:\n");
+    TTreino treino = cSearchTreinoComp(ftreino, TREINOS, 1, 1);  // Exercício 1, Cliente 1
+    cPrintTreino(&treino);
+    treino = cSearchTreinoComp(ftreino, TREINOS, 2, 2);  // Exercício 2, Cliente 2
     cPrintTreino(&treino);
 
-    // Fecha os arquivos
-    cdbClose(fcli);
-    cdbClose(ffunc);
-    cdbClose(ftreino);
-    cdbClose(fexec);
+    // Fechar os arquivos
+    cCloseDatabase(fcli, ffunc, ftreino, fexer);
+}
 
-    return EXIT_SUCCESS;
+int criar_base_desordenada(int tam, int qtdTrocas){
+
+    int vet[tam];
+    for (int i = 0; i < tam; i++) vet[i] = i + 1;
+
+    embaralha(vet, tam, qtdTrocas);
+
+    cAddCliente(fcli, CLIENTES, 0, "Alice", "12345678901", "alice@example.com", "1234567890", "2024-12-31");
+    cAddCliente(fcli, CLIENTES, 0, "Bob", "98765432100", "bob@example.com", "0987654321", "2025-12-31");
+    
 }

@@ -21,7 +21,7 @@ typedef struct {
 
 int TFunc_Size();
 
-TFunc TFunc_New(const char* nome, const char* cpf, const char* email, const char* telefone, const char* data_nascimento, double salario);
+TFunc TFunc_New(unsigned long pk, const char* nome, const char* cpf, const char* email, const char* telefone, const char* data_nascimento, double salario);
 
 TFunc TFunc_GetByPK(FILE *file, const char* table_name, long unsigned pk);
 

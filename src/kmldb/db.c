@@ -152,13 +152,31 @@ int dbAdd(FILE* file, const char* table_name, void* member, size_t member_size, 
         perror("Tamanho do membro incompatível com a tabela");
         return ERR_REGISTER_INCOMPATIBLE_SIZE;
     }
-    if (pk_offset != 0) {
-        perror("A struct deve conter o campo pk no início");
-        return ERR_REGISTER_INVALID_STRUCT;
+
+    unsigned long *pk = (unsigned long *)((char *)member + pk_offset);
+    if (*pk == 0) {
+        // Atribuir uma nova PK se a PK fornecida for 0
+        *pk = header.tables[index].next_pk;
+        header.tables[index].next_pk++;
+    } else {
+        // Verificar se a PK fornecida já existe
+        size_t table_offset = header.tables[index].start_offset;
+        size_t size = header.tables[index].size;
+        while (table_offset < header.tables[index].end_offset) {
+            fseek(file, table_offset, SEEK_SET);
+            unsigned long existing_pk;
+            if (fread(&existing_pk, sizeof(unsigned long), 1, file) != 1) {
+                perror("Erro ao ler PK existente");
+                return ERR_REGISTER_READ_FAILED;
+            }
+            if (existing_pk == *pk) {
+                perror("PK fornecida já existe");
+                return ERR_REGISTER_WRITE_FAILED;
+            }
+            table_offset += size;
+        }
     }
-    // Atualiza a PK do novo membro
-    memcpy_s(member, sizeof(unsigned long), &header.tables[index].next_pk, sizeof(header.tables[index].next_pk));
-    header.tables[index].next_pk++;
+
     // Posiciona no final da tabela e escreve o membro no arquivo
     if (fseek(file, header.tables[index].end_offset, SEEK_SET) != 0) {
         perror("Erro ao posicionar o ponteiro do arquivo");
@@ -168,14 +186,17 @@ int dbAdd(FILE* file, const char* table_name, void* member, size_t member_size, 
         perror("Erro ao escrever o membro no arquivo");
         return ERR_REGISTER_WRITE_FAILED;
     }
+
     // Atualiza o end_offset da tabela atual
     size_t size = header.tables[index].size;
     header.tables[index].end_offset += size;
+
     // Atualiza os offsets das tabelas subsequentes (empurrando para a direita)
     for (int i = index + 1; i < header.table_count; ++i) {
         header.tables[i].start_offset += size;
         header.tables[i].end_offset += size;
     }
+
     // Reposiciona para escrever o cabeçalho de volta no arquivo
     if (fseek(file, 0, SEEK_SET) != 0) {
         perror("Erro ao reposicionar o ponteiro do arquivo para o início");
@@ -185,6 +206,7 @@ int dbAdd(FILE* file, const char* table_name, void* member, size_t member_size, 
         perror("Erro ao escrever o cabeçalho atualizado no arquivo");
         return ERR_HEADER_WRITE_FAILED;
     }
+
     fflush(file);
     return DB_OK;
 }

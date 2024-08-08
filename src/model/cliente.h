@@ -20,7 +20,7 @@ typedef struct {
 
 int TCliente_Size();
 
-TCliente TCliente_New(const char* nome, const char* cpf, const char* email, const char* telefone, const char* exp_date);
+TCliente TCliente_New(unsigned long pk, const char* nome, const char* cpf, const char* email, const char* telefone, const char* exp_date);
 
 TCliente TCliente_GetByPK(FILE *file, const char* table_name, long unsigned pk);
 

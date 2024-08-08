@@ -16,7 +16,7 @@ int TFunc_Size() {
 }
 
 // Cria uma nova instância de TFunc
-TFunc TFunc_New(const char* nome, const char* cpf, const char* email, const char* telefone, const char* data_nascimento, double salario) {
+TFunc TFunc_New(unsigned long pk, const char* nome, const char* cpf, const char* email, const char* telefone, const char* data_nascimento, double salario) {
     TFunc func = {0};
 
     // Verifica se os tamanhos das strings são válidos
@@ -28,6 +28,7 @@ TFunc TFunc_New(const char* nome, const char* cpf, const char* email, const char
     // Dependendo do ambiente, usa strncpy_s ou strncpy
     #ifdef _MSC_VER
         // Ambiente Microsoft
+        func.pk = pk;
         strncpy_s(func.nome, sizeof(func.nome), nome, _TRUNCATE);
         strncpy_s(func.cpf, sizeof(func.cpf), cpf, _TRUNCATE);
         strncpy_s(func.email, sizeof(func.email), email, _TRUNCATE);
@@ -35,6 +36,7 @@ TFunc TFunc_New(const char* nome, const char* cpf, const char* email, const char
         strncpy_s(func.data_nascimento, sizeof(func.data_nascimento), data_nascimento, _TRUNCATE);
     #else
         // Ambiente Unix/Linux
+        func.pk = pk;
         strncpy(func.nome, nome, BF_NOME - 1);
         func.nome[BF_NOME - 1] = '\0'; // Garantir que a string está terminada
 

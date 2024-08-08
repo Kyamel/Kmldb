@@ -12,12 +12,6 @@
 
 #include "main_menu.h"
 
-// Funções auxiliares
-void clearInputBuffer() {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
-}
-
 void cadastrarCliente(FILE *file) {
     char nome[BC_NOME], cpf[BC_CPF], email[BC_EMAIL], telefone[BC_TELEFONE], exp_date[BC_EXP_DATE];
 
@@ -42,21 +36,22 @@ void cadastrarCliente(FILE *file) {
     fgets(exp_date, sizeof(exp_date), stdin);
     exp_date[strcspn(exp_date, "\n")] = 0;
 
-    cAddCliente(file, CLIENTES, nome, cpf, email, telefone, exp_date);
+    cAddCliente(file, CLIENTES, 0, nome, cpf, email, telefone, exp_date);
     printf("Cliente cadastrado com sucesso!\n");
 }
 
 void buscarCliente(FILE *file) {
     printf("Buscar Cliente:\n");
     printf("PK: ");
-    long unsigned pk;
+    unsigned long pk;
     scanf_s("%lu", &pk);
+    cClearInputBuffer();
 
     TCliente cliente = TCliente_GetByPK(file, CLIENTES, pk);
     if (cliente.pk != 0) {
         cPrintCliente(&cliente);
     } else {
-        printf("Cliente nao encontrado.\n");
+        printf("Cliente não encontrado.\n");
     }
 }
 
@@ -85,25 +80,26 @@ void cadastrarFuncionario(FILE *file) {
     fgets(data_nascimento, sizeof(data_nascimento), stdin);
     data_nascimento[strcspn(data_nascimento, "\n")] = 0;
 
-    printf("Salario: ");
+    printf("Salário: ");
     scanf_s("%lf", &salario);
-    clearInputBuffer();
+    cClearInputBuffer();
 
-    cAddFunc(file, FUNCIONARIOS, nome, cpf, email, telefone, data_nascimento, salario);
-    printf("Funcionario cadastrado com sucesso!\n");
+    cAddFunc(file, FUNCIONARIOS, 0, nome, cpf, email, telefone, data_nascimento, salario);
+    printf("Funcionário cadastrado com sucesso!\n");
 }
 
 void buscarFuncionario(FILE *file) {
     printf("Buscar Funcionário:\n");
     printf("PK: ");
-    long unsigned pk;
+    unsigned long pk;
     scanf_s("%lu", &pk);
+    cClearInputBuffer();
 
     TFunc func = TFunc_GetByPK(file, FUNCIONARIOS, pk);
     if (func.pk != 0) {
         cPrintFunc(&func);
     } else {
-        printf("Funcionario nao encontrado.\n");
+        printf("Funcionário não encontrado.\n");
     }
 }
 
@@ -120,33 +116,32 @@ void cadastrarExercicio(FILE *file) {
     fgets(tipo, sizeof(tipo), stdin);
     tipo[strcspn(tipo, "\n")] = 0;
 
-    printf("Duracao (segundos): ");
+    printf("Duração (segundos): ");
     scanf_s("%d", &duration);
-    clearInputBuffer();
+    cClearInputBuffer();
 
-    CAddExerc(file, EXERCICIOS, nome, tipo, duration);
-    printf("Exercicio cadastrado com sucesso!\n");
+    cAddExerc(file, EXERCICIOS, 0, nome, tipo, duration);
+    printf("Exercício cadastrado com sucesso!\n");
 }
 
 void buscarExercicio(FILE *file) {
-    char nome[BE_NOME];
-
     printf("Buscar Exercicio:\n");
     printf("PK: ");
-    long unsigned pk;
+    unsigned long pk;
     scanf_s("%lu", &pk);
+    cClearInputBuffer();
 
-    TExerc exerc = cReadExerc(file, EXERCICIOS, pk);
-    if (strcmp(exerc.nome, nome) == 0) {
-        cPrintExerc(&exerc);
+    TExerc exercicio = cSearchExerc(file, EXERCICIOS, pk);
+    if (exercicio.pk != 0) {
+        cPrintExerc(&exercicio);
     } else {
-        printf("Exercicio nao encontrado.\n");
+        printf("Exercício não encontrado.\n");
     }
 }
 
 void cadastrarTreino(FILE *file, FILE *fexerc, FILE *fcli) {
     char nome[BT_NOME], tipo[BT_TIPO];
-    int cpk, epk;
+    unsigned long cpk, epk;
 
     printf("Cadastro de Treino:\n");
     printf("Nome: ");
@@ -158,52 +153,33 @@ void cadastrarTreino(FILE *file, FILE *fexerc, FILE *fcli) {
     tipo[strcspn(tipo, "\n")] = 0;
 
     printf("PK do Cliente: ");
-    scanf_s("%d", &cpk);
-    clearInputBuffer();
+    scanf_s("%lu", &cpk);
+    cClearInputBuffer();
 
     printf("PK do Exercicio: ");
-    scanf_s("%d", &epk);
-    clearInputBuffer();
+    scanf_s("%lu", &epk);
+    cClearInputBuffer();
 
-    cAddTreinoDoC(file, TREINOS, nome, tipo, epk, cpk);
+    cAddTreinoDoC(file, TREINOS, 0, nome, tipo, epk, cpk);
     printf("Treino cadastrado com sucesso!\n");
 }
 
 void buscarTreino(FILE *file) {
-    char nome[BT_NOME];
-
     printf("Buscar Treino:\n");
-    printf("PK: ");
-    long unsigned pk;
-    scanf_s("%lu", &pk);
+    unsigned long epk, cpk;
+    printf("Exercicio PK: ");
+    scanf_s("%lu", &epk);
+    cClearInputBuffer();
+    printf("Cliente PK: ");
+    scanf_s("%lu", &cpk);
+    cClearInputBuffer();
 
-    TTreino treino = cReadTreino(file, TREINOS, pk);
-    if (strcmp(treino.nome, nome) == 0) {
+    TTreino treino = cSearchTreinoComp(file, TREINOS, epk, cpk);
+    if (treino.pk != 0) {
         cPrintTreino(&treino);
     } else {
-        printf("Treino nao encontrado.\n");
+        printf("Treino não encontrado.\n");
     }
-}
-
-void initTables(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexec) {
-    cdbCreateTable(fcli, CLIENTES, sizeof(TCliente));
-    cdbCreateTable(ffunc, FUNCIONARIOS, sizeof(TFunc));
-    cdbCreateTable(ftreino, TREINOS, sizeof(TTreino));
-    cdbCreateTable(fexec, EXERCICIOS, sizeof(TExerc));
-}
-
-int closeDatabase(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer) {
-    printf("Cliente ");
-    cdbClose(fcli);
-    printf("Funcionario ");
-    cdbClose(ffunc);
-    printf("Treino ");
-    cdbClose(ftreino);
-    printf("Exercicio ");
-    cdbClose(fexer);
-    printf("Saindo... Pressione ENTER\n");
-    clearInputBuffer();
-    exit(EXIT_SUCCESS);
 }
 
 int cli_main_menu() {
@@ -212,7 +188,7 @@ int cli_main_menu() {
     FILE *ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
     FILE *fexer = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
 
-    initTables(fcli, ffunc, ftreino, fexer);
+    cInitTables(fcli, ffunc, ftreino, fexer);
 
     int opcao;
 
@@ -229,7 +205,7 @@ int cli_main_menu() {
         printf("9. Sair\n");
         printf("Escolha uma opcao: ");
         scanf_s("%d", &opcao);
-        clearInputBuffer();
+        cClearInputBuffer();
 
         switch (opcao) {
             case 1:
@@ -257,9 +233,12 @@ int cli_main_menu() {
                 buscarTreino(ftreino);
                 break;
             case 9:
-                return closeDatabase(fcli, ffunc, ftreino, fexer);
+                cCloseDatabase(fcli, ffunc, ftreino, fexer);
+                printf("Saindo... Pressione ENTER para sair.");
+                cClearInputBuffer();
+                return EXIT_SUCCESS;
             default:
-                printf("Opcao invalida. Tente novamente.\n");
+                printf("Opção inválida. Tente novamente.\n");
                 break;
         }
     }

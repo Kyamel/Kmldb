@@ -15,14 +15,14 @@ int TTreino_Size() {
 
 // Cria uma nova instância de TTreino
 // Cria uma nova instância de TTreino
-TTreino TTreino_New(const char* nome, const char* tipo, long unsigned cpk, long unsigned epk) {
+TTreino TTreino_New(unsigned long pk, const char* nome, const char* tipo, long unsigned cpk, long unsigned epk) {
     TTreino treino = {0};
     // Verifica se os tamanhos das strings são válidos
     if (strlen(nome) >= BT_NOME || strlen(tipo) >= BT_TIPO) {
         perror("TTreino buffer overflow");
         return treino;
     }
-
+    treino.pk = pk;
     strncpy_s(treino.nome, sizeof(treino.nome), nome, _TRUNCATE);
     strncpy_s(treino.tipo, sizeof(treino.tipo), tipo, _TRUNCATE);
     treino.cpk = cpk;
@@ -61,6 +61,41 @@ TTreino TTreino_GetByPK(FILE *file, const char* table_name, long unsigned pk) {
         if (treino.pk < pk) start = middle + 1;
         else end = middle - 1;
     }
+    return treino;
+}
+
+TTreino TTreino_GetByCidEid(FILE *file, const char* table_name, long unsigned cpk, long unsigned epk) {
+    TTreino treino = {0}; // Inicialize com valores padrão
+    DatabaseHeader header;
+    
+    fseek(file, 0, SEEK_SET);
+    if (fread(&header, sizeof(DatabaseHeader), 1, file) != 1) {
+        perror("Erro ao ler o cabeçalho do arquivo");
+        return treino;
+    }
+    
+    int index = dbFindTable(file, table_name);
+    if (index == -1) {
+        perror("Tabela não encontrada");
+        return treino;
+    }
+    
+    long unsigned start_offset = header.tables[index].start_offset;
+    long unsigned end_offset = header.tables[index].end_offset;
+    size_t size = header.tables[index].size;
+    
+    // Percorre todos os registros na tabela
+    for (long unsigned offset = start_offset; offset < end_offset; offset += size) {
+        fseek(file, offset, SEEK_SET);
+        TTreino current_treino = TTreino_Read(file);
+        
+        // Verifica se o registro corresponde à chave composta
+        if (current_treino.cpk == cpk && current_treino.epk == epk) {
+            return current_treino;
+        }
+    }
+    
+    // Retorna um TTreino vazio se não encontrar o registro
     return treino;
 }
 

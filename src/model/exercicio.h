@@ -15,7 +15,7 @@ typedef struct {
 
 int TExerc_Size();
 
-TExerc TExerc_New(const char* nome, const char* tipo, int duration);
+TExerc TExerc_New(unsigned long pk, const char* nome, const char* tipo, int duration);
 
 TExerc TExerc_GetByPK(FILE *file, const char* table_name, long unsigned pk);
 

@@ -16,9 +16,11 @@ typedef struct {
 
 int TTreino_Size();
 
-TTreino TTreino_New(const char* nome, const char* tipo, long unsigned cpk, long unsigned epk);
+TTreino TTreino_New(unsigned long pk, const char* nome, const char* tipo, long unsigned cpk, long unsigned epk);
 
 TTreino TTreino_GetByPK(FILE *file, const char* table_name, long unsigned pk);
+
+TTreino TTreino_GetByCidEid(FILE *file, const char* table_name, long unsigned cpk, long unsigned epk);
 
 TTreino TTreino_Read(FILE *file);
 

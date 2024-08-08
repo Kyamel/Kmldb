@@ -13,7 +13,7 @@ int TExerc_Size() {
 }
 
 // Cria uma nova instância de TExerc
-TExerc TExerc_New(const char* nome, const char* tipo, int duration) {
+TExerc TExerc_New(unsigned long pk, const char* nome, const char* tipo, int duration) {
     TExerc exec = {0};
     // Verifica se os tamanhos das strings são válidos
     if (strlen(nome) >= BE_NOME || strlen(tipo) >= BE_TIPO) {
@@ -21,6 +21,7 @@ TExerc TExerc_New(const char* nome, const char* tipo, int duration) {
         return exec;
     }
     // Copiar os dados para a estrutura TExerc usando strncpy_s
+    exec.pk = pk;
     strncpy_s(exec.nome, sizeof(exec.nome), nome, _TRUNCATE);
     strncpy_s(exec.tipo, sizeof(exec.tipo), tipo, _TRUNCATE);
     exec.duration = duration;

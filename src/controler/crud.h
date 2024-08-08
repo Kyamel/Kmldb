@@ -8,18 +8,32 @@
 #include "../model/treino.h"
 #include "../model/funcionario.h"
 
+#define DB_FOLDER "./data"
+#define CLIENTES "clientes"
+#define FUNCIONARIOS "funcionarios"
+#define TREINOS "treinos"
+#define EXERCICIOS "exercicios"
+
+// Funções auxiliares
+void cClearInputBuffer();
+
+void cInitTables(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexec);
+
+int cCloseDatabase(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer);
 
 // ########
 // #TREINO#
 // ########
 
 // Não faz checagem da existeência do cliente e do exercicio
-int cAddTreinoDoC(FILE* file, const char* table_name, const char* nome, const char* tipo, long unsigned epk, long unsigned cpk);
+int cAddTreinoDoC(FILE* file, const char* table_name, unsigned long pk, const char* nome, const char* tipo, long unsigned epk, long unsigned cpk);
 
 // Faz checagem da existeência do cliente e do exercicio
-int cAddTreinoNotC(FILE* file, const char* table_name, const char* nome, const char* tipo, TExerc* exerc, TCliente* cliente);
+int cAddTreinoNotC(FILE* file, const char* table_name, unsigned long pk, const char* nome, const char* tipo, TExerc* exerc, TCliente* cliente);
 
-TTreino cReadTreino(FILE* file, const char* table_name, long unsigned pk);
+TTreino cSearchTreino(FILE* file, const char* table_name, long unsigned pk);
+
+TTreino cSearchTreinoComp(FILE* file, const char* table_name, long unsigned cpk, long unsigned epk);
 
 void cPrintTreino(TTreino* treino);
 
@@ -28,9 +42,9 @@ void cPrintTreino(TTreino* treino);
 // #############
 
 // Adiciona um novo funcionário
-int cAddFunc(FILE* file, const char* table_name, const char* nome, const char* cpf, const char* email, const char* tel, const char* data_nascimento, double salario);
+int cAddFunc(FILE* file, const char* table_name, unsigned long pk, const char* nome, const char* cpf, const char* email, const char* tel, const char* data_nascimento, double salario);
 
-TFunc cReadFunc(FILE* file, const char* table_name, long unsigned pk);
+TFunc cSearchFunc(FILE* file, const char* table_name, long unsigned pk);
 
 void cPrintFunc(TFunc* func);
 
@@ -39,9 +53,9 @@ void cPrintFunc(TFunc* func);
 // ###########
 
 // Adiciona um novo exercício
-int CAddExerc(FILE* file, const char* table_name, const char* nome, const char* tipo, int duration);
+int cAddExerc(FILE* file, const char* table_name, unsigned long pk, const char* nome, const char* tipo, int duration);
 
-TExerc cReadExerc(FILE* file, const char* table_name, long unsigned pk);
+TExerc cSearchExerc(FILE* file, const char* table_name, long unsigned pk);
 
 void cPrintExerc(TExerc* exec);
 
@@ -50,9 +64,9 @@ void cPrintExerc(TExerc* exec);
 // #########
 
 // Adiciona um novo cliente
-int cAddCliente(FILE* file, const char* table_name, const char* nome, const char *cpf, const char* email, const char* tel, const char* exp_date);
+int cAddCliente(FILE* file, const char* table_name, unsigned long pk, const char* nome, const char *cpf, const char* email, const char* tel, const char* exp_date);
 
-TCliente cReadCliente(FILE* file, const char* table_name, long unsigned pk);
+TCliente cSearchCliente(FILE* file, const char* table_name, long unsigned pk);
 
 void cPrintCliente(TCliente* cliente);
 
