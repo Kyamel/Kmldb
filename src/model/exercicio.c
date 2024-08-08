@@ -39,7 +39,7 @@ TExerc TExerc_GetByPK(FILE *file, const char* table_name, long unsigned pk) {
     }
     int index = dbFindTable(file, table_name);
     if (index == -1) {
-        perror("Tabela não encontrada");
+        fprintf_s(stderr, "Erro: Tabela '%s' não encontrada.\n", table_name);
         return exec;
     }
     // binary search

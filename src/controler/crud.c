@@ -38,7 +38,7 @@ int cCloseDatabase(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer) {
 // ########
 
 // Não faz checagem da existeência do cliente e do exercicio
-int cAddTreinoNotC(FILE* file, const char* table_name,  unsigned long pk, const char* nome, const char* tipo, TExerc* exerc, TCliente* cliente) {
+int cAddTreinoNotC(FILE* file, const char* table_name, unsigned long pk, const char* nome, const char* tipo, TExerc* exerc, TCliente* cliente) {
     TTreino treino = TTreino_New(pk, nome, tipo, cliente->pk, exerc->pk);
 
     dbAdd(file, table_name, &treino, sizeof(treino), DB_PK_OFFSET(TTreino));

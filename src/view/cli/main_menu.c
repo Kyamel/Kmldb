@@ -139,18 +139,10 @@ void buscarExercicio(FILE *file) {
     }
 }
 
-void cadastrarTreino(FILE *file, FILE *fexerc, FILE *fcli) {
+void cadastrarTreino(FILE *ftreino, FILE *fexerc, FILE *fcli) {
     char nome[BT_NOME], tipo[BT_TIPO];
     unsigned long cpk, epk;
-
     printf("Cadastro de Treino:\n");
-    printf("Nome: ");
-    fgets(nome, sizeof(nome), stdin);
-    nome[strcspn(nome, "\n")] = 0;
-
-    printf("Tipo: ");
-    fgets(tipo, sizeof(tipo), stdin);
-    tipo[strcspn(tipo, "\n")] = 0;
 
     printf("PK do Cliente: ");
     scanf_s("%lu", &cpk);
@@ -160,7 +152,29 @@ void cadastrarTreino(FILE *file, FILE *fexerc, FILE *fcli) {
     scanf_s("%lu", &epk);
     cClearInputBuffer();
 
-    cAddTreinoDoC(file, TREINOS, 0, nome, tipo, epk, cpk);
+    TExerc exercicio = cSearchExerc(fexerc, EXERCICIOS, epk);
+    if (exercicio.pk <= 0) {
+        printf("Exercicio não encontrado.\n");
+        return;
+    }
+    TExerc_Print(&exercicio);
+
+    TCliente cliente = cSearchCliente(fcli, CLIENTES, cpk);
+    if (cliente.pk <= 0) {
+        printf("Cliente não encontrado.\n");
+        return;
+    }
+    TCliente_Print(&cliente);
+
+    printf("Nome: ");
+    fgets(nome, sizeof(nome), stdin);
+    nome[strcspn(nome, "\n")] = 0;
+
+    printf("Tipo: ");
+    fgets(tipo, sizeof(tipo), stdin);
+    tipo[strcspn(tipo, "\n")] = 0;
+
+    cAddTreinoNotC(ftreino, TREINOS, 0, nome, tipo, &exercicio, &cliente);
     printf("Treino cadastrado com sucesso!\n");
 }
 

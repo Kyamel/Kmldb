@@ -87,7 +87,7 @@ void run_test() {
     cCloseDatabase(fcli, ffunc, ftreino, fexer);
 }
 
-int criar_base_desordenada(int tam, int qtdTrocas){
+/* int criar_base_desordenada(int tam, int qtdTrocas){
 
     int vet[tam];
     for (int i = 0; i < tam; i++) vet[i] = i + 1;
@@ -96,5 +96,5 @@ int criar_base_desordenada(int tam, int qtdTrocas){
 
     cAddCliente(fcli, CLIENTES, 0, "Alice", "12345678901", "alice@example.com", "1234567890", "2024-12-31");
     cAddCliente(fcli, CLIENTES, 0, "Bob", "98765432100", "bob@example.com", "0987654321", "2025-12-31");
-    
-}
+
+} */
