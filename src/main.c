@@ -2,7 +2,7 @@
 #include "teste.h"
 
 int main(){
-    int ok = cli_main_menu();
-    //int ok = run_test();
+    //int ok = cli_main_menu();
+    int ok = run_test();
     return ok;
 }
