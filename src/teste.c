@@ -150,7 +150,7 @@ int particion_test() {
     fread(&header, sizeof(DatabaseHeader), 1, ftreino);
 
     FILE *ftreinoOrd = cdbInit(DB_FOLDER"/"TREINOS"COrdCpk.dat");
-    intercalacao_basica(ftreinoOrd, &header, particions);
+    intercalacaoBasica(ftreinoOrd, &header, particions);
 
     TTreino treino;
     int j = cdbReadAll(ftreinoOrd, TREINOS, &treino, sizeof(TTreino), printTreino);

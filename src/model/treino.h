@@ -29,6 +29,6 @@ void TTreino_Print(TTreino *treino);
 
 int selecaoComSubstituicao(FILE *file, const char *table_name);
 
-int intercalacao_basica(FILE *file, DatabaseHeader *header, int num_particions);
+int intercalacaoBasica(FILE *file, DatabaseHeader *header, int num_particions);
 
 #endif
