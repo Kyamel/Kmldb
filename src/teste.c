@@ -84,32 +84,10 @@ int run_test() {
     treino = cSearchTreinoComp(ftreino, TREINOS, 2, 2);  // Exercício 2, Cliente 2
     cPrintTreino(&treino);
 
-    printf("Criando base de dados desordenada...\n");
-    int ok = criar_base_desordenada(1000, 1000, fcli, ffunc, ftreino, fexer);
-
     // Fechar os arquivos
     printf("Desalocando recursos...\n");
     cCloseDatabase(fcli, ffunc, ftreino, fexer);
 
-    return ok;
-}
-
-int criar_base_desordenada(int tam, int qtdTrocas, FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer) {
-    int vet[tam];
-    for (int i = 0; i < tam; i++) vet[i] = i + 1;
-    embaralha(vet, tam, qtdTrocas);
-
-    for (int i = 0; i < tam; i++){
-        cAddCliente(fcli, CLIENTES, vet[i], "Alice", "12345678901", "alice@example.com", "1234567890", "2024-12-31");
-        cAddFunc(ffunc, FUNCIONARIOS, vet[i], "Charlie", "11223344556", "charlie@example.com", "1112233445", "1985-07-30", 3500.50);
-        cAddExerc(fexer, EXERCICIOS, vet[i], "Push-up", "Strength", 30*60);
-        TCliente cliente;
-        cliente.pk = vet[i];
-        TExerc exercicio;
-        exercicio.pk = vet[i];
-        cAddTreinoNotC(ftreino, TREINOS, vet[i], "Morning Routine", "Strength", &exercicio, &cliente);
-
-    }
     return 0;
 }
 
@@ -125,38 +103,103 @@ void printTreino(void* member) {
     printf("| Tipo: %s\n", treino->tipo);
 }
 
+int criar_base_ordenada(int tam, FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer) {
+
+    int i = -1;
+    for (i = 1; i <= tam; i++){
+        cAddCliente(fcli, CLIENTES, i, "Alice", "12345678901", "alice@example.com", "1234567890", "2024-12-31");
+        cAddFunc(ffunc, FUNCIONARIOS, i, "Charlie", "11223344556", "charlie@example.com", "1112233445", "1985-07-30", 3500.50);
+        cAddExerc(fexer, EXERCICIOS, i, "Push-up", "Strength", 30*60);
+        TCliente cliente;
+        cliente.pk = i;
+        TExerc exercicio;
+        exercicio.pk = i;
+        cAddTreinoNotC(ftreino, TREINOS, i, "Morning Routine", "Strength", &exercicio, &cliente);
+
+    }
+    return i;
+}
+
+int criar_base_desordenada(int tam, int qtdTrocas, FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer) {
+    int vet[tam];
+    for (int i = 0; i < tam; i++) vet[i] = i + 1;
+    embaralha(vet, tam, qtdTrocas);
+
+    int i = -1;
+    for (i = 0; i < tam; i++){
+        cAddCliente(fcli, CLIENTES, vet[i], "Alice", "12345678901", "alice@example.com", "1234567890", "2024-12-31");
+        cAddFunc(ffunc, FUNCIONARIOS, vet[i], "Charlie", "11223344556", "charlie@example.com", "1112233445", "1985-07-30", 3500.50);
+        cAddExerc(fexer, EXERCICIOS, vet[i], "Push-up", "Strength", 30*60);
+        TCliente cliente;
+        cliente.pk = vet[i];
+        TExerc exercicio;
+        exercicio.pk = vet[i];
+        cAddTreinoNotC(ftreino, TREINOS, vet[i], "Morning Routine", "Strength", &exercicio, &cliente);
+
+    }
+    return i;
+}
+
+int teste_criar_base_desordenada() {
+    // Abrir os arquivos de banco de dados
+    FILE *fcli = cdbInit(DB_FOLDER"/"CLIENTES".dat");
+    FILE *ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
+    FILE *ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
+    FILE *fexer = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
+
+    // Inicializar tabelas
+    cInitTables(fcli, ffunc, ftreino, fexer);
+
+    printf("Criando base de dados desordenada...\n");
+    int count = criar_base_desordenada(100, 100, fcli, ffunc, ftreino, fexer);
+    if (count < 0){
+        perror("Erro ao criar base de dados desordenada");
+    };
+
+    // Buscar e imprimir TREINOS
+    TTreino treino;
+    cdbReadAll(ftreino, TREINOS, &treino, sizeof(TTreino), printTreino);
+    printf("Quantidade de treinos: %d\n", count);
+
+    printf("Desalocando recursos...\n");
+    count = cCloseDatabase(fcli, ffunc, ftreino, fexer);
+
+    return count;
+}
 
 int particion_test() {
     FILE *ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
     cdbCreateTable(ftreino, TREINOS, sizeof(TTreino));
+    int ok = 0;
 
     printf("Teste de selecao com substituiao aplicado ao cpk do treino...\n");
     int particions = selecaoComSubstituicao(ftreino, TREINOS);
-  /*   int j = 0;
+    printf("Particoes: %d\n", particions);
+
+    int j = 0;
     TTreino treino = {0};
-    for (int i = 0; i <= particions; i++){
+    for (int i = 0; i < particions; i++){
         printf("\nImprimindo Particao %d:\n", i);
         char nome_arq[256];
-        sprintf_s(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", particions);
+        sprintf_s(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", i);
 
         FILE *particionFile = fopen(nome_arq, "r+b");
         j += cdbReadAllNoHeader(particionFile, &treino, sizeof(TTreino), printTreino);
         fclose(particionFile);
     }
     printf("Particoes geradas: %d\n", particions);
-    printf("Total de registros lidos: %d\n", j); */
-    DatabaseHeader header;
-    fseek(ftreino, 0, SEEK_SET);
-    fread(&header, sizeof(DatabaseHeader), 1, ftreino);
+    printf("Total de registros lidos: %d\n", j);
 
-    FILE *ftreinoOrd = cdbInit(DB_FOLDER"/"TREINOS"COrdCpk.dat");
-    intercalacaoBasica(ftreinoOrd, &header, particions);
+   /*  // Escreve o cabeçalho no início do arquivo de saída
+    FILE *ftreinoOrd =  fopen(DB_FOLDER"/"TREINOS"COrdCpk.dat", "w+b");
+
+    ok = intercalacaoBasica(ftreinoOrd, particions);
 
     TTreino treino;
-    int j = cdbReadAll(ftreinoOrd, TREINOS, &treino, sizeof(TTreino), printTreino);
+    int j = cdbReadAllNoHeader(ftreinoOrd, &treino, sizeof(TTreino), printTreino);
     printf("Total de registros lidos: %d\n", j);
-    
-    cdbClose(ftreinoOrd);
+
+    cdbClose(ftreinoOrd); */
     cdbClose(ftreino);
-    return 0;
+    return ok;
 }

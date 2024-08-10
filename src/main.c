@@ -4,6 +4,7 @@
 int main(){
     //int ok = cli_main_menu();
     //int ok = run_test();
+    //int ok = teste_criar_base_desordenada();
     int ok = particion_test();
     return ok;
 }

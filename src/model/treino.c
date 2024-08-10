@@ -159,7 +159,7 @@ wchar_t *charToWChar(const char *text) {
 }
 
 // Método para limpar a pasta de partições antes de iniciar
-int limpaPasta(const char *pasta) {
+int clearFolder(const char *pasta) {
 #ifdef _WIN32
     WIN32_FIND_DATAW findFileData;
     wchar_t *dirPath = charToWChar(pasta);
@@ -181,7 +181,7 @@ int limpaPasta(const char *pasta) {
 
             if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
                 // Se for um diretório, chamar limpaPasta recursivamente
-                limpaPasta((const char *)caminho);  // Recursão
+                clearFolder((const char *)caminho);  // Recursão
                 RemoveDirectoryW(caminho); // Remover o diretório vazio
             } else {
                 // Se for um arquivo, remover
@@ -232,10 +232,10 @@ int limpaPasta(const char *pasta) {
 // Função para realizar a seleção com substituição como método de ordenação
 int selecaoComSubstituicao(FILE *file, const char *table_name) {
     fflush(file);
-    int ok = limpaPasta("data/particions");
+    int ok = clearFolder("data/particions");
     if (ok == -1) return ok;
 
-    int M = 100;
+    int M = 10;
     TTreino *registers = malloc(M * sizeof(TTreino));
     TTreino *freeze = malloc(M * sizeof(TTreino));
     if (!registers || !freeze) {
@@ -308,13 +308,18 @@ int selecaoComSubstituicao(FILE *file, const char *table_name) {
             aux = fopen(nome_arq, "a+b");
             if (aux == NULL) {
                 perror("Erro ao criar arquivo de partição");
-                break;
+                free(registers);
+                free(freeze);
+                return -1; // Retorna erro
             }
         }
 
         if (fwrite(&registers[indexMenor], sizeof(TTreino), 1, aux) != 1) {
             perror("Erro ao gravar registro na partição");
-            break;
+            fclose(aux);
+            free(registers);
+            free(freeze);
+            return -1; // Retorna erro
         }
 
         TTreino treino = {0};
@@ -322,7 +327,9 @@ int selecaoComSubstituicao(FILE *file, const char *table_name) {
             if (treino.cpk >= registers[indexMenor].cpk) {
                 registers[indexMenor] = treino;
             } else {
-                freeze[numCongelados++] = treino;
+                if (numCongelados < M) {
+                    freeze[numCongelados++] = treino;
+                }
             }
         } else {
             registers[indexMenor].cpk = -1;  // Marca o registro como processado
@@ -333,7 +340,7 @@ int selecaoComSubstituicao(FILE *file, const char *table_name) {
                 fclose(aux);
                 aux = NULL;
             }
-            memcpy(registers, freeze, numCongelados * sizeof(TTreino));
+            memmove(registers, freeze, numCongelados * sizeof(TTreino));
             num_registros_lidos = numCongelados;
             numCongelados = 0;
             particion++;
@@ -346,12 +353,12 @@ int selecaoComSubstituicao(FILE *file, const char *table_name) {
 
     free(registers);
     free(freeze);
-    return particion;
+    return particion + 1;
 }
 
-// Função para realizar a intercalação das partições geradas por seleção com substituição
 
-int intercalacaoBasica(FILE *file, DatabaseHeader *header, int num_particions) {
+// Função para realizar a intercalação das partições geradas por seleção com substituição
+int intercalacaoBasica(FILE *file, int num_particions) {
     typedef struct vetor {
         TTreino treino;
         FILE *aux;
@@ -386,18 +393,7 @@ int intercalacaoBasica(FILE *file, DatabaseHeader *header, int num_particions) {
         }
     }
 
-    // Escreve o cabeçalho no início do arquivo de saída
-    fseek(file, 0, SEEK_SET);
-    if (fwrite(header, sizeof(DatabaseHeader), 1, file) != 1) {
-        perror("Erro ao escrever o cabeçalho no arquivo de saída");
-        for (int i = 0; i < num_particions; i++) {
-            if (v[i].aux != NULL) {
-                fclose(v[i].aux);
-            }
-        }
-        free(v);
-        return -1; // Retorna código de erro
-    }
+    fflush(file);
 
     // Processa os registros
     while (!fim) {
