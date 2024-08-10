@@ -211,6 +211,65 @@ int dbAdd(FILE* file, const char* table_name, void* member, size_t member_size, 
     return DB_OK;
 }
 
+int dbReadAll(FILE* file, const char* table_name, void* member, size_t member_size, PrintCallback printFunc) {
+    DatabaseHeader header;
+    fseek(file, 0, SEEK_SET);
+    if (fread(&header, sizeof(DatabaseHeader), 1, file) != 1) {
+        perror("Erro ao ler o cabeçalho do arquivo");
+        return ERR_HEADER_NOT_FOUND;
+    }
+
+    int index = dbFindTable(file, table_name);
+    if (index == -1) {
+        perror("Tabela não encontrada");
+        return ERR_REGISTER_NOT_FOUND;
+    }
+
+    if (header.tables[index].size != member_size) {
+        perror("Tamanho do membro incompatível com a tabela");
+        return ERR_REGISTER_INCOMPATIBLE_SIZE;
+    }
+
+    fseek(file, header.tables[index].start_offset, SEEK_SET);
+    int i = 0;
+    for (i = 0; i < header.tables[index].end_offset / member_size; i++) {
+        if (fread(member, member_size, 1, file) != 1) {
+            break;
+        }
+        printFunc(member);  // Usa a função de callback para imprimir o registro
+    }
+
+    return i;
+}
+
+int dbReadAllNoHeader(FILE* file, void* member, size_t member_size, PrintCallback printFunc) {
+    if (file == NULL) {
+        perror("Arquivo inválido");
+        return -1;
+    }
+
+    if (member == NULL) {
+        perror("Ponteiro member inválido");
+        return -1;
+    }
+
+    fseek(file, 0, SEEK_SET);  // Volta para o início do arquivo
+    int i = 0;
+
+    while (fread(member, member_size, 1, file) == 1) {
+        printFunc(member);  // Usa a função de callback para imprimir o registro
+        i++;
+    }
+
+    if (feof(file)) {
+        return i;  // Retorna o número de registros lidos
+    } else {
+        perror("Erro ao ler o arquivo");
+        return -1;  // Retorna -1 em caso de erro
+    }
+}
+
+
 void dbAddMember2(FILE* file, const char* table_name, void* member, size_t member_size, size_t pk_offset) {
     DatabaseHeader header;
     FILE* temp_file;

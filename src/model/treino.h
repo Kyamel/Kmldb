@@ -2,6 +2,7 @@
 #define TREINO_H
 
 #include <stdio.h>
+#include "../kmldb/db.h"
 
 #define BT_NOME 50
 #define BT_TIPO 15
@@ -20,10 +21,14 @@ TTreino TTreino_New(unsigned long pk, const char* nome, const char* tipo, long u
 
 TTreino TTreino_GetByPK(FILE *file, const char* table_name, long unsigned pk);
 
-TTreino TTreino_GetByCidEid(FILE *file, const char* table_name, long unsigned cpk, long unsigned epk);
+TTreino TTreino_GetByCpkEpk(FILE *file, const char* table_name, long unsigned cpk, long unsigned epk);
 
 TTreino TTreino_Read(FILE *file);
 
 void TTreino_Print(TTreino *treino);
+
+int selecaoComSubstituicao(FILE *file, const char *table_name);
+
+int intercalacao_basica(FILE *file, DatabaseHeader *header, int num_particions);
 
 #endif

@@ -247,10 +247,8 @@ int cli_main_menu() {
                 buscarTreino(ftreino);
                 break;
             case 9:
-                cCloseDatabase(fcli, ffunc, ftreino, fexer);
-                printf("Saindo... Pressione ENTER para sair.");
-                cClearInputBuffer();
-                return EXIT_SUCCESS;
+                int ok = cCloseDatabase(fcli, ffunc, ftreino, fexer);
+                return ok;
             default:
                 printf("Opção inválida. Tente novamente.\n");
                 break;

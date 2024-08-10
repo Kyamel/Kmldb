@@ -4,11 +4,21 @@
 #include <string.h>
 #include "../kmldb/db.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#include <minwinbase.h>
+#else
+#include <dirent.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#endif
+
+
 // Calcula o tamanho da estrutura TTreino
 int TTreino_Size() {
-    return sizeof(long unsigned) // pk
-         + sizeof(long unsigned) // cpk
-         + sizeof(long unsigned) // epk
+    return sizeof(long unsigned) // cpk
+         + sizeof(long unsigned) // ccpk
+         + sizeof(long unsigned) // ecpk
          + sizeof(char) * BT_NOME // nome
          + sizeof(char) * BT_TIPO; // tipo
 }
@@ -64,7 +74,7 @@ TTreino TTreino_GetByPK(FILE *file, const char* table_name, long unsigned pk) {
     return treino;
 }
 
-TTreino TTreino_GetByCidEid(FILE *file, const char* table_name, long unsigned cpk, long unsigned epk) {
+TTreino TTreino_GetByCpkEpk(FILE *file, const char* table_name, long unsigned cpk, long unsigned epk) {
     TTreino treino = {0}; // Inicialize com valores padrão
     DatabaseHeader header;
     
@@ -107,15 +117,15 @@ TTreino TTreino_Read(FILE *file) {
         return treino;
     }
     if (fread(&treino.pk, sizeof(long unsigned), 1, file) != 1) {
-        perror("Erro na leitura do PK");
+        perror("Erro na leitura do pk");
         return treino;
     }
     if (fread(&treino.cpk, sizeof(long unsigned), 1, file) != 1) {
-        perror("Erro na leitura do Cliente PK");
+        perror("Erro na leitura do Cliente cpk");
         return treino;
     }
     if (fread(&treino.epk, sizeof(long unsigned), 1, file) != 1) {
-        perror("Erro na leitura do Exercicio PK");
+        perror("Erro na leitura do Exercicio epk");
         return treino;
     }
     fread(treino.nome, sizeof(char), sizeof(treino.nome), file);
@@ -130,9 +140,299 @@ void TTreino_Print(TTreino *treino) {
         return;
     }
     printf("# Treino:\n");
-    printf("| PK: %lu\n", treino->pk);
-    printf("| Cliente PK: %lu\n", treino->cpk);
-    printf("| Exercicio PK: %lu\n", treino->epk);
+    printf("| pk: %lu\n", treino->pk);
+    printf("| Cliente cpk: %lu\n", treino->cpk);
+    printf("| Exercicio epk: %lu\n", treino->epk);
     printf("| Nome: %s\n", treino->nome);
     printf("| Tipo: %s\n", treino->tipo);
+}
+
+// Função para converter string do tipo char para WCHAR
+wchar_t *charToWChar(const char *text) {
+    size_t size = strlen(text) + 1;
+    wchar_t *wText = malloc(sizeof(wchar_t) * size);
+    size_t tamanho = mbstowcs(wText, text, size);
+    if (tamanho == (size_t)-1) {
+        perror("Erro na conversão de string char para WCHAR.\n");
+    }
+    return wText;
+}
+
+// Método para limpar a pasta de partições antes de iniciar
+int limpaPasta(const char *pasta) {
+#ifdef _WIN32
+    WIN32_FIND_DATAW findFileData;
+    wchar_t *dirPath = charToWChar(pasta);
+    wchar_t searchPath[1024];
+    swprintf_s(searchPath, 1024, L"%s\\*", dirPath);
+
+    HANDLE hFind = FindFirstFileW(searchPath, &findFileData);
+
+    if (hFind == INVALID_HANDLE_VALUE) {
+        printf("Erro ao abrir diretório.\n");
+        free(dirPath);
+        return -1;
+    }
+
+    do {
+        if (wcscmp(findFileData.cFileName, L".") != 0 && wcscmp(findFileData.cFileName, L"..") != 0) {
+            wchar_t caminho[1024];
+            swprintf_s(caminho, sizeof(caminho) / sizeof(wchar_t), L"%s\\%s", dirPath, findFileData.cFileName);
+
+            if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+                // Se for um diretório, chamar limpaPasta recursivamente
+                limpaPasta((const char *)caminho);  // Recursão
+                RemoveDirectoryW(caminho); // Remover o diretório vazio
+            } else {
+                // Se for um arquivo, remover
+                DeleteFileW(caminho);
+            }
+        }
+    } while (FindNextFileW(hFind, &findFileData) != 0);
+
+    FindClose(hFind);
+    free(dirPath);
+    return 0;
+#else
+    struct dirent *arquivo;
+    DIR *dir = opendir(pasta);
+
+    if (dir == NULL) {
+        perror("Erro ao abrir diretório");
+        return;
+    }
+
+    while ((arquivo = readdir(dir)) != NULL) {
+        char caminho[1024];
+        snprintf(caminho, sizeof(caminho), "%s/%s", pasta, arquivo->d_name);
+
+        // Ignorar . e .. no diretório
+        if (strcmp(arquivo->d_name, ".") != 0 && strcmp(arquivo->d_name, "..") != 0) {
+            struct stat st;
+            if (stat(caminho, &st) == 0) {
+                if (S_ISDIR(st.st_mode)) {
+                    // Se for um diretório, chamar limpaPasta recursivamente
+                    limpaPasta(caminho);
+                    rmdir(caminho); // Remover o diretório vazio
+                } else {
+                    // Se for um arquivo, remover
+                    remove(caminho);
+                }
+            } else {
+                perror("Erro ao obter informações do arquivo");
+            }
+        }
+    }
+    closedir(dir);
+    return 0;
+#endif
+    return 0;
+}
+
+// Função para realizar a seleção com substituição como método de ordenação
+int selecaoComSubstituicao(FILE *file, const char *table_name) {
+    fflush(file);
+    int ok = limpaPasta("data/particions");
+    if (ok == -1) return ok;
+
+    int M = 100;
+    TTreino *registers = malloc(M * sizeof(TTreino));
+    TTreino *freeze = malloc(M * sizeof(TTreino));
+    if (!registers || !freeze) {
+        perror("Erro ao alocar memória");
+        free(registers);
+        free(freeze);
+        return -1;
+    }
+    
+    int numCongelados = 0;
+    FILE *aux = NULL;
+    int particion = 0;
+
+    DatabaseHeader header;
+    fseek(file, 0, SEEK_SET);
+    if (fread(&header, sizeof(DatabaseHeader), 1, file) != 1) {
+        perror("Erro ao ler o cabeçalho do arquivo");
+        free(registers);
+        free(freeze);
+        return -1;
+    }
+
+    if (header.table_count >= TABLE_MAX_COUNT) {
+        perror("Número máximo de tabelas atingido");
+        free(registers);
+        free(freeze);
+        return ERR_TABLE_MAX_SIZE_EXCEEDED;
+    }
+    if (strlen(table_name) >= B_TABLE_NAME - 1) {
+        perror("Nome da tabela muito grande ou sem terminação nula");
+        free(registers);
+        free(freeze);
+        return ERR_TABLE_INVALID_NAME;
+    }
+
+    // 1) Ler M registros do arquivo para a memória
+    fseek(file, header.tables[0].start_offset, SEEK_SET);
+    int num_registros_lidos = 0;
+    for (int i = 0; i < M; i++) {
+        TTreino treino = {0};
+        if (fread(&treino, sizeof(TTreino), 1, file) == 1) {
+            registers[num_registros_lidos++] = treino;
+        } else {
+            break;
+        }
+    }
+
+    if (num_registros_lidos == 0) {
+        free(registers);
+        free(freeze);
+        return -1;
+    }
+
+    // Loop principal para processar o arquivo de entrada
+    while (1) {
+        int indexMenor = -1;
+        for (int j = 0; j < num_registros_lidos; j++) {
+            if (registers[j].cpk != -1 && (indexMenor == -1 || registers[j].cpk < registers[indexMenor].cpk)) {
+                indexMenor = j;
+            }
+        }
+
+        if (indexMenor == -1) {
+            break;
+        }
+
+        if (aux == NULL) {
+            char nome_arq[256];
+            snprintf(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", particion);
+            aux = fopen(nome_arq, "a+b");
+            if (aux == NULL) {
+                perror("Erro ao criar arquivo de partição");
+                break;
+            }
+        }
+
+        if (fwrite(&registers[indexMenor], sizeof(TTreino), 1, aux) != 1) {
+            perror("Erro ao gravar registro na partição");
+            break;
+        }
+
+        TTreino treino = {0};
+        if (fread(&treino, sizeof(TTreino), 1, file) == 1) {
+            if (treino.cpk >= registers[indexMenor].cpk) {
+                registers[indexMenor] = treino;
+            } else {
+                freeze[numCongelados++] = treino;
+            }
+        } else {
+            registers[indexMenor].cpk = -1;  // Marca o registro como processado
+        }
+
+        if (numCongelados == M) {
+            if (aux != NULL) {
+                fclose(aux);
+                aux = NULL;
+            }
+            memcpy(registers, freeze, numCongelados * sizeof(TTreino));
+            num_registros_lidos = numCongelados;
+            numCongelados = 0;
+            particion++;
+        }
+    }
+
+    if (aux != NULL) {
+        fclose(aux);
+    }
+
+    free(registers);
+    free(freeze);
+    return particion;
+}
+
+// Função para realizar a intercalação das partições geradas por seleção com substituição
+
+int intercalacao_basica(FILE *file, DatabaseHeader *header, int num_particions) {
+    typedef struct vetor {
+        TTreino treino;
+        FILE *aux;
+    } TVet;
+
+    int fim = 0; // variável que controla o fim do procedimento
+    int particao = 0;
+    char nome_arq[256]; // Alocar memória suficiente para o nome do arquivo
+
+    // Cria vetor de partições
+    TVet *v = malloc(num_particions * sizeof(TVet));
+    if (v == NULL) {
+        perror("Erro ao alocar memória para vetores de partições");
+        return -1; // Retorna código de erro
+    }
+
+    // Abre arquivos das partições e lê o primeiro registro
+    for (int i = 0; i < num_particions; i++) {
+        snprintf(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", i);
+
+        v[i].aux = fopen(nome_arq, "rb");
+        if (v[i].aux != NULL) {
+            TTreino treino = {0};
+            if (fread(&treino, sizeof(TTreino), 1, v[i].aux) == 1) {
+                v[i].treino = treino;
+            } else {
+                // Arquivo estava vazio
+                v[i].treino = TTreino_New(0, "", "", INT_MAX, 0);
+            }
+        } else {
+            fim = 1; // Marcar o fim se algum arquivo não puder ser aberto
+        }
+    }
+
+    // Escreve o cabeçalho no início do arquivo de saída
+    fseek(file, 0, SEEK_SET);
+    if (fwrite(header, sizeof(DatabaseHeader), 1, file) != 1) {
+        perror("Erro ao escrever o cabeçalho no arquivo de saída");
+        for (int i = 0; i < num_particions; i++) {
+            if (v[i].aux != NULL) {
+                fclose(v[i].aux);
+            }
+        }
+        free(v);
+        return -1; // Retorna código de erro
+    }
+
+    // Processa os registros
+    while (!fim) {
+        int menor = INT_MAX;
+        int pos_menor = -1;
+
+        // Encontra o treino com menor chave no vetor
+        for (int i = 0; i < num_particions; i++) {
+            if (v[i].treino.cpk < menor) {
+                menor = v[i].treino.cpk;
+                pos_menor = i;
+            }
+        }
+
+        if (pos_menor == -1) {
+            fim = 1; // Termina o processamento se não encontrar um menor
+        } else {
+            fwrite(&v[pos_menor].treino, sizeof(TTreino), 1, file);
+
+            TTreino treino = {0};
+            if (fread(&treino, sizeof(TTreino), 1, v[pos_menor].aux) == 1) {
+                v[pos_menor].treino = treino;
+            } else {
+                v[pos_menor].treino = TTreino_New(0, "", "", INT_MAX, 0);
+            }
+        }
+    }
+
+    // Fecha arquivos das partições de entrada
+    for (int i = 0; i < num_particions; i++) {
+        if (v[i].aux != NULL) {
+            fclose(v[i].aux);
+        }
+    }
+
+    free(v);
+    return 0; // Retorna 0 em caso de sucesso
 }

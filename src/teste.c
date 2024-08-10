@@ -85,7 +85,7 @@ int run_test() {
     cPrintTreino(&treino);
 
     printf("Criando base de dados desordenada...\n");
-    int ok = criar_base_desordenada(1000, 100, fcli, ffunc, ftreino, fexer);
+    int ok = criar_base_desordenada(1000, 1000, fcli, ffunc, ftreino, fexer);
 
     // Fechar os arquivos
     printf("Desalocando recursos...\n");
@@ -110,5 +110,53 @@ int criar_base_desordenada(int tam, int qtdTrocas, FILE *fcli, FILE *ffunc, FILE
         cAddTreinoNotC(ftreino, TREINOS, vet[i], "Morning Routine", "Strength", &exercicio, &cliente);
 
     }
+    return 0;
+}
+
+// Função de callback para imprimir MyRecord
+void printTreino(void* member) {
+    TTreino* treino = (TTreino*)member;
+
+    printf("# Treino:\n");
+    printf("| pk: %lu\n", treino->pk);
+    printf("| Cliente cpk: %lu\n", treino->cpk);
+    printf("| Exercicio epk: %lu\n", treino->epk);
+    printf("| Nome: %s\n", treino->nome);
+    printf("| Tipo: %s\n", treino->tipo);
+}
+
+
+int particion_test() {
+    FILE *ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
+    cdbCreateTable(ftreino, TREINOS, sizeof(TTreino));
+
+    printf("Teste de selecao com substituiao aplicado ao cpk do treino...\n");
+    int particions = selecaoComSubstituicao(ftreino, TREINOS);
+  /*   int j = 0;
+    TTreino treino = {0};
+    for (int i = 0; i <= particions; i++){
+        printf("\nImprimindo Particao %d:\n", i);
+        char nome_arq[256];
+        sprintf_s(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", particions);
+
+        FILE *particionFile = fopen(nome_arq, "r+b");
+        j += cdbReadAllNoHeader(particionFile, &treino, sizeof(TTreino), printTreino);
+        fclose(particionFile);
+    }
+    printf("Particoes geradas: %d\n", particions);
+    printf("Total de registros lidos: %d\n", j); */
+    DatabaseHeader header;
+    fseek(ftreino, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, ftreino);
+
+    FILE *ftreinoOrd = cdbInit(DB_FOLDER"/"TREINOS"COrdCpk.dat");
+    intercalacao_basica(ftreinoOrd, &header, particions);
+
+    TTreino treino;
+    int j = cdbReadAll(ftreinoOrd, TREINOS, &treino, sizeof(TTreino), printTreino);
+    printf("Total de registros lidos: %d\n", j);
+    
+    cdbClose(ftreinoOrd);
+    cdbClose(ftreino);
     return 0;
 }

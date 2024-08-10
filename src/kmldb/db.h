@@ -26,6 +26,9 @@ typedef struct {
     TableMeta tables[TABLE_MAX_COUNT]; // Suportamos até 10 tabelas
 } DatabaseHeader;
 
+// Callback para impressão
+typedef void (*PrintCallback)(void*);
+
 // Um ERR é definido por um inteiro negativo
 // 0 indica que não houve erro
 // A primeira casa indica a origem do erro
@@ -89,6 +92,10 @@ void dbPrintHeader(DatabaseHeader* header);
 
 // Insere novo registro na tabela indicada
 int dbAdd(FILE* file, const char* table_name, void* member, size_t member_size, size_t pk_offset);
+
+int dbReadAll(FILE* file, const char* table_name, void* member, size_t member_size, PrintCallback printFunc);
+
+int dbReadAllNoHeader(FILE* file, void* member, size_t member_size, PrintCallback printFunc);
 
 void dbAddMember2(FILE* file, const char* table_name, void* member, size_t member_size, size_t pk_offset);
 

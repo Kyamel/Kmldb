@@ -20,17 +20,22 @@ void cInitTables(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexec) {
 }
 
 int cCloseDatabase(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer) {
+    int ok;
     printf("Cliente ");
-    cdbClose(fcli);
+    ok = cdbClose(fcli);
+    if (ok < 0) perror("Erro ao fechar o arquivo clientes.dat\n");
     printf("Funcionario ");
-    cdbClose(ffunc);
+    ok = cdbClose(ffunc);
+    if (ok < 0) perror("Erro ao fechar o arquivo funcionarios.dat\n");
     printf("Treino ");
-    cdbClose(ftreino);
+    ok = cdbClose(ftreino);
+    if (ok < 0) perror("Erro ao fechar o arquivo treinos.dat\n");
     printf("Exercicio ");
-    cdbClose(fexer);
+    ok = cdbClose(fexer);
+    if (ok < 0) perror("Erro ao fechar o arquivo exercicios.dat\n");
     printf("Saindo... Pressione ENTER\n");
     cClearInputBuffer();
-    exit(EXIT_SUCCESS);
+    return ok;
 }
 
 // ########
@@ -68,7 +73,7 @@ TTreino cSearchTreino(FILE* file, const char* table_name, long unsigned pk) {
 }
 
 TTreino cSearchTreinoComp(FILE* file, const char* table_name, long unsigned cpk, long unsigned epk) {
-    TTreino treino = TTreino_GetByCidEid(file, table_name, cpk, epk);
+    TTreino treino = TTreino_GetByCpkEpk(file, table_name, cpk, epk);
     return treino;
 }
 
