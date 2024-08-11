@@ -14,8 +14,9 @@
 #define TREINOS "treinos"
 #define EXERCICIOS "exercicios"
 
-// Funções auxiliares
-void cClearInputBuffer();
+// ###################
+// Funções Auxiliares#
+// ###################
 
 void cInitTables(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexec);
 

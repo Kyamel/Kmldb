@@ -1,6 +1,8 @@
 #ifndef TREINO_H
 #define TREINO_H
 
+#include "../kmldb/db.h"
+
 #include <stdio.h>
 
 #define BT_NOME 50
@@ -26,8 +28,15 @@ TTreino TTreino_Read(FILE *file);
 
 void TTreino_Print(TTreino *treino);
 
-int selecaoComSubstituicao(FILE *file, const char *table_name);
+void TTreino_PrintGeneric(void* member);
 
-int intercalacaoBasica(FILE *file, int num_particions);
+int TTreinoSelecaoComSubstituicaoCpkk(FILE *file, const char *table_name);
+
+int TTreinoIntercalacaoBasicaCpk(FILE *file, DatabaseHeader *header, int num_particions);
+
+int TTreinoClassificacaoInterna(FILE *file, const char* table_name);
+
+int TTreinoIntercalacaoBasica(FILE *file, DatabaseHeader *header, int num_particoes);
+
 
 #endif

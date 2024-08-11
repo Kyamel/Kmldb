@@ -1,16 +1,12 @@
-#include "../kmldb/db.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "../kmldb/db.h"
+#include "../utils/util.h"
+
 #include "crud.h"
 #include "db_wrapper.h"
-
-// Funções auxiliares
-void cClearInputBuffer() {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
-}
 
 void cInitTables(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexec) {
     cdbCreateTable(fcli, CLIENTES, sizeof(TCliente));

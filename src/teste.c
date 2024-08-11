@@ -8,6 +8,8 @@
 #include "../model/treino.h"
 #include "../model/funcionario.h"
 
+#include "../utils/util.h"
+
 #include <stdlib.h>
 #include <time.h>
 #include "teste.h"
@@ -91,18 +93,6 @@ int run_test() {
     return 0;
 }
 
-// Função de callback para imprimir MyRecord
-void printTreino(void* member) {
-    TTreino* treino = (TTreino*)member;
-
-    printf("# Treino:\n");
-    printf("| pk: %lu\n", treino->pk);
-    printf("| Cliente cpk: %lu\n", treino->cpk);
-    printf("| Exercicio epk: %lu\n", treino->epk);
-    printf("| Nome: %s\n", treino->nome);
-    printf("| Tipo: %s\n", treino->tipo);
-}
-
 int criar_base_ordenada(int tam, FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer) {
 
     int i = -1;
@@ -151,14 +141,14 @@ int teste_criar_base_desordenada() {
     cInitTables(fcli, ffunc, ftreino, fexer);
 
     printf("Criando base de dados desordenada...\n");
-    int count = criar_base_desordenada(100, 100, fcli, ffunc, ftreino, fexer);
+    int count = criar_base_desordenada(1000, 1000, fcli, ffunc, ftreino, fexer);
     if (count < 0){
         perror("Erro ao criar base de dados desordenada");
     };
 
     // Buscar e imprimir TREINOS
     TTreino treino;
-    cdbReadAll(ftreino, TREINOS, &treino, sizeof(TTreino), printTreino);
+    cdbReadAll(ftreino, TREINOS, &treino, sizeof(TTreino), TFunc_PrintGeneric);
     printf("Quantidade de treinos: %d\n", count);
 
     printf("Desalocando recursos...\n");
@@ -173,7 +163,7 @@ int particion_test() {
     int ok = 0;
 
     printf("Teste de selecao com substituiao aplicado ao cpk do treino...\n");
-    int particions = selecaoComSubstituicao(ftreino, TREINOS);
+    int particions = TTreinoSelecaoComSubstituicaoCpkk(ftreino, TREINOS);
     printf("Particoes: %d\n", particions);
 
     int j = 0;
@@ -184,7 +174,7 @@ int particion_test() {
         sprintf_s(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", i);
 
         FILE *particionFile = fopen(nome_arq, "r+b");
-        j += cdbReadAllNoHeader(particionFile, &treino, sizeof(TTreino), printTreino);
+        j += cdbReadAllNoHeader(particionFile, &treino, sizeof(TTreino), TTreino_PrintGeneric);
         fclose(particionFile);
     }
     printf("Particoes geradas: %d\n", particions);
@@ -202,4 +192,154 @@ int particion_test() {
     cdbClose(ftreinoOrd); */
     cdbClose(ftreino);
     return ok;
+}
+
+int teste_classificasao_interna_func(){
+    FILE *ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
+    cdbCreateTable(ffunc, FUNCIONARIOS, sizeof(TFunc));
+    int ok = 0;
+
+    printf("Teste de classificacaoInterna...\n");
+
+    int particions = TFuncClassificacaoInterna(ffunc, FUNCIONARIOS);
+    printf("Particoes: %d\n", particions);
+
+    int j = 0;
+    TFunc func;
+    /* for (int i = 0; i < particions; i++){
+        printf("\nImprimindo Particao %d:\n", i);
+        char nome_arq[256];
+        sprintf_s(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", i);
+
+        FILE *particionFile = fopen(nome_arq, "r+b");
+        j += cdbReadAllNoHeader(particionFile, &func, sizeof(TFunc), printFunc);
+        fclose(particionFile);
+    }
+    printf("Particoes geradas: %d\n", particions);
+    printf("Total de registros lidos: %d\n", j); */    
+
+    // Carrega o cabeçalho
+    DatabaseHeader header;
+    fseek(ffunc, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, ffunc);
+
+    FILE *ffuncOrd =  fopen(DB_FOLDER"/"FUNCIONARIOS"COrd.dat", "w+b");
+    //ok = intercalacaoBasica(ftreinoOrd, header, particions, TREINOS);
+    ok = TFuncIntercalacaoBasica(ffuncOrd, &header, particions);
+    if (ok < 0) perror("Erro ao intercalar as particoes\n");
+
+    //j = cdbReadAllNoHeader(ffuncOrd, &func, sizeof(TFunc), printFunc);
+    j = cdbReadAll(ffuncOrd, FUNCIONARIOS, &func, sizeof(TFunc), TFunc_PrintGeneric);
+    printf("Total de registros lidos: %d\n", j);
+
+    cdbClose(ffunc);
+    //  cdbClose(ffuncOrd); 
+
+    return 0;
+}
+
+int teste_classificasao_interna_treino(){
+    FILE *ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
+    cdbCreateTable(ftreino, TREINOS, sizeof(TTreino));
+    int ok = 0;
+
+    printf("Teste de classificacaoInterna...\n");
+
+    int particions = TTreinoClassificacaoInterna(ftreino, TREINOS);
+    printf("Particoes: %d\n", particions);
+
+    int j = 0;
+    TTreino treino;
+    /* for (int i = 0; i < particions; i++){
+        printf("\nImprimindo Particao %d:\n", i);
+        char nome_arq[256];
+        sprintf_s(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", i);
+
+        FILE *particionFile = fopen(nome_arq, "r+b");
+        j += cdbReadAllNoHeader(particionFile, &func, sizeof(TFunc), printFunc);
+        fclose(particionFile);
+    }
+    printf("Particoes geradas: %d\n", particions);
+    printf("Total de registros lidos: %d\n", j); */    
+
+    // Carrega o cabeçalho
+    DatabaseHeader header;
+    fseek(ftreino, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, ftreino);
+
+    FILE *ftreinoOrd =  fopen(DB_FOLDER"/"TREINOS"COrd.dat", "w+b");
+    //ok = intercalacaoBasica(ftreinoOrd, header, particions, TREINOS);
+    ok = TTreinoIntercalacaoBasica(ftreinoOrd, &header, particions);
+    if (ok < 0) perror("Erro ao intercalar as particoes\n");
+
+    //j = cdbReadAllNoHeader(ftreinoOrd, &treino, sizeof(TTreino), printTreino);
+    j = cdbReadAll(ftreinoOrd, TREINOS, &treino, sizeof(TTreino), TTreino_PrintGeneric);
+    printf("Total de registros lidos: %d\n", j);
+
+    cdbClose(ftreino);
+    //  cdbClose(ffuncOrd); 
+
+    return 0;
+}
+
+int teste_classificasao_interna_exerc() {
+    FILE *fexerc = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
+    cdbCreateTable(fexerc, EXERCICIOS, sizeof(TExerc));
+    int ok = 0;
+
+    printf("Teste de classificacaoInterna para TExerc...\n");
+
+    int particions = TExercClassificacaoInterna(fexerc, EXERCICIOS);
+    printf("Particoes: %d\n", particions);
+
+    int j = 0;
+    TExerc exerc;
+
+    // Carrega o cabeçalho
+    DatabaseHeader header;
+    fseek(fexerc, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, fexerc);
+
+    FILE *fexercOrd =  fopen(DB_FOLDER"/"EXERCICIOS"COrd.dat", "w+b");
+    ok = TExercIntercalacaoBasica(fexercOrd, &header, particions);
+    if (ok < 0) perror("Erro ao intercalar as particoes\n");
+
+    j = cdbReadAll(fexercOrd, EXERCICIOS, &exerc, sizeof(TExerc), TExerc_PrintGeneric);
+    printf("Total de registros lidos: %d\n", j);
+
+    cdbClose(fexerc);
+    cdbClose(fexercOrd);
+
+    return 0;
+}
+
+int teste_classificasao_interna_cliente() {
+    FILE *fcliente = cdbInit(DB_FOLDER"/"CLIENTES".dat");
+    cdbCreateTable(fcliente, CLIENTES, sizeof(TCliente));
+    int ok = 0;
+
+    printf("Teste de classificacaoInterna para TCliente...\n");
+
+    int particions = TClienteClassificacaoInterna(fcliente, CLIENTES);
+    printf("Particoes: %d\n", particions);
+
+    int j = 0;
+    TCliente cliente;
+
+    // Carrega o cabeçalho
+    DatabaseHeader header;
+    fseek(fcliente, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, fcliente);
+
+    FILE *fclienteOrd =  fopen(DB_FOLDER"/"CLIENTES"COrd.dat", "w+b");
+    ok = TClienteIntercalacaoBasica(fclienteOrd, &header, particions);
+    if (ok < 0) perror("Erro ao intercalar as particoes\n");
+
+    j = cdbReadAll(fclienteOrd, CLIENTES, &cliente, sizeof(TCliente), TCliente_PrintGeneric);
+    printf("Total de registros lidos: %d\n", j);
+
+    cdbClose(fcliente);
+    cdbClose(fclienteOrd);
+
+    return 0;
 }

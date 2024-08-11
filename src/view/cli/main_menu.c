@@ -10,6 +10,8 @@
 #include "../model/treino.h"
 #include "../model/funcionario.h"
 
+#include "../../utils/util.h"
+
 #include "main_menu.h"
 
 void cadastrarCliente(FILE *file) {
@@ -197,11 +199,24 @@ void buscarTreino(FILE *file) {
 }
 
 int cli_main_menu() {
-    FILE *fcli = cdbInit(DB_FOLDER"/"CLIENTES".dat");
-    FILE *ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
-    FILE *ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
-    FILE *fexer = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
 
+    FILE *fcli;
+    FILE *ffunc;
+    FILE *ftreino;
+    FILE *fexer;
+
+    if (1){
+        // se true, seleciona a base de dados ordenada
+        fcli = cdbInit(DB_FOLDER"/"CLIENTES"COrd.dat");
+        ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS"COrd.dat");
+        ftreino = cdbInit(DB_FOLDER"/"TREINOS"COrd.dat");
+        fexer = cdbInit(DB_FOLDER"/"EXERCICIOS"COrd.dat");
+    } else {
+        fcli = cdbInit(DB_FOLDER"/"CLIENTES".dat");
+        ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
+        ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
+        fexer = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
+    }
     cInitTables(fcli, ffunc, ftreino, fexer);
 
     int opcao;

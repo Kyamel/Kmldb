@@ -1,6 +1,8 @@
 #ifndef FUNCIONARIO_H
 #define FUNCIONARIO_H
 
+#include "../kmldb/db.h"
+
 #include <stdio.h>
 
 #define BF_NOME 50
@@ -28,5 +30,11 @@ TFunc TFunc_GetByPK(FILE *file, const char* table_name, long unsigned pk);
 void TFunc_Print(TFunc *func);
 
 TFunc TFunc_Read(FILE *file);
+
+void TFunc_PrintGeneric(void* member);
+
+int TFuncIntercalacaoBasica(FILE *file, DatabaseHeader *header, int num_particions);
+
+int TFuncClassificacaoInterna(FILE *file, const char* table_name);
 
 #endif // FUNCIONARIO_H

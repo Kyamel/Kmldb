@@ -1,6 +1,8 @@
 #ifndef EXEC_H
 #define EXEC_H
 
+#include "../kmldb/db.h"
+
 #include <stdio.h>
 
 #define BE_NOME 50
@@ -22,5 +24,11 @@ TExerc TExerc_GetByPK(FILE *file, const char* table_name, long unsigned pk);
 TExerc TExerc_Read(FILE *file);
 
 void TExerc_Print(TExerc *exec);
+
+void TExerc_PrintGeneric(void* member);
+
+int TExercClassificacaoInterna(FILE *file, const char* table_name);
+
+int TExercIntercalacaoBasica(FILE *file, DatabaseHeader *header, int num_particions);
 
 #endif

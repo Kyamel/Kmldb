@@ -27,6 +27,7 @@ file(GLOB_RECURSE SOURCES
     src/model/*.c
     src/kmldb/*.c
     src/controler/*.c
+    src/utils/*.c
     ${VIEW_DIR}/*.c
 )
 

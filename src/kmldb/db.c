@@ -174,6 +174,10 @@ int dbAdd(FILE* file, const char* table_name, void* member, size_t member_size, 
                 return ERR_REGISTER_WRITE_FAILED;
             }
             table_offset += size;
+            // Garantir que o next_pk seja maior que o pk fornecido
+            if (*pk >= header.tables[index].next_pk) {
+                header.tables[index].next_pk = *pk + 1;
+            }
         }
     }
 

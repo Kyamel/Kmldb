@@ -12,11 +12,13 @@
             "src/kmldb/*.c",
             "src/controler/*.c",
             "src/view/cli/*.c",
+            "src/utils/*.c",
             "-I", "src",
             "-I", "src/model",
             "-I", "src/kmldb",
             "-I", "src/controler",
             "-I", "src/view",
+            "-I", "src/utils",
             "-o", "build/programa"
         ],
         "group": {

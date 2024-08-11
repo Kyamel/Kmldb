@@ -2,10 +2,6 @@
 #define MAIN_MENU_H
 
 #include <stdio.h>
-#include "../model/exercicio.h"
-#include "../model/cliente.h"
-#include "../model/treino.h"
-#include "../model/funcionario.h"
 
 // Funções para interação com o menu principal
 void cadastrarCliente(FILE *file);

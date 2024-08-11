@@ -1,6 +1,8 @@
 #ifndef CLIENTE_H
 #define CLIENTE_H
 
+#include "../kmldb/db.h"
+
 #include <stdio.h>
 
 #define BC_NOME 50
@@ -27,5 +29,14 @@ TCliente TCliente_GetByPK(FILE *file, const char* table_name, long unsigned pk);
 TCliente TCliente_Read(FILE *file);
 
 void TCliente_Print(TCliente *cliente);
+
+void TCliente_PrintGeneric(void* member);
+
+int TClienteIntercalacaoBasicaTeste(FILE *file, DatabaseHeader *header, int num_particions);
+
+int TClienteClassificacaoInterna(FILE *file, const char* table_name);
+
+int TClienteIntercalacaoBasica(FILE *file, DatabaseHeader *header, int num_particoes);
+
 
 #endif

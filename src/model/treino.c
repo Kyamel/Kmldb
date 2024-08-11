@@ -4,14 +4,7 @@
 #include <string.h>
 #include "../kmldb/db.h"
 
-#ifdef _WIN32
-#include <windows.h>
-#include <minwinbase.h>
-#else
-#include <dirent.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#endif
+#include "../utils/util.h"
 
 
 // Calcula o tamanho da estrutura TTreino
@@ -147,90 +140,21 @@ void TTreino_Print(TTreino *treino) {
     printf("| Tipo: %s\n", treino->tipo);
 }
 
-// Função para converter string do tipo char para WCHAR
-wchar_t *charToWChar(const char *text) {
-    size_t size = strlen(text) + 1;
-    wchar_t *wText = malloc(sizeof(wchar_t) * size);
-    size_t tamanho = mbstowcs(wText, text, size);
-    if (tamanho == (size_t)-1) {
-        perror("Erro na conversão de string char para WCHAR.\n");
-    }
-    return wText;
+// Função de callback para imprimir MyRecord
+void TTreino_PrintGeneric(void* member) {
+    TTreino* treino = (TTreino*)member;
+
+    printf("# Treino:\n");
+    printf("| pk: %lu\n", treino->pk);
+    printf("| Cliente cpk: %lu\n", treino->cpk);
+    printf("| Exercicio epk: %lu\n", treino->epk);
+    printf("| Nome: %s\n", treino->nome);
+    printf("| Tipo: %s\n", treino->tipo);
 }
 
-// Método para limpar a pasta de partições antes de iniciar
-int clearFolder(const char *pasta) {
-#ifdef _WIN32
-    WIN32_FIND_DATAW findFileData;
-    wchar_t *dirPath = charToWChar(pasta);
-    wchar_t searchPath[1024];
-    swprintf_s(searchPath, 1024, L"%s\\*", dirPath);
-
-    HANDLE hFind = FindFirstFileW(searchPath, &findFileData);
-
-    if (hFind == INVALID_HANDLE_VALUE) {
-        printf("Erro ao abrir diretório.\n");
-        free(dirPath);
-        return -1;
-    }
-
-    do {
-        if (wcscmp(findFileData.cFileName, L".") != 0 && wcscmp(findFileData.cFileName, L"..") != 0) {
-            wchar_t caminho[1024];
-            swprintf_s(caminho, sizeof(caminho) / sizeof(wchar_t), L"%s\\%s", dirPath, findFileData.cFileName);
-
-            if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-                // Se for um diretório, chamar limpaPasta recursivamente
-                clearFolder((const char *)caminho);  // Recursão
-                RemoveDirectoryW(caminho); // Remover o diretório vazio
-            } else {
-                // Se for um arquivo, remover
-                DeleteFileW(caminho);
-            }
-        }
-    } while (FindNextFileW(hFind, &findFileData) != 0);
-
-    FindClose(hFind);
-    free(dirPath);
-    return 0;
-#else
-    struct dirent *arquivo;
-    DIR *dir = opendir(pasta);
-
-    if (dir == NULL) {
-        perror("Erro ao abrir diretório");
-        return;
-    }
-
-    while ((arquivo = readdir(dir)) != NULL) {
-        char caminho[1024];
-        snprintf(caminho, sizeof(caminho), "%s/%s", pasta, arquivo->d_name);
-
-        // Ignorar . e .. no diretório
-        if (strcmp(arquivo->d_name, ".") != 0 && strcmp(arquivo->d_name, "..") != 0) {
-            struct stat st;
-            if (stat(caminho, &st) == 0) {
-                if (S_ISDIR(st.st_mode)) {
-                    // Se for um diretório, chamar limpaPasta recursivamente
-                    limpaPasta(caminho);
-                    rmdir(caminho); // Remover o diretório vazio
-                } else {
-                    // Se for um arquivo, remover
-                    remove(caminho);
-                }
-            } else {
-                perror("Erro ao obter informações do arquivo");
-            }
-        }
-    }
-    closedir(dir);
-    return 0;
-#endif
-    return 0;
-}
 
 // Função para realizar a seleção com substituição como método de ordenação
-int selecaoComSubstituicao(FILE *file, const char *table_name) {
+int TTreinoSelecaoComSubstituicaoCpkk(FILE *file, const char *table_name) {
     fflush(file);
     int ok = clearFolder("data/particions");
     if (ok == -1) return ok;
@@ -358,7 +282,7 @@ int selecaoComSubstituicao(FILE *file, const char *table_name) {
 
 
 // Função para realizar a intercalação das partições geradas por seleção com substituição
-int intercalacaoBasica(FILE *file, int num_particions) {
+int TTreinoIntercalacaoBasicaCpk(FILE *file, DatabaseHeader *header,int num_particions) {
     typedef struct vetor {
         TTreino treino;
         FILE *aux;
@@ -393,7 +317,8 @@ int intercalacaoBasica(FILE *file, int num_particions) {
         }
     }
 
-    fflush(file);
+    rewind(file);
+    fwrite(header, sizeof(DatabaseHeader), 1, file);
 
     // Processa os registros
     while (!fim) {
@@ -431,4 +356,158 @@ int intercalacaoBasica(FILE *file, int num_particions) {
 
     free(v);
     return 0; // Retorna 0 em caso de sucesso
+}
+
+int TTreinoClassificacaoInterna(FILE *file, const char* table_name) {
+    rewind(file); // Posiciona o cursor no início do arquivo
+
+    int M = 100;  // Tamanho do buffer
+    DatabaseHeader header;
+    int qtdParticoes = 0;
+    char nomeParticao[256];
+
+    fseek(file, 0, SEEK_SET);
+    if (fread(&header, sizeof(DatabaseHeader), 1, file) != 1) {
+        perror("Erro ao ler o cabeçalho do arquivo");
+        return -1;
+    }
+
+    int index = dbFindTable(file, table_name);
+    if (index == -1) {
+        perror("Tabela não encontrada");
+        return -1;
+    }
+
+    if (header.tables[index].size != sizeof(TTreino)) {
+        perror("Tamanho do membro incompatível com a tabela");
+        return -1;
+    }
+
+    int start_offset = header.tables[index].start_offset;
+    int end_offset = header.tables[index].end_offset;
+    int nTreino = (end_offset - start_offset) / sizeof(TTreino);
+
+    fseek(file, start_offset, SEEK_SET);
+
+    while (ftell(file) < end_offset) {
+        TTreino *v[M];
+        int i = 0;
+
+        while (ftell(file) < end_offset && i < M) {
+            v[i] = malloc(sizeof(TTreino));
+            if (fread(v[i], sizeof(TTreino), 1, file) == 1) {
+                i++;
+            } else {
+                free(v[i]);
+                break;
+            }
+        }
+
+        if (i != M) {
+            M = i;
+        }
+
+        for (int j = 1; j < M; j++) {
+            TTreino *t = v[j];
+            int k = j - 1;
+            while (k >= 0 && v[k]->pk > t->pk) {
+                v[k + 1] = v[k];
+                k--;
+            }
+            v[k + 1] = t;
+        }
+
+        snprintf(nomeParticao, sizeof(nomeParticao), "data/particions/particion_%d.dat", qtdParticoes);
+        FILE *p = fopen(nomeParticao, "wb+");
+        if (p == NULL) {
+            perror("Erro ao criar arquivo de partição");
+            for (int jj = 0; jj < M; jj++) {
+                free(v[jj]);
+            }
+            return -1;
+        }
+
+        for (int i = 0; i < M; i++) {
+            if (fwrite(v[i], sizeof(TTreino), 1, p) != 1) {
+                perror("Erro ao gravar registro na partição");
+                fclose(p);
+                for (int jj = 0; jj < M; jj++) {
+                    free(v[jj]);
+                }
+                return -1;
+            }
+            free(v[i]);
+        }
+
+        fclose(p);
+        qtdParticoes++;
+    }
+
+    return qtdParticoes;
+}
+
+int TTreinoIntercalacaoBasica(FILE *file, DatabaseHeader *header, int num_particoes) {
+    if (num_particoes <= 0) {
+        perror("Número de partições inválido");
+        return -1;
+    }
+
+    typedef struct vetor {
+        TTreino treino;
+        FILE *aux;
+    } TVet;
+
+    int fim = 0;
+    char nome_file[256];
+
+    TVet *v = malloc(num_particoes * sizeof(TVet));
+    if (v == NULL) {
+        perror("Erro ao alocar memória para vetores de partições");
+        return -1;
+    }
+
+    for (int i = 0; i < num_particoes; i++) {
+        snprintf(nome_file, sizeof(nome_file), "data/particions/particion_%d.dat", i);
+
+        v[i].aux = fopen(nome_file, "rb");
+        rewind(v[i].aux);
+        if (v[i].aux != NULL) {
+            fread(&v[i].treino, sizeof(TTreino), 1, v[i].aux);
+        } else {
+            fim = 1;
+        }
+    }
+
+    rewind(file);
+    fwrite(header, sizeof(DatabaseHeader), 1, file);
+
+    while (!fim) {
+        unsigned long menor = ULONG_MAX;
+        int pos_menor;
+
+        for (int i = 0; i < num_particoes; i++) {
+            if (v[i].treino.pk < menor) {
+                menor = v[i].treino.pk;
+                pos_menor = i;
+            }
+        }
+
+        if (menor == ULONG_MAX) {
+            fim = 1;
+        } else {
+            fwrite(&v[pos_menor].treino, sizeof(TTreino), 1, file);
+            if (fread(&v[pos_menor].treino, sizeof(TTreino), 1, v[pos_menor].aux) != 1) {
+                v[pos_menor].treino.pk = ULONG_MAX;
+            }
+        }
+    }
+
+    for (int i = 0; i < num_particoes; i++) {
+        if (v[i].aux != NULL) {
+            fclose(v[i].aux);
+        }
+    }
+
+    free(v);
+    return 0;
 }
