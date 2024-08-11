@@ -27,14 +27,14 @@ int cCloseDatabase(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer);
 // ########
 
 // Não faz checagem da existeência do cliente e do exercicio
-int cAddTreinoDoC(FILE* file, const char* table_name, unsigned long pk, const char* nome, const char* tipo, long unsigned epk, long unsigned cpk, int duration);
+int cAddTreinoDoC(FILE* file, unsigned long pk, const char* nome, const char* tipo, long unsigned epk, long unsigned cpk, int duration);
 
 // Faz checagem da existeência do cliente e do exercicio
-int cAddTreinoNotC(FILE* file, const char* table_name, unsigned long pk, const char* nome, const char* tipo, TExerc* exerc, TCliente* cliente, int duration);
+int cAddTreinoNotC(FILE* file, unsigned long pk, const char* nome, const char* tipo, TExerc* exerc, TCliente* cliente, int duration);
 
-TTreino cSearchTreino(FILE* file, const char* table_name, long unsigned pk);
+TTreino cSearchTreino(FILE* file, long unsigned pk);
 
-TTreino cSearchTreinoByCpkEpk(FILE* file, const char* table_name, long unsigned cpk, long unsigned epk);
+TTreino cSearchTreinoByCpkEpk(FILE* file, long unsigned cpk, long unsigned epk);
 
 // imprime os dados do exercício
 int cSearchPrintTreinoFullByCpk(FILE* ftreino, FILE* fexerc, long unsigned epk);

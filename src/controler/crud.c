@@ -39,15 +39,15 @@ int cCloseDatabase(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer) {
 // ########
 
 // Não faz checagem da existeência do cliente e do exercicio
-int cAddTreinoNotC(FILE* file, const char* table_name, unsigned long pk, const char* nome, const char* tipo, TExerc* exerc, TCliente* cliente, int duration) {
+int cAddTreinoNotC(FILE* file, unsigned long pk, const char* nome, const char* tipo, TExerc* exerc, TCliente* cliente, int duration) {
     TTreino treino = TTreino_New(pk, nome, tipo, cliente->pk, exerc->pk, duration);
 
-    dbAdd(file, table_name, &treino, sizeof(treino), DB_PK_OFFSET(TTreino));
+    dbAdd(file, TREINOS, &treino, sizeof(treino), DB_PK_OFFSET(TTreino));
     return 0;
 }
 
 // Faz checagem da existeência do cliente e do exercicio
-int cAddTreinoDoC(FILE* file, const char* table_name, unsigned long pk, const char* nome, const char* tipo, long unsigned epk, long unsigned cpk, int duration) {
+int cAddTreinoDoC(FILE* file, unsigned long pk, const char* nome, const char* tipo, long unsigned epk, long unsigned cpk, int duration) {
     TExerc e = TExerc_GetByPK(file, EXERCICIOS, epk);
     if (e.pk == 0) {
         printf("Exercicio inexistente\n");
@@ -59,17 +59,17 @@ int cAddTreinoDoC(FILE* file, const char* table_name, unsigned long pk, const ch
         return -1;
     }
     TTreino treino = TTreino_New(pk, nome, tipo, cpk, epk, duration);
-    dbAdd(file, table_name, &treino, sizeof(treino), DB_PK_OFFSET(TTreino));
+    dbAdd(file, TREINOS, &treino, sizeof(treino), DB_PK_OFFSET(TTreino));
     return 0;
 }
 
-TTreino cSearchTreino(FILE* file, const char* table_name, long unsigned pk) {
-    TTreino treino = TTreino_GetByPK(file, table_name, pk);
+TTreino cSearchTreino(FILE* file, long unsigned pk) {
+    TTreino treino = TTreino_GetByPK(file, TREINOS, pk);
     return treino;
 }
 
-TTreino cSearchTreinoByCpkEpk(FILE* file, const char* table_name, long unsigned cpk, long unsigned epk) {
-    TTreino treino = TTreino_GetByCpkEpk(file, table_name, cpk, epk);
+TTreino cSearchTreinoByCpkEpk(FILE* file, long unsigned cpk, long unsigned epk) {
+    TTreino treino = TTreino_GetByCpkEpk(file, TREINOS, cpk, epk);
     return treino;
 }
 
@@ -95,7 +95,8 @@ int cSearchPrintTreinoFullByCpk(FILE* ftreino, FILE* fexerc, long unsigned epk) 
             printf("| > Exercicio:\n");
             printf("  | PK: %lu\n", exerc.pk);
             printf("  | Nome: %s\n", exerc.nome);
-            printf("  | Tipo: %s\n", treino->tipo);
+            printf("  | Tipo: %s\n", exerc.tipo);
+            printf("  | Duracao: %d segundos\n", exerc.duration);
         }
         
         curr = curr->next;

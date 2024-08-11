@@ -52,7 +52,8 @@ TExerc TExerc_GetByPK(FILE *file, const char* table_name, long unsigned pk) {
         long unsigned middle = (start + end) / 2;
         size_t seek = start_offset + (middle * size);
         fseek(file, seek, SEEK_SET);
-        exec = TExerc_ReadReg(file);
+        TExerc exec;
+        fread(&exec, sizeof(TExerc), 1, file);
         if (exec.pk == pk) {
             return exec;
         }

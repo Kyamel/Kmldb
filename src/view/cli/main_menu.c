@@ -191,7 +191,7 @@ void cadastrarTreino(FILE *ftreino, FILE *fexerc, FILE *fcli) {
     // Avalia a expressão ou converte o número diretamente
     duration = evaluateArithmeticExpression(durationStr);
 
-    cAddTreinoNotC(ftreino, TREINOS, 0, nome, tipo, &exercicio, &cliente, duration);
+    cAddTreinoNotC(ftreino, 0, nome, tipo, &exercicio, &cliente, duration);
     printf("Treino cadastrado com sucesso!\n");
 }
 

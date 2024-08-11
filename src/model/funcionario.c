@@ -279,7 +279,7 @@ int TFuncIntercalacaoBasica(FILE *file, DatabaseHeader *header,int num_particion
             TFunc func = {0};
             fread(&func, sizeof(TFunc), 1, v[i].aux);
             if (func.pk == 0) {
-                v[i].func = TFunc_New(INT_MAX, "", "", "", "", "", 0.0);
+                v[i].func.pk = ULONG_MAX;
                 
             } else {
                 v[i].func = func;
@@ -294,7 +294,7 @@ int TFuncIntercalacaoBasica(FILE *file, DatabaseHeader *header,int num_particion
 
     // Processa os registros
     while (!fim) {
-        int menor = INT_MAX;
+        int menor = ULLONG_MAX;
         int pos_menor;
 
         // Encontra o treino com menor chave no vetor
@@ -312,7 +312,7 @@ int TFuncIntercalacaoBasica(FILE *file, DatabaseHeader *header,int num_particion
             TFunc func = {0};
             fread(&func, sizeof(TFunc), 1, v[pos_menor].aux);
             if (func.pk == 0){ 
-                v[pos_menor].func = TFunc_New(INT_MAX, "", "", "", "", "", 0.0);
+                v[pos_menor].func.pk = ULONG_MAX;
             } else {
                 v[pos_menor].func = func;
             }
