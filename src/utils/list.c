@@ -193,7 +193,8 @@ person_t *find_person(node_t *node, char *name) {
     node_t *curr = list_get_head(node);
     while (curr) {
         person_t *person = (person_t *)curr->data;
-        if (strcmp(person->name, name) == 0) return person;
+        if (strcmp(person->name, name) == 0) 
+            return person;
         curr = curr->next;
     }
     return NULL;

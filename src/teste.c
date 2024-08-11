@@ -116,7 +116,13 @@ int criar_base_desordenada(int tam, int qtdTrocas, FILE *fcli, FILE *ffunc, FILE
     embaralha(vet, tam, qtdTrocas);
 
     int i = -1;
-    for (i = 0; i < tam; i++){
+    clock_t start_time, end_time;
+    double time_spent;
+
+    // Inicia a contagem de tempo
+    start_time = clock();
+
+    for (i = 0; i < tam; i++) {
         cAddCliente(fcli, CLIENTES, vet[i], "Alice", "12345678901", "alice@example.com", "1234567890", "2024-12-31");
         cAddFunc(ffunc, FUNCIONARIOS, vet[i], "Charlie", "11223344556", "charlie@example.com", "1112233445", "1985-07-30", 3500.50);
         cAddExerc(fexer, EXERCICIOS, vet[i], "Push-up", "Strength", 30*60);
@@ -126,11 +132,23 @@ int criar_base_desordenada(int tam, int qtdTrocas, FILE *fcli, FILE *ffunc, FILE
         exercicio.pk = vet[i];
         cAddTreinoNotC(ftreino, vet[i], "Morning Routine", "Strength", &exercicio, &cliente, 20*60);
 
+        // Calcula o tempo gasto até agora
+        end_time = clock();
+        time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+
+        // Calcula a porcentagem de progresso
+        int progress = (i + 1) * 100 / tam;
+
+        // Atualiza a barra de progresso
+        atualizarBarraProgresso(progress, 100, time_spent, "Progresso:");
     }
+    
+    printf("\n"); // Adiciona uma nova linha ao final do loop para que o próximo output não sobrescreva a barra
+
     return i;
 }
 
-int teste_criar_base_desordenada() {
+int teste_criar_base_desordenada(int tam) {
     // Abrir os arquivos de banco de dados
     FILE *fcli = cdbInit(DB_FOLDER"/"CLIENTES".dat");
     FILE *ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
@@ -141,9 +159,36 @@ int teste_criar_base_desordenada() {
     cInitTables(fcli, ffunc, ftreino, fexer);
 
     printf("Criando base de dados desordenada...\n");
-    int count = criar_base_desordenada(1000, 1000, fcli, ffunc, ftreino, fexer);
+    int count = criar_base_desordenada(tam, tam, fcli, ffunc, ftreino, fexer);
     if (count < 0){
         perror("Erro ao criar base de dados desordenada");
+    };
+
+    // Buscar e imprimir TREINOS
+    TTreino treino;
+    cdbReadAll(ftreino, TREINOS, &treino, sizeof(TTreino), TTreino_PrintGeneric);
+    printf("Quantidade de treinos: %d\n", count);
+
+    printf("Desalocando recursos...\n");
+    count = cCloseDatabase(fcli, ffunc, ftreino, fexer);
+
+    return count;
+}
+
+int teste_criar_base_drdenada(int tam) {
+    // Abrir os arquivos de banco de dados
+    FILE *fcli = cdbInit(DB_FOLDER"/"CLIENTES".dat");
+    FILE *ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
+    FILE *ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
+    FILE *fexer = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
+
+    // Inicializar tabelas
+    cInitTables(fcli, ffunc, ftreino, fexer);
+
+    printf("Criando base de dados desordenada...\n");
+    int count = criar_base_ordenada(tam, fcli, ffunc, ftreino, fexer);
+    if (count < 0){
+        perror("Erro ao criar base de dados ordenada");
     };
 
     // Buscar e imprimir TREINOS

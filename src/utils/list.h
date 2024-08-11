@@ -1,7 +1,6 @@
 #ifndef LIST_H
 #define LIST_H
 
-#include <stddef.h>  // For size_t
 
 /***************************************************************************
  * Helper Types 

@@ -1,6 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+void atualizarBarraProgresso(int progresso, int total, double tempoGasto, const char *mensagem);
+
 void cClearInputBuffer();
 
 int evaluateArithmeticExpression(const char *expr);

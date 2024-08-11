@@ -82,6 +82,10 @@ int cSearchPrintTreinoFullByCpk(FILE* ftreino, FILE* fexerc, long unsigned epk) 
     }
     
     node_t *curr = list_get_head(list);
+    if (curr == NULL) {
+        list_free(list);
+        return ERR_REGISTER_NOT_FOUND;
+    }
     
     while (curr) {
         TTreino *treino = (TTreino *)curr->data;
@@ -90,7 +94,7 @@ int cSearchPrintTreinoFullByCpk(FILE* ftreino, FILE* fexerc, long unsigned epk) 
             // Obter o exercício correspondente usando epk
             TExerc exerc = TExerc_GetByPK(fexerc, EXERCICIOS, treino->epk);
             
-            // Imprimir o nome do exercício
+            // Imprimir o treino
             TTreino_Print(treino);
             printf("| > Exercicio:\n");
             printf("  | PK: %lu\n", exerc.pk);
@@ -106,6 +110,7 @@ int cSearchPrintTreinoFullByCpk(FILE* ftreino, FILE* fexerc, long unsigned epk) 
     list_free(list);
     return 0;
 }
+
 
 int cSearchPrintTreinoByCpk(FILE* file, const char* table_name, long unsigned cpk) {
     int ok = TTreino_ReadByCpk(file, table_name, cpk);

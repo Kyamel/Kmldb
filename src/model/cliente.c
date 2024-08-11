@@ -2,7 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+
 #include "../kmldb/db.h"
+#include "../utils/log.h"
 
 // Calcula o tamanho da estrutura TCliente
 int TCliente_Size() {
@@ -57,37 +60,51 @@ TCliente TCliente_New(unsigned long pk, const char* nome, const char* cpf, const
 
 // Função para buscar um cliente pelo ID na tabela
 TCliente TCliente_GetByPK(FILE *file, const char* table_name, long unsigned pk) {
-    TCliente cliente = {0};
+    TCliente clienteEmpty = {0};
     DatabaseHeader header;
     fseek(file, 0, SEEK_SET);
     if (fread(&header, sizeof(DatabaseHeader), 1, file) != 1) {
         perror("Erro ao ler o cabeçalho do arquivo");
-        return cliente;
+        return clienteEmpty;
     }
     int index = dbFindTable(file, table_name);
     if (index == -1) {
         perror("Tabela não encontrada");
-        return cliente;
+        return clienteEmpty;
     }
-
     // Busca binária
     long unsigned start_offset = header.tables[index].start_offset;
     long unsigned end_offset = header.tables[index].end_offset;
     size_t size = header.tables[index].size;
     long unsigned start = 0;
     long unsigned end = (end_offset - start_offset) / size;
+
+     // Iniciar log e medir tempo
+    FILE *log_file = init_log();
+    clock_t start_time = clock();
+
     while (start <= end) {
         long unsigned middle = (start + end) / 2;
         size_t seek = start_offset + (middle * size);
         fseek(file, seek, SEEK_SET);
-        cliente = TCliente_ReadReg(file);
+        TCliente cliente;
+        fread(&cliente.pk, sizeof(TCliente), 1, file);
+        // Registrar tentativa no log
+        log_attempt(log_file, middle, cliente.pk);
         if (cliente.pk == pk) {
+            // Registrar tentativa no log
+            log_attempt(log_file, middle, cliente.pk);
+            fclose(log_file);  // Fecha o arquivo de log
             return cliente;
         }
         if (cliente.pk < pk) start = middle + 1;
         else end = middle - 1;
     }
-    return cliente;
+       // Registra o tempo final e calcula a duração
+    log_total_time(log_file, start_time);
+    fclose(log_file);  // Fecha o arquivo de log
+
+    return clienteEmpty;
 }
 
 // Função para ler um cliente de um arquivo

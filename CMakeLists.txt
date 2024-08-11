@@ -36,7 +36,7 @@ add_executable(programa ${SOURCES})
 
 # Defina o diretório onde o executável será gerado
 set_target_properties(programa PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Bin
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Bin/Debug
 )
 
 # Mensagem informativa sobre o tipo de build

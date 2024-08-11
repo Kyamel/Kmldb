@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "../controler/db_wrapper.h"
 #include "../controler/crud.h"
@@ -13,6 +14,7 @@
 #include "../../utils/util.h"
 
 #include "main_menu.h"
+#include "../../teste.h"
 
 void cadastrarCliente(FILE *file) {
     char nome[BC_NOME], cpf[BC_CPF], email[BC_EMAIL], telefone[BC_TELEFONE], exp_date[BC_EXP_DATE];
@@ -34,7 +36,7 @@ void cadastrarCliente(FILE *file) {
     fgets(telefone, sizeof(telefone), stdin);
     telefone[strcspn(telefone, "\n")] = 0;
 
-    printf("Data de Expiração (AAAA-MM-DD): ");
+    printf("Data de Expiracao (DD-MM-AAAA): ");
     fgets(exp_date, sizeof(exp_date), stdin);
     exp_date[strcspn(exp_date, "\n")] = 0;
 
@@ -49,11 +51,11 @@ void buscarCliente(FILE *file) {
     scanf_s("%lu", &pk);
     cClearInputBuffer();
 
-    TCliente cliente = TCliente_GetByPK(file, CLIENTES, pk);
+    TCliente cliente = cSearchCliente(file, CLIENTES, pk);
     if (cliente.pk != 0) {
-        cPrintCliente(&cliente);
+        TCliente_PrintGeneric(&cliente);
     } else {
-        printf("Cliente não encontrado.\n");
+        printf("Cliente nao encontrado.\n");
     }
 }
 
@@ -101,7 +103,7 @@ void buscarFuncionario(FILE *file) {
     if (func.pk != 0) {
         cPrintFunc(&func);
     } else {
-        printf("Funcionário não encontrado.\n");
+        printf("Funcionario nao encontrado.\n");
     }
 }
 
@@ -127,7 +129,7 @@ void cadastrarExercicio(FILE *file) {
     duration = evaluateArithmeticExpression(durationStr);
 
     cAddExerc(file, EXERCICIOS, 0, nome, tipo, duration);
-    printf("Exercício cadastrado com sucesso!\n");
+    printf("Exercicio cadastrado com sucesso!\n");
 }
 
 void buscarExercicio(FILE *file) {
@@ -141,7 +143,7 @@ void buscarExercicio(FILE *file) {
     if (exercicio.pk != 0) {
         cPrintExerc(&exercicio);
     } else {
-        printf("Exercício não encontrado.\n");
+        printf("Exercicio nao encontrado.\n");
     }
 }
 
@@ -161,14 +163,14 @@ void cadastrarTreino(FILE *ftreino, FILE *fexerc, FILE *fcli) {
 
     TExerc exercicio = cSearchExerc(fexerc, EXERCICIOS, epk);
     if (exercicio.pk <= 0) {
-        printf("Exercicio não encontrado.\n");
+        printf("Exercicio nao encontrado.\n");
         return;
     }
     TExerc_Print(&exercicio);
 
     TCliente cliente = cSearchCliente(fcli, CLIENTES, cpk);
     if (cliente.pk <= 0) {
-        printf("Cliente não encontrado.\n");
+        printf("Cliente nao encontrado.\n");
         return;
     }
     TCliente_Print(&cliente);
@@ -205,8 +207,101 @@ void buscarTreino(FILE *ftreino, FILE *fexerc) {
 
     int ok = cSearchPrintTreinoFullByCpk(ftreino, fexerc, cpk);
     if (ok < 0) {
-        printf("Treino não encontrado.\n");
+        printf("Treino nao encontrado.\n");
     }
+}
+
+// Função para ordenar e substituir arquivos
+void ordenarESubstituirArquivos(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexerc) {
+    // Variáveis auxiliares para armazenar o número de partições e o cabeçalho do banco de dados
+    int particions;
+    DatabaseHeader header;
+    int totalArquivos = 4; // Total de tipos de arquivos para ordenação
+    int progressoAtual = 0;
+
+    // Inicia a contagem de tempo
+    clock_t start_time = clock();
+    clock_t start_global_time = clock();
+
+    // FUNCIONARIOS
+    printf("\nOrdenando funcionarios...\n");
+    particions = TFuncClassificacaoInterna(ffunc, FUNCIONARIOS);
+    fseek(ffunc, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, ffunc);
+    FILE *ffuncOrd = fopen(DB_FOLDER"/"FUNCIONARIOS"COrd.dat", "w+b");
+    TFuncIntercalacaoBasica(ffuncOrd, &header, particions);
+    fclose(ffuncOrd);
+    fclose(ffunc);
+    progressoAtual++;
+    clock_t end_time = clock();
+    double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+    atualizarBarraProgresso(progressoAtual, totalArquivos, time_spent, "Funcionarios");
+
+    // CLIENTES
+    printf("\nOrdenando clientes...\n");
+    start_time = clock();
+    particions = TClienteClassificacaoInterna(fcli, CLIENTES);
+    fseek(fcli, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, fcli);
+    FILE *fcliOrd = fopen(DB_FOLDER"/"CLIENTES"COrd.dat", "w+b");
+    TClienteIntercalacaoBasica(fcliOrd, &header, particions);
+    fclose(fcliOrd);
+    fclose(fcli);
+    progressoAtual++;
+    end_time = clock();
+    time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+    atualizarBarraProgresso(progressoAtual, totalArquivos, time_spent, "Clientes");
+
+    // EXERCICIOS
+    printf("\nOrdenando exercicios...\n");
+    start_time = clock();
+    particions = TExercClassificacaoInterna(fexerc, EXERCICIOS);
+    fseek(fexerc, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, fexerc);
+    FILE *fexercOrd = fopen(DB_FOLDER"/"EXERCICIOS"COrd.dat", "w+b");
+    TExercIntercalacaoBasica(fexercOrd, &header, particions);
+    fclose(fexercOrd);
+    fclose(fexerc);
+    progressoAtual++;
+    end_time = clock();
+    time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+    atualizarBarraProgresso(progressoAtual, totalArquivos, time_spent, "Exercicios");
+
+    // TREINOS
+    printf("\nOrdenando treinos...\n");
+    start_time = clock();
+    particions = TTreinoClassificacaoInterna(ftreino, TREINOS);
+    fseek(ftreino, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, ftreino);
+    FILE *ftreinoOrd = fopen(DB_FOLDER"/"TREINOS"COrd.dat", "w+b");
+    TTreinoIntercalacaoBasica(ftreinoOrd, &header, particions);
+    fclose(ftreinoOrd);
+    fclose(ftreino);
+    progressoAtual++;
+    end_time = clock();
+    time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+    atualizarBarraProgresso(progressoAtual, totalArquivos, time_spent, "Treinos");
+
+    clock_t end_global_time = clock();
+    time_spent = (double)(end_global_time - start_global_time) / CLOCKS_PER_SEC;
+    printf("\nProcesso concluido em %.2f segundos.\n", time_spent);
+}
+
+void trocarParaArquivosOrdenados(FILE **fcli, FILE **ffunc, FILE **ftreino, FILE **fexerc) {
+    // Fechando arquivos não ordenados
+    fclose(*fcli);
+    fclose(*ffunc);
+    fclose(*ftreino);
+    fclose(*fexerc);
+
+    // Reabrindo arquivos ordenados
+    *fcli = cdbInit(DB_FOLDER"/"CLIENTES"COrd.dat");
+    *ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS"COrd.dat");
+    *ftreino = cdbInit(DB_FOLDER"/"TREINOS"COrd.dat");
+    *fexerc = cdbInit(DB_FOLDER"/"EXERCICIOS"COrd.dat");
+
+    // Recarregar as tabelas se necessário
+    cInitTables(*fcli, *ffunc, *ftreino, *fexerc);
 }
 
 int cli_main_menu() {
@@ -216,20 +311,13 @@ int cli_main_menu() {
     FILE *ftreino;
     FILE *fexerc;
 
-    if (1){
-        // se true, seleciona a base de dados ordenada
-        fcli = cdbInit(DB_FOLDER"/"CLIENTES"COrd.dat");
-        ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS"COrd.dat");
-        ftreino = cdbInit(DB_FOLDER"/"TREINOS"COrd.dat");
-        fexerc = cdbInit(DB_FOLDER"/"EXERCICIOS"COrd.dat");
-    } else {
-        fcli = cdbInit(DB_FOLDER"/"CLIENTES".dat");
-        ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
-        ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
-        fexerc = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
-    }
-    cInitTables(fcli, ffunc, ftreino, fexerc);
+    // Inicialmente, abre os arquivos não ordenados
+    fcli = cdbInit(DB_FOLDER"/"CLIENTES".dat");
+    ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
+    ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
+    fexerc = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
 
+    cInitTables(fcli, ffunc, ftreino, fexerc);
     cdbWelcome();
 
     int opcao;
@@ -245,6 +333,7 @@ int cli_main_menu() {
         printf("7. Cadastrar Treino\n");
         printf("8. Buscar Treino\n");
         printf("9. Sair\n");
+        printf("10. Ordenar e Substituir Arquivos\n");
         printf("Escolha uma opcao: ");
         scanf_s("%d", &opcao);
         cClearInputBuffer();
@@ -277,8 +366,12 @@ int cli_main_menu() {
             case 9:
                 int ok = cCloseDatabase(fcli, ffunc, ftreino, fexerc);
                 return ok;
+            case 10:
+                ordenarESubstituirArquivos(fcli, ffunc, ftreino, fexerc);
+                trocarParaArquivosOrdenados(&fcli, &ffunc, &ftreino, &fexerc);
+                break;
             default:
-                printf("Opção inválida. Tente novamente.\n");
+                printf("Opcao invalida. Tente novamente.\n");
                 break;
         }
     }

@@ -18,6 +18,47 @@
 #include <string.h>
 #include <math.h>
 
+void atualizarBarraProgresso(int progresso, int total, double tempoGasto, const char *mensagem) {
+    int bar_width = 50; // Largura da barra de progresso
+    int pos = progresso * bar_width / total;
+
+    // Cores ANSI
+    const char *cor_vermelho = "\033[31m";   // Vermelho
+    const char *cor_laranja = "\033[38;5;208m";  // Laranja
+    const char *cor_amarelo = "\033[33m";         // Amarelo
+    const char *cor_verde = "\033[32m";          // Verde
+    const char *cor_reset = "\033[0m";           // Reset para cor padrão
+
+    // Calcula a cor da barra com base no progresso
+    const char *cor_barra;
+    int porcentagem = progresso * 100 / total;
+    if (porcentagem <= 25) {
+        cor_barra = cor_vermelho;
+    } else if (porcentagem <= 50) {
+        cor_barra = cor_laranja;
+    } else if (porcentagem <= 75) {
+        cor_barra = cor_amarelo;
+    } else {
+        cor_barra = cor_verde;
+    }
+
+    printf("\r%s [", mensagem);
+
+    for (int j = 0; j < bar_width; ++j) {
+        if (j < pos) {
+            printf("%s#", cor_barra); // Cor da barra
+        } else {
+            printf("\033[48;5;232m "); // Espaço para a parte não preenchida da barra
+        }
+    }
+
+    printf("\033[0m] ");
+    printf("\033[38;5;208m%d%% Completo\033[0m - ", porcentagem);
+    printf("\033[32mTempo gasto: %.2f segundos\033[0m", tempoGasto); // Verde para o tempo
+
+    fflush(stdout);
+}
+
 // Função para limpar o buffer do teclado
 void cClearInputBuffer() {
     int c;

@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+
 #include "../kmldb/db.h"
 
 #include "../utils/util.h"
@@ -57,17 +59,38 @@ TTreino TTreino_GetByPK(FILE *file, const char* table_name, long unsigned pk) {
     size_t size = header.tables[index].size;
     long unsigned start = 0;
     long unsigned end = (end_offset - start_offset) / size;
+
+    // Abre o arquivo log.txt para registrar as tentativas
+    FILE *log_file = fopen("log.txt", "w");
+    if (log_file == NULL) {
+        perror("Erro ao abrir o arquivo de log");
+        return treino;
+    }
+
+    // Registra o tempo de início
+    clock_t start_time = clock();
+
     while (start <= end) {
         long unsigned middle = (start + end) / 2;
         size_t seek = start_offset + (middle * size);
         fseek(file, seek, SEEK_SET);
-        treino = TTreino_ReadReg(file);
+        fread(&treino, sizeof(TTreino), 1, file);
+        // Imprime a tentativa no arquivo de log
+        fprintf(log_file, "Tentativa: posicao=%lu, pk=%lu\n", middle, treino.pk);
+
         if (treino.pk == pk) {
             return treino;
         }
         if (treino.pk < pk) start = middle + 1;
         else end = middle - 1;
     }
+     // Registra o tempo final e calcula a duração
+    clock_t end_time = clock();
+    double total_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+
+    // Imprime o tempo total no arquivo de log
+    fprintf(log_file, "Tempo total de busca binaria: %.2f segundos\n", total_time);
+
     return treino;
 }
 

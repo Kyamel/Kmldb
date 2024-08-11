@@ -102,15 +102,15 @@ int dbCreateTable(FILE* file, const char* table_name, size_t size) {
     fread(&header, sizeof(DatabaseHeader), 1, file);
 
     if (header.table_count >= TABLE_MAX_COUNT) {
-        perror("Número máximo de tabelas atingido");
+        perror("Numero maximo de tabelas atingido");
         return ERR_TABLE_MAX_SIZE_EXCEEDED;
     }
     if (dbFindTable(file, table_name) != -1) {
-        perror("Tabela já existe");
+        perror("Tabela ja existe");
         return ERR_TABLE_EXISTS;
     }
     if (strlen(table_name) >= B_TABLE_NAME - 1) {
-        perror("Nome da tabela muito grande ou sem terminação nula");
+        perror("Nome da tabela muito grande ou sem terminacao nula");
         return ERR_TABLE_INVALID_NAME;
     }
 
@@ -225,7 +225,7 @@ int dbAdd(FILE* file, const char* table_name, void* member, size_t member_size, 
     return DB_OK;
 }
 
-int dbReadAll(FILE* file, const char* table_name, void* member, size_t member_size, PrintCallback printFunc) {
+int dbReadAll(FILE* file, const char* table_name, void* reg, size_t reg_size, PrintCallback printFunc) {
     DatabaseHeader header;
     fseek(file, 0, SEEK_SET);
     if (fread(&header, sizeof(DatabaseHeader), 1, file) != 1) {
@@ -236,24 +236,24 @@ int dbReadAll(FILE* file, const char* table_name, void* member, size_t member_si
     int index = dbFindTable(file, table_name);
     if (index == -1) {
         perror("Tabela não encontrada");
-        return ERR_REGISTER_NOT_FOUND;
+        return ERR_TABLE_NOT_FOUND;
     }
 
-    if (header.tables[index].size != member_size) {
-        perror("Tamanho do membro incompatível com a tabela");
+    if (header.tables[index].size != reg_size) {
+        perror("Tamanho do registro incompatível com a tabela");
         return ERR_REGISTER_INCOMPATIBLE_SIZE;
     }
 
     fseek(file, header.tables[index].start_offset, SEEK_SET);
-    int i = 0;
-    for (i = 0; i < header.tables[index].end_offset / member_size; i++) {
-        if (fread(member, member_size, 1, file) != 1) {
+    int count = 0;
+    for (count = 0; count < header.tables[index].end_offset / reg_size; count++) {
+        if (fread(reg, reg_size, 1, file) != 1) {
             break;
         }
-        printFunc(member);  // Usa a função de callback para imprimir o registro
+        printFunc(reg);  // Usa a função de callback para imprimir o registro
     }
 
-    return i;
+    return count;
 }
 
 int dbReadAllNoHeader(FILE* file, void* member, size_t member_size, PrintCallback printFunc) {
