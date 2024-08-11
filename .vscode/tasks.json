@@ -19,7 +19,7 @@
             "-I", "src/controler",
             "-I", "src/view",
             "-I", "src/utils",
-            "-o", "build/programa"
+            "-o", "build/Bin/Debug/programa"
         ],
         "group": {
           "kind": "build",
