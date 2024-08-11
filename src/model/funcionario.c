@@ -294,7 +294,7 @@ int TFuncIntercalacaoBasica(FILE *file, DatabaseHeader *header,int num_particion
 
     // Processa os registros
     while (!fim) {
-        int menor = ULLONG_MAX;
+        unsigned long int menor = ULONG_MAX;
         int pos_menor;
 
         // Encontra o treino com menor chave no vetor

@@ -230,6 +230,8 @@ int cli_main_menu() {
     }
     cInitTables(fcli, ffunc, ftreino, fexerc);
 
+    cdbWelcome();
+
     int opcao;
 
     while (1) {

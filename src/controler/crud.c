@@ -88,7 +88,7 @@ int cSearchPrintTreinoFullByCpk(FILE* ftreino, FILE* fexerc, long unsigned epk) 
         
         if (treino != NULL) {
             // Obter o exercício correspondente usando epk
-            TExerc exerc = TExerc_GetByPK(fexerc, EXERCICIOS, treino->epk); // Substitua "exerc_table_name" pelo nome correto da tabela
+            TExerc exerc = TExerc_GetByPK(fexerc, EXERCICIOS, treino->epk);
             
             // Imprimir o nome do exercício
             TTreino_Print(treino);
