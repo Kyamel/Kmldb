@@ -5,22 +5,23 @@
 #include "../kmldb/db.h"
 
 #include "../utils/util.h"
+#include "../utils/list.h"
+
 
 
 // Calcula o tamanho da estrutura TTreino
 int TTreino_Size() {
     return sizeof(long unsigned) // cpk
-         + sizeof(long unsigned) // ccpk
-         + sizeof(long unsigned) // ecpk
+         + sizeof(long unsigned) // cpk
+         + sizeof(long unsigned) // epk
          + sizeof(char) * BT_NOME // nome
-         + sizeof(char) * BT_TIPO; // tipo
+         + sizeof(char) * BT_TIPO // tipo
+         + sizeof(int); // duration
 }
 
 // Cria uma nova instância de TTreino
-// Cria uma nova instância de TTreino
-TTreino TTreino_New(unsigned long pk, const char* nome, const char* tipo, long unsigned cpk, long unsigned epk) {
+TTreino TTreino_New(unsigned long pk, const char* nome, const char* tipo, long unsigned cpk, long unsigned epk, int duration) {
     TTreino treino = {0};
-    // Verifica se os tamanhos das strings são válidos
     if (strlen(nome) >= BT_NOME || strlen(tipo) >= BT_TIPO) {
         perror("TTreino buffer overflow");
         return treino;
@@ -30,9 +31,12 @@ TTreino TTreino_New(unsigned long pk, const char* nome, const char* tipo, long u
     strncpy_s(treino.tipo, sizeof(treino.tipo), tipo, _TRUNCATE);
     treino.cpk = cpk;
     treino.epk = epk;
+    treino.duration = duration;
 
     return treino;
 }
+
+
 // Função para buscar um treino pelo ID na tabela
 TTreino TTreino_GetByPK(FILE *file, const char* table_name, long unsigned pk) {
     TTreino treino = {0};
@@ -57,7 +61,7 @@ TTreino TTreino_GetByPK(FILE *file, const char* table_name, long unsigned pk) {
         long unsigned middle = (start + end) / 2;
         size_t seek = start_offset + (middle * size);
         fseek(file, seek, SEEK_SET);
-        treino = TTreino_Read(file);
+        treino = TTreino_ReadReg(file);
         if (treino.pk == pk) {
             return treino;
         }
@@ -90,7 +94,7 @@ TTreino TTreino_GetByCpkEpk(FILE *file, const char* table_name, long unsigned cp
     // Percorre todos os registros na tabela
     for (long unsigned offset = start_offset; offset < end_offset; offset += size) {
         fseek(file, offset, SEEK_SET);
-        TTreino current_treino = TTreino_Read(file);
+        TTreino current_treino = TTreino_ReadReg(file);
         
         // Verifica se o registro corresponde à chave composta
         if (current_treino.cpk == cpk && current_treino.epk == epk) {
@@ -102,8 +106,107 @@ TTreino TTreino_GetByCpkEpk(FILE *file, const char* table_name, long unsigned cp
     return treino;
 }
 
-// Função para ler um treino de um arquivo
-TTreino TTreino_Read(FILE *file) {
+// Função para buscar um treino pelo cpk (id) do cliente e retornar uma lista de treinos
+node_t *TTreino_GetByCpk(FILE *file, const char* table_name, long unsigned cpk) {
+    TTreino treino = {0}; // Inicialize com valores padrão
+    DatabaseHeader header;
+    
+    fseek(file, 0, SEEK_SET);
+    if (fread(&header, sizeof(DatabaseHeader), 1, file) != 1) {
+        perror("Erro ao ler o cabeçalho do arquivo");
+        return NULL;
+    }
+    
+    int index = dbFindTable(file, table_name);
+    if (index == -1) {
+        perror("Tabela não encontrada");
+        return NULL;
+    }
+    
+    long unsigned start_offset = header.tables[index].start_offset;
+    long unsigned end_offset = header.tables[index].end_offset;
+    size_t size = header.tables[index].size;
+    
+    node_t *list = list_node_init(); // Lista para armazenar os registros encontrados
+    
+    // Percorre todos os registros na tabela
+    for (long unsigned offset = start_offset; offset < end_offset; offset += size) {
+        fseek(file, offset, SEEK_SET);
+        TTreino current_treino; 
+        if (fread(&current_treino, sizeof(TTreino), 1, file) != 1) {
+            perror("Erro ao ler o registro");
+            // Libere a memória da lista antes de retornar
+            list_free(list);
+            return NULL;
+        }
+        
+        // Verifica se o registro corresponde à chave composta
+        if (current_treino.cpk == cpk) {
+            // Cria um novo nó para o registro encontrado
+            node_t *node = list_node_init();
+            if (node == NULL) {
+                perror("Erro ao alocar memória para o nó");
+                // Libere a memória da lista antes de retornar
+                list_free(list);
+                return NULL;
+            }
+            node->data = malloc(sizeof(TTreino));
+            if (node->data == NULL) {
+                perror("Erro ao alocar memória para os dados do nó");
+                // Libere a memória do nó e da lista antes de retornar
+                list_free_node(node);
+                list_free(list);
+                return NULL;
+            }
+            memcpy(node->data, &current_treino, sizeof(TTreino));
+            // Adiciona o nó à lista
+            printf("Treino encontrado: %s\n", current_treino.nome);
+            list_add_end(list, node);
+        }
+    }
+    
+    return list;
+}
+
+// Função para buscar um treino pelo cpk (id) do cliente
+int TTreino_ReadByCpk(FILE *file, const char* table_name, long unsigned cpk) {
+    TTreino treino = {0}; // Inicialize com valores padrão
+    DatabaseHeader header;
+    
+    fseek(file, 0, SEEK_SET);
+    if (fread(&header, sizeof(DatabaseHeader), 1, file) != 1) {
+        perror("Erro ao ler o cabeçalho do arquivo");
+        return ERR_HEADER_READ_FAILED;
+    }
+    
+    int index = dbFindTable(file, table_name);
+    if (index == -1) {
+        perror("Tabela não encontrada");
+        return ERR_TABLE_NOT_FOUND;
+    }
+    
+    long unsigned start_offset = header.tables[index].start_offset;
+    long unsigned end_offset = header.tables[index].end_offset;
+    size_t size = header.tables[index].size;
+    
+    // Percorre todos os registros na tabela
+    for (long unsigned offset = start_offset; offset < end_offset; offset += size) {
+        fseek(file, offset, SEEK_SET);
+        TTreino current_treino; 
+        if (fread(&current_treino, sizeof(TTreino), 1, file) != 1) {
+            perror("Erro ao ler o registro");
+            return ERR_REGISTER_READ_FAILED;
+        }        
+        // Verifica se o registro corresponde à chave composta
+        if (current_treino.cpk == cpk) {
+            TTreino_Print(&current_treino);
+        }
+    }
+    return 0;
+}
+
+// Função para ler um treino de um arquivo, tá com erro
+TTreino TTreino_ReadReg(FILE *file) {
     TTreino treino = {0};  // Inicializa a estrutura com zeros
     if (file == NULL) {
         perror("Arquivo não pode ser NULL");
@@ -113,6 +216,8 @@ TTreino TTreino_Read(FILE *file) {
         perror("Erro na leitura do pk");
         return treino;
     }
+    fread(treino.nome, sizeof(char), sizeof(treino.nome), file);
+    fread(treino.tipo, sizeof(char), sizeof(treino.tipo), file);
     if (fread(&treino.cpk, sizeof(long unsigned), 1, file) != 1) {
         perror("Erro na leitura do Cliente cpk");
         return treino;
@@ -121,10 +226,13 @@ TTreino TTreino_Read(FILE *file) {
         perror("Erro na leitura do Exercicio epk");
         return treino;
     }
-    fread(treino.nome, sizeof(char), sizeof(treino.nome), file);
-    fread(treino.tipo, sizeof(char), sizeof(treino.tipo), file);
+    if (fread(&treino.duration, sizeof(int), 1, file) != 1) {
+        perror("Erro na leitura do duration");
+        return treino;
+    }
     return treino;
 }
+
 
 // Função para imprimir os dados de um treino
 void TTreino_Print(TTreino *treino) {
@@ -138,7 +246,9 @@ void TTreino_Print(TTreino *treino) {
     printf("| Exercicio epk: %lu\n", treino->epk);
     printf("| Nome: %s\n", treino->nome);
     printf("| Tipo: %s\n", treino->tipo);
+    printf("| Duracao: %d segundos\n", treino->duration);
 }
+
 
 // Função de callback para imprimir MyRecord
 void TTreino_PrintGeneric(void* member) {
@@ -150,6 +260,7 @@ void TTreino_PrintGeneric(void* member) {
     printf("| Exercicio epk: %lu\n", treino->epk);
     printf("| Nome: %s\n", treino->nome);
     printf("| Tipo: %s\n", treino->tipo);
+    printf("| Duracao: %d segundos\n", treino->duration);
 }
 
 
@@ -310,7 +421,7 @@ int TTreinoIntercalacaoBasicaCpk(FILE *file, DatabaseHeader *header,int num_part
                 v[i].treino = treino;
             } else {
                 // Arquivo estava vazio
-                v[i].treino = TTreino_New(0, "", "", INT_MAX, 0);
+                v[i].treino = TTreino_New(0, "", "", INT_MAX, 0, 0);
             }
         } else {
             fim = 1; // Marcar o fim se algum arquivo não puder ser aberto
@@ -342,7 +453,7 @@ int TTreinoIntercalacaoBasicaCpk(FILE *file, DatabaseHeader *header,int num_part
             if (fread(&treino, sizeof(TTreino), 1, v[pos_menor].aux) == 1) {
                 v[pos_menor].treino = treino;
             } else {
-                v[pos_menor].treino = TTreino_New(0, "", "", INT_MAX, 0);
+                v[pos_menor].treino = TTreino_New(0, "", "", INT_MAX, 0, 0);
             }
         }
     }

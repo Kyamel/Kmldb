@@ -24,6 +24,27 @@ void cClearInputBuffer() {
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
+// Função auxiliar para avaliar uma expressão aritmética simples (suporta apenas um operador)
+int evaluateArithmeticExpression(const char *expr) {
+    char *endPtr;
+    long num1 = strtol(expr, &endPtr, 10);
+
+    while (isspace(*endPtr)) endPtr++; // Ignora espaços em branco
+
+    if (*endPtr == '*') {
+        return (int)(num1 * strtol(endPtr + 1, NULL, 10));
+    } else if (*endPtr == '/') {
+        return (int)(num1 / strtol(endPtr + 1, NULL, 10));
+    } else if (*endPtr == '+') {
+        return (int)(num1 + strtol(endPtr + 1, NULL, 10));
+    } else if (*endPtr == '-') {
+        return (int)(num1 - strtol(endPtr + 1, NULL, 10));
+    }
+
+    // Se não houver operador, retorna o número original
+    return (int)num1;
+}
+
 // Função para converter string do tipo char para WCHAR
 wchar_t *charToWChar(const char *text) {
     size_t size = strlen(text) + 1;

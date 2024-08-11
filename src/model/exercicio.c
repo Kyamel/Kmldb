@@ -52,7 +52,7 @@ TExerc TExerc_GetByPK(FILE *file, const char* table_name, long unsigned pk) {
         long unsigned middle = (start + end) / 2;
         size_t seek = start_offset + (middle * size);
         fseek(file, seek, SEEK_SET);
-        exec = TExerc_Read(file);
+        exec = TExerc_ReadReg(file);
         if (exec.pk == pk) {
             return exec;
         }
@@ -63,7 +63,7 @@ TExerc TExerc_GetByPK(FILE *file, const char* table_name, long unsigned pk) {
 }
 
 // Função para ler uma execução de um arquivo
-TExerc TExerc_Read(FILE *file) {
+TExerc TExerc_ReadReg(FILE *file) {
     TExerc exec = {0};  // Inicializa a estrutura com zeros
     if (file == NULL) {
         perror("Arquivo não pode ser NULL");

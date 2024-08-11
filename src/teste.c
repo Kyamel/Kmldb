@@ -76,14 +76,14 @@ int run_test() {
     cPrintExerc(&exercicio);
 
     // Cadastro de treinos
-    cAddTreinoNotC(ftreino, TREINOS, 0, "Morning Routine", "Strength", &exercicio, &cliente);  // Cliente 1, Exercício 1
-    cAddTreinoNotC(ftreino, TREINOS, 0, "Evening Routine", "Strength", &exercicio2, &cliente2);  // Cliente 2, Exercício 2
+    cAddTreinoNotC(ftreino, TREINOS, 0, "Morning Routine", "Strength", &exercicio, &cliente, 20*30);  // Cliente 1, Exercício 1
+    cAddTreinoNotC(ftreino, TREINOS, 0, "Evening Routine", "Strength", &exercicio2, &cliente2, 20*30);  // Cliente 2, Exercício 2
 
     // Buscar e imprimir treinos
     printf("\nTreinos:\n");
-    TTreino treino = cSearchTreinoComp(ftreino, TREINOS, 1, 1);  // Exercício 1, Cliente 1
+    TTreino treino = cSearchTreinoByCpkEpk(ftreino, TREINOS, 1, 1);  // Exercício 1, Cliente 1
     cPrintTreino(&treino);
-    treino = cSearchTreinoComp(ftreino, TREINOS, 2, 2);  // Exercício 2, Cliente 2
+    treino = cSearchTreinoByCpkEpk(ftreino, TREINOS, 2, 2);  // Exercício 2, Cliente 2
     cPrintTreino(&treino);
 
     // Fechar os arquivos
@@ -104,7 +104,7 @@ int criar_base_ordenada(int tam, FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *f
         cliente.pk = i;
         TExerc exercicio;
         exercicio.pk = i;
-        cAddTreinoNotC(ftreino, TREINOS, i, "Morning Routine", "Strength", &exercicio, &cliente);
+        cAddTreinoNotC(ftreino, TREINOS, i, "Morning Routine", "Strength", &exercicio, &cliente, 20*30);
 
     }
     return i;
@@ -124,7 +124,7 @@ int criar_base_desordenada(int tam, int qtdTrocas, FILE *fcli, FILE *ffunc, FILE
         cliente.pk = vet[i];
         TExerc exercicio;
         exercicio.pk = vet[i];
-        cAddTreinoNotC(ftreino, TREINOS, vet[i], "Morning Routine", "Strength", &exercicio, &cliente);
+        cAddTreinoNotC(ftreino, TREINOS, vet[i], "Morning Routine", "Strength", &exercicio, &cliente, 20*60);
 
     }
     return i;
@@ -148,7 +148,7 @@ int teste_criar_base_desordenada() {
 
     // Buscar e imprimir TREINOS
     TTreino treino;
-    cdbReadAll(ftreino, TREINOS, &treino, sizeof(TTreino), TFunc_PrintGeneric);
+    cdbReadAll(ftreino, TREINOS, &treino, sizeof(TTreino), TTreino_PrintGeneric);
     printf("Quantidade de treinos: %d\n", count);
 
     printf("Desalocando recursos...\n");

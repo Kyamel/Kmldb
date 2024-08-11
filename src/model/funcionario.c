@@ -85,7 +85,7 @@ TFunc TFunc_GetByPK(FILE *file, const char* table_name, long unsigned pk) {
         long unsigned middle = (start + end) / 2;
         size_t seek = start_offset + (middle * size);
         fseek(file, seek, SEEK_SET);
-        func = TFunc_Read(file);
+        func = TFunc_ReadReg(file);
         if (func.pk == pk) {
             return func;
         }
@@ -96,7 +96,7 @@ TFunc TFunc_GetByPK(FILE *file, const char* table_name, long unsigned pk) {
 }
 
 // Função para ler um funcionário de um fileuivo
-TFunc TFunc_Read(FILE *file) {
+TFunc TFunc_ReadReg(FILE *file) {
     TFunc func = {0};  // Inicializa a estrutura com zeros
     if (file == NULL) {
         perror("fileuivo não pode ser NULL");

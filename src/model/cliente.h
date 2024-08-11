@@ -26,7 +26,7 @@ TCliente TCliente_New(unsigned long pk, const char* nome, const char* cpf, const
 
 TCliente TCliente_GetByPK(FILE *file, const char* table_name, long unsigned pk);
 
-TCliente TCliente_Read(FILE *file);
+TCliente TCliente_ReadReg(FILE *file);
 
 void TCliente_Print(TCliente *cliente);
 

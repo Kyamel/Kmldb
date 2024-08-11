@@ -29,7 +29,7 @@ TFunc TFunc_GetByPK(FILE *file, const char* table_name, long unsigned pk);
 
 void TFunc_Print(TFunc *func);
 
-TFunc TFunc_Read(FILE *file);
+TFunc TFunc_ReadReg(FILE *file);
 
 void TFunc_PrintGeneric(void* member);
 

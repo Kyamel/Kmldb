@@ -127,12 +127,12 @@ void dbPrintHeader(DatabaseHeader* header) {
     }
     printf("| Table count: %d\n", header->table_count);
     for (int i = 0; i < header->table_count; ++i) {
-        printf("> TABLE %d:\n", i);
-        printf("| Name: %s\n", header->tables[i].table_name);
-        printf("| Next PK: %lu\n", header->tables[i].next_pk);
-        printf("| Start offset: %ld\n", header->tables[i].start_offset);
-        printf("| End offset: %ld\n", header->tables[i].end_offset);
-        printf("| Size: %zu\n", header->tables[i].size);
+        printf("| > TABLE %d:\n", i);
+        printf("  | Name: %s\n", header->tables[i].table_name);
+        printf("  | Next PK: %lu\n", header->tables[i].next_pk);
+        printf("  | Start offset: %ld\n", header->tables[i].start_offset);
+        printf("  | End offset: %ld\n", header->tables[i].end_offset);
+        printf("  | Size: %zu\n", header->tables[i].size);
     }
 }
 

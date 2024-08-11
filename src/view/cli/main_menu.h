@@ -18,7 +18,7 @@ void buscarExercicio(FILE *file);
 
 void cadastrarTreino(FILE *file, FILE *fexerc, FILE *fcli);
 
-void buscarTreino(FILE *file);
+void buscarTreino(FILE *ftreino, FILE *fexerc);
 
 int cli_main_menu();
 

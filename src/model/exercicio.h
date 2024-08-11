@@ -21,7 +21,7 @@ TExerc TExerc_New(unsigned long pk, const char* nome, const char* tipo, int dura
 
 TExerc TExerc_GetByPK(FILE *file, const char* table_name, long unsigned pk);
 
-TExerc TExerc_Read(FILE *file);
+TExerc TExerc_ReadReg(FILE *file);
 
 void TExerc_Print(TExerc *exec);
 

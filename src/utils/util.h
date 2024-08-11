@@ -1,9 +1,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-
-
 void cClearInputBuffer();
+
+int evaluateArithmeticExpression(const char *expr);
 
 wchar_t *charToWChar(const char *text);
 

@@ -80,7 +80,7 @@ TCliente TCliente_GetByPK(FILE *file, const char* table_name, long unsigned pk) 
         long unsigned middle = (start + end) / 2;
         size_t seek = start_offset + (middle * size);
         fseek(file, seek, SEEK_SET);
-        cliente = TCliente_Read(file);
+        cliente = TCliente_ReadReg(file);
         if (cliente.pk == pk) {
             return cliente;
         }
@@ -91,7 +91,7 @@ TCliente TCliente_GetByPK(FILE *file, const char* table_name, long unsigned pk) 
 }
 
 // Função para ler um cliente de um arquivo
-TCliente TCliente_Read(FILE *file) {
+TCliente TCliente_ReadReg(FILE *file) {
     TCliente cliente = {0};  // Inicializa a estrutura com zeros
     if (file == NULL) {
         perror("Arquivo não pode ser NULL");

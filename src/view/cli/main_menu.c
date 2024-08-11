@@ -118,9 +118,13 @@ void cadastrarExercicio(FILE *file) {
     fgets(tipo, sizeof(tipo), stdin);
     tipo[strcspn(tipo, "\n")] = 0;
 
-    printf("Duração (segundos): ");
-    scanf_s("%d", &duration);
-    cClearInputBuffer();
+    char durationStr[20];
+    printf("Duracao (segundos): ");
+    fgets(durationStr, sizeof(durationStr), stdin);
+    durationStr[strcspn(durationStr, "\n")] = 0;
+
+    // Avalia a expressão ou converte o número diretamente
+    duration = evaluateArithmeticExpression(durationStr);
 
     cAddExerc(file, EXERCICIOS, 0, nome, tipo, duration);
     printf("Exercício cadastrado com sucesso!\n");
@@ -144,6 +148,7 @@ void buscarExercicio(FILE *file) {
 void cadastrarTreino(FILE *ftreino, FILE *fexerc, FILE *fcli) {
     char nome[BT_NOME], tipo[BT_TIPO];
     unsigned long cpk, epk;
+
     printf("Cadastro de Treino:\n");
 
     printf("PK do Cliente: ");
@@ -176,24 +181,30 @@ void cadastrarTreino(FILE *ftreino, FILE *fexerc, FILE *fcli) {
     fgets(tipo, sizeof(tipo), stdin);
     tipo[strcspn(tipo, "\n")] = 0;
 
-    cAddTreinoNotC(ftreino, TREINOS, 0, nome, tipo, &exercicio, &cliente);
+    char durationStr[20];
+    int duration;
+
+    printf("Duracao do Exercicio (segundos): ");
+    fgets(durationStr, sizeof(durationStr), stdin);
+    durationStr[strcspn(durationStr, "\n")] = 0;
+
+    // Avalia a expressão ou converte o número diretamente
+    duration = evaluateArithmeticExpression(durationStr);
+
+    cAddTreinoNotC(ftreino, TREINOS, 0, nome, tipo, &exercicio, &cliente, duration);
     printf("Treino cadastrado com sucesso!\n");
 }
 
-void buscarTreino(FILE *file) {
+void buscarTreino(FILE *ftreino, FILE *fexerc) {
     printf("Buscar Treino:\n");
-    unsigned long epk, cpk;
-    printf("Exercicio PK: ");
-    scanf_s("%lu", &epk);
-    cClearInputBuffer();
+    unsigned long cpk;
+   
     printf("Cliente PK: ");
     scanf_s("%lu", &cpk);
     cClearInputBuffer();
 
-    TTreino treino = cSearchTreinoComp(file, TREINOS, epk, cpk);
-    if (treino.pk != 0) {
-        cPrintTreino(&treino);
-    } else {
+    int ok = cSearchPrintTreinoFullByCpk(ftreino, fexerc, cpk);
+    if (ok < 0) {
         printf("Treino não encontrado.\n");
     }
 }
@@ -203,21 +214,21 @@ int cli_main_menu() {
     FILE *fcli;
     FILE *ffunc;
     FILE *ftreino;
-    FILE *fexer;
+    FILE *fexerc;
 
     if (1){
         // se true, seleciona a base de dados ordenada
         fcli = cdbInit(DB_FOLDER"/"CLIENTES"COrd.dat");
         ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS"COrd.dat");
         ftreino = cdbInit(DB_FOLDER"/"TREINOS"COrd.dat");
-        fexer = cdbInit(DB_FOLDER"/"EXERCICIOS"COrd.dat");
+        fexerc = cdbInit(DB_FOLDER"/"EXERCICIOS"COrd.dat");
     } else {
         fcli = cdbInit(DB_FOLDER"/"CLIENTES".dat");
         ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
         ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
-        fexer = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
+        fexerc = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
     }
-    cInitTables(fcli, ffunc, ftreino, fexer);
+    cInitTables(fcli, ffunc, ftreino, fexerc);
 
     int opcao;
 
@@ -250,19 +261,19 @@ int cli_main_menu() {
                 buscarFuncionario(ffunc);
                 break;
             case 5:
-                cadastrarExercicio(fexer);
+                cadastrarExercicio(fexerc);
                 break;
             case 6:
-                buscarExercicio(fexer);
+                buscarExercicio(fexerc);
                 break;
             case 7:
-                cadastrarTreino(ftreino, fexer, fcli);
+                cadastrarTreino(ftreino, fexerc, fcli);
                 break;
             case 8:
-                buscarTreino(ftreino);
+                buscarTreino(ftreino, fexerc);
                 break;
             case 9:
-                int ok = cCloseDatabase(fcli, ffunc, ftreino, fexer);
+                int ok = cCloseDatabase(fcli, ffunc, ftreino, fexerc);
                 return ok;
             default:
                 printf("Opção inválida. Tente novamente.\n");
