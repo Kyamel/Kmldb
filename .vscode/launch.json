@@ -5,7 +5,7 @@
       "name": "Run C Program",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/programa.exe", // Use "${workspaceFolder}/build/programa" no Linux ou MacOS
+      "program": "${workspaceFolder}/build/Bin/Debug/programa.exe", // Use "${workspaceFolder}/build/programa" no Linux ou MacOS
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
