@@ -255,7 +255,6 @@ int TClienteClassificacaoInterna(FILE *file, const char* table_name) {
 
     int start_offset = header.tables[index].start_offset;
     int end_offset = header.tables[index].end_offset;
-    int nCliente = (end_offset - start_offset) / sizeof(TCliente);
 
     fseek(file, start_offset, SEEK_SET);
 
