@@ -22,7 +22,13 @@ Este projeto é uma implementação de um banco de dados para a disciplina de Al
 
 Para construir o projeto, siga os passos abaixo:
 
-1. **Crie um diretório para a construção:**
+1. **Clone o repositorio**
+    ```bash
+    git clone https://github.com/Kyamel/Kmldb.git
+    cd Kmldb
+
+
+2. **Crie um diretório para o build:**
 
    ```bash
     mkdir build
