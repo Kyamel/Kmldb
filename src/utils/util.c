@@ -18,6 +18,12 @@
 #include <string.h>
 #include <math.h>
 
+// Função para mover o cursor do terminal para uma posição específica
+void moverCursorParaLinha(int linha) {
+    printf("\033[%d;0H", linha); // Move o cursor para a linha especificada, coluna 0
+}
+
+
 void atualizarBarraProgresso(int progresso, int total, double tempoGasto, const char *mensagem) {
     int bar_width = 50; // Largura da barra de progresso
     int pos = progresso * bar_width / total;

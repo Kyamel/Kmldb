@@ -5,7 +5,7 @@ int run_test();
 
 int teste_criar_base_desordenada(int tam);
 
-int teste_criar_base_drdenada(int tam);
+int teste_criar_base_ordenada(int tam);
 
 int particion_test();
 

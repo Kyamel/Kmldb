@@ -156,7 +156,7 @@ int dbAdd(FILE* file, const char* table_name, void* member, size_t member_size, 
     int index = dbFindTable(file, table_name);
     if (index == -1) {
         perror("Tabela não encontrada");
-        return ERR_REGISTER_NOT_FOUND;
+        return ERR_TABLE_NOT_FOUND;
     }
     if (header.tables[index].size != member_size) {
         perror("Tamanho do membro incompatível com a tabela");

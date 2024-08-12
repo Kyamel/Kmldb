@@ -93,24 +93,186 @@ int run_test() {
     return 0;
 }
 
+void updateHeader(FILE *file, DatabaseHeader *header) {
+    fseek(file, 0, SEEK_SET);
+    fwrite(header, sizeof(DatabaseHeader), 1, file);
+    fflush(file);
+}
+
+// Função para escrever dados desordenados e atualizar a barra de progresso
+void escreveClienteDesordenado(FILE *fcli, int *vet, int tam, int progress_start, int progress_end, clock_t start_time) {
+    printf("\nGerando base de clientes...\n");
+    DatabaseHeader header;
+    fseek(fcli, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, fcli);
+
+    TCliente cliente;
+    long unsigned offset = sizeof(DatabaseHeader);
+
+    for (int i = 0; i < tam; i++) {
+        cliente = TCliente_New(vet[i], "Alice", "12345678901", "alice@example.com", "(99)99999-9999", "16-04-1980");
+        fseek(fcli, offset, SEEK_SET);
+        fwrite(&cliente, sizeof(TCliente), 1, fcli);
+        offset += sizeof(TCliente);
+
+        // Atualiza a barra de progresso
+        clock_t end_time = clock();
+        double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+        int progress = progress_start + (i + 1) * (progress_end - progress_start) / tam;
+        atualizarBarraProgresso(progress, 100, time_spent, "Cliente:");
+    }
+
+    // Atualiza o header
+    header.tables[0].end_offset = offset;
+    header.tables[0].next_pk = tam + 1;
+    updateHeader(fcli, &header);
+}
+
+// Funções semelhantes para Func, Exerc e Treino
+void escreveFuncDesordenado(FILE *ffunc, int *vet, int tam, int progress_start, int progress_end, clock_t start_time) {
+    printf("\nGerando base de funcionarios...\n");
+    DatabaseHeader header;
+    fseek(ffunc, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, ffunc);
+
+    TFunc func;
+    long unsigned offset = sizeof(DatabaseHeader);
+
+    for (int i = 0; i < tam; i++) {
+        func = TFunc_New(vet[i], "Joao", "12345678901", "joao@example.com", "(99)99999-9999", "31-12-2000", 3500.00);
+        fseek(ffunc, offset, SEEK_SET);
+        fwrite(&func, sizeof(TFunc), 1, ffunc);
+        offset += sizeof(TFunc);
+
+        // Atualiza a barra de progresso
+        clock_t end_time = clock();
+        double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+        int progress = progress_start + (i + 1) * (progress_end - progress_start) / tam;
+        atualizarBarraProgresso(progress, 100, time_spent, "Funcionario:");
+    }
+
+    // Atualiza o header
+    header.tables[0].end_offset = offset;
+    header.tables[0].next_pk = tam + 1;
+    updateHeader(ffunc, &header);
+}
+
+void escreveExercDesordenado(FILE *fexer, int *vet, int tam, int progress_start, int progress_end, clock_t start_time) {
+    printf("\nGerando base de exercicios...\n");
+    DatabaseHeader header;
+    fseek(fexer, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, fexer);
+
+    TExerc exerc;
+    long unsigned offset = sizeof(DatabaseHeader);
+
+    for (int i = 0; i < tam; i++) {
+        exerc = TExerc_New(vet[i], "Agachamento", "Strenght", 60*15);
+        fseek(fexer, offset, SEEK_SET);
+        fwrite(&exerc, sizeof(TExerc), 1, fexer);
+        offset += sizeof(TExerc);
+
+        // Atualiza a barra de progresso
+        clock_t end_time = clock();
+        double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+        int progress = progress_start + (i + 1) * (progress_end - progress_start) / tam;
+        atualizarBarraProgresso(progress, 100, time_spent, "Exercicio:");
+    }
+
+    // Atualiza o header
+    header.tables[0].end_offset = offset;
+    header.tables[0].next_pk = tam + 1;
+    updateHeader(fexer, &header);
+}
+
+void escreveTreinoDesordenado(FILE *ftreino, int *vet, int tam, int progress_start, int progress_end, clock_t start_time) {
+    printf("\nGerando base de treinos...\n");
+
+    DatabaseHeader header;
+    fseek(ftreino, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, ftreino);
+
+    TTreino treino;
+    long unsigned offset = sizeof(DatabaseHeader);
+
+    for (int i = 0; i < tam; i++) {
+        treino = TTreino_New(vet[i], "Alice", "12345678901", vet[i], vet[i], 60*100);
+        fseek(ftreino, offset, SEEK_SET);
+        fwrite(&treino, sizeof(TTreino), 1, ftreino);
+        offset += sizeof(TTreino);
+
+        // Atualiza a barra de progresso
+        clock_t end_time = clock();
+        double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+        int progress = progress_start + (i + 1) * (progress_end - progress_start) / tam;
+        atualizarBarraProgresso(progress, 100, time_spent, "Treino:");
+    }
+
+    // Atualiza o header
+    header.tables[0].end_offset = offset;
+    header.tables[0].next_pk = tam + 1;
+    updateHeader(ftreino, &header);
+}
+
+// Função principal para criar a base desordenada
+int criar_base_desordenada(int tam, int qtdTrocas, FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer) {
+    int vet[tam];
+    for (int i = 0; i < tam; i++) vet[i] = i + 1;
+    embaralha(vet, tam, qtdTrocas);
+
+    // Tempo total para todas as operações
+    clock_t start_time_global = clock();
+
+    // Escreve em cada tabela e atualiza a barra de progresso global
+    escreveClienteDesordenado(fcli, vet, tam, 0, 25, clock());
+    escreveFuncDesordenado(ffunc, vet, tam, 25, 50, clock());
+    escreveExercDesordenado(fexer, vet, tam, 50, 75, clock());
+    escreveTreinoDesordenado(ftreino, vet, tam, 75, 100, clock());
+
+    printf("\n"); // Adiciona uma nova linha ao final para evitar sobrescrita
+
+    // Calcula e exibe o tempo total gasto
+    clock_t end_time_global = clock();
+    double total_time_spent = (double)(end_time_global - start_time_global) / CLOCKS_PER_SEC;
+    printf("Tempo total gasto: %.2fs\n", total_time_spent);
+
+    return tam;
+}
+
 int criar_base_ordenada(int tam, FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer) {
 
     int i = -1;
+    clock_t start_time, end_time;
+    double time_spent;
+
+    // Inicia a contagem de tempo
+    start_time = clock();
+
     for (i = 1; i <= tam; i++){
-        cAddCliente(fcli, CLIENTES, i, "Alice", "12345678901", "alice@example.com", "1234567890", "2024-12-31");
-        cAddFunc(ffunc, FUNCIONARIOS, i, "Charlie", "11223344556", "charlie@example.com", "1112233445", "1985-07-30", 3500.50);
-        cAddExerc(fexer, EXERCICIOS, i, "Push-up", "Strength", 30*60);
+        cAddCliente(fcli, CLIENTES, 0, "Alice", "12345678901", "alice@example.com", "1234567890", "2024-12-31");
+        cAddFunc(ffunc, FUNCIONARIOS, 0, "Charlie", "11223344556", "charlie@example.com", "1112233445", "1985-07-30", 3500.50);
+        cAddExerc(fexer, EXERCICIOS, 0, "Push-up", "Strength", 30*60);
         TCliente cliente;
         cliente.pk = i;
         TExerc exercicio;
         exercicio.pk = i;
-        cAddTreinoNotC(ftreino, i, "Morning Routine", "Strength", &exercicio, &cliente, 20*30);
+        cAddTreinoNotC(ftreino, 0, "Morning Routine", "Strength", &exercicio, &cliente, 20*30);
+
+        // Calcula o tempo gasto até agora
+        end_time = clock();
+        time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+
+        // Calcula a porcentagem de progresso
+        int progress = (i + 1) * 100 / tam;
+
+        // Atualiza a barra de progresso
+        atualizarBarraProgresso(progress, 100, time_spent, "Progresso:");
 
     }
     return i;
 }
 
-int criar_base_desordenada(int tam, int qtdTrocas, FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer) {
+int criar_base_desordenada_2(int tam, int qtdTrocas, FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer) {
     int vet[tam];
     for (int i = 0; i < tam; i++) vet[i] = i + 1;
     embaralha(vet, tam, qtdTrocas);
@@ -163,19 +325,42 @@ int teste_criar_base_desordenada(int tam) {
     if (count < 0){
         perror("Erro ao criar base de dados desordenada");
     };
-
-    // Buscar e imprimir TREINOS
-    TTreino treino;
-    cdbReadAll(ftreino, TREINOS, &treino, sizeof(TTreino), TTreino_PrintGeneric);
-    printf("Quantidade de treinos: %d\n", count);
-
+    int opcao = 0;
+    printf("Deseja imprimir alguma base?\n| > (0 - Não, 1 - funcionários, 2 - clientes, 3 - exercícios, 4 - treinos, 5 - todos)\n");
+    scanf("%d", &opcao);
+    switch (opcao) {
+        case 1:
+            TFunc func;
+            cdbReadAll(ffunc, FUNCIONARIOS, &func, sizeof(TFunc), TFunc_PrintGeneric);
+            break;
+        case 2:
+            TCliente cliente;
+            cdbReadAll(fcli, CLIENTES, &cliente, sizeof(TCliente), TCliente_PrintGeneric);                  
+            break;
+        case 3:
+            TExerc exercicio;
+            cdbReadAll(fexer, EXERCICIOS, &exercicio, sizeof(TExerc), TExerc_PrintGeneric);
+            break;
+        case 4:
+            TTreino treino;
+            cdbReadAll(ftreino, TREINOS, &treino, sizeof(TTreino), TTreino_PrintGeneric);
+            break;
+        case 5:
+            cdbReadAll(ffunc, FUNCIONARIOS, &func, sizeof(TFunc), TFunc_PrintGeneric);
+            cdbReadAll(fcli, CLIENTES, &cliente, sizeof(TCliente), TCliente_PrintGeneric);
+            cdbReadAll(fexer, EXERCICIOS, &exercicio, sizeof(TExerc), TExerc_PrintGeneric);
+            cdbReadAll(ftreino, TREINOS, &treino, sizeof(TTreino), TTreino_PrintGeneric);
+            break;
+        default:
+            break;
+    }
     printf("Desalocando recursos...\n");
     count = cCloseDatabase(fcli, ffunc, ftreino, fexer);
 
     return count;
 }
 
-int teste_criar_base_drdenada(int tam) {
+int teste_criar_base_ordenada(int tam) {
     // Abrir os arquivos de banco de dados
     FILE *fcli = cdbInit(DB_FOLDER"/"CLIENTES".dat");
     FILE *ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
@@ -185,7 +370,7 @@ int teste_criar_base_drdenada(int tam) {
     // Inicializar tabelas
     cInitTables(fcli, ffunc, ftreino, fexer);
 
-    printf("Criando base de dados desordenada...\n");
+    printf("Criando base de dados ordenada...\n");
     int count = criar_base_ordenada(tam, fcli, ffunc, ftreino, fexer);
     if (count < 0){
         perror("Erro ao criar base de dados ordenada");

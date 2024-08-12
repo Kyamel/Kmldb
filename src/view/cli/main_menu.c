@@ -228,7 +228,7 @@ void ordenarESubstituirArquivos(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fe
     particions = TFuncClassificacaoInterna(ffunc, FUNCIONARIOS);
     fseek(ffunc, 0, SEEK_SET);
     fread(&header, sizeof(DatabaseHeader), 1, ffunc);
-    FILE *ffuncOrd = fopen(DB_FOLDER"/"FUNCIONARIOS"COrd.dat", "w+b");
+    FILE *ffuncOrd = fopen(DB_FOLDER"/"FUNCIONARIOS".dat", "w+b");
     TFuncIntercalacaoBasica(ffuncOrd, &header, particions);
     fclose(ffuncOrd);
     fclose(ffunc);
@@ -243,7 +243,7 @@ void ordenarESubstituirArquivos(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fe
     particions = TClienteClassificacaoInterna(fcli, CLIENTES);
     fseek(fcli, 0, SEEK_SET);
     fread(&header, sizeof(DatabaseHeader), 1, fcli);
-    FILE *fcliOrd = fopen(DB_FOLDER"/"CLIENTES"COrd.dat", "w+b");
+    FILE *fcliOrd = fopen(DB_FOLDER"/"CLIENTES".dat", "w+b");
     TClienteIntercalacaoBasica(fcliOrd, &header, particions);
     fclose(fcliOrd);
     fclose(fcli);
@@ -258,7 +258,7 @@ void ordenarESubstituirArquivos(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fe
     particions = TExercClassificacaoInterna(fexerc, EXERCICIOS);
     fseek(fexerc, 0, SEEK_SET);
     fread(&header, sizeof(DatabaseHeader), 1, fexerc);
-    FILE *fexercOrd = fopen(DB_FOLDER"/"EXERCICIOS"COrd.dat", "w+b");
+    FILE *fexercOrd = fopen(DB_FOLDER"/"EXERCICIOS".dat", "w+b");
     TExercIntercalacaoBasica(fexercOrd, &header, particions);
     fclose(fexercOrd);
     fclose(fexerc);
@@ -273,7 +273,7 @@ void ordenarESubstituirArquivos(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fe
     particions = TTreinoClassificacaoInterna(ftreino, TREINOS);
     fseek(ftreino, 0, SEEK_SET);
     fread(&header, sizeof(DatabaseHeader), 1, ftreino);
-    FILE *ftreinoOrd = fopen(DB_FOLDER"/"TREINOS"COrd.dat", "w+b");
+    FILE *ftreinoOrd = fopen(DB_FOLDER"/"TREINOS".dat", "w+b");
     TTreinoIntercalacaoBasica(ftreinoOrd, &header, particions);
     fclose(ftreinoOrd);
     fclose(ftreino);
@@ -295,10 +295,10 @@ void trocarParaArquivosOrdenados(FILE **fcli, FILE **ffunc, FILE **ftreino, FILE
     fclose(*fexerc);
 
     // Reabrindo arquivos ordenados
-    *fcli = cdbInit(DB_FOLDER"/"CLIENTES"COrd.dat");
-    *ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS"COrd.dat");
-    *ftreino = cdbInit(DB_FOLDER"/"TREINOS"COrd.dat");
-    *fexerc = cdbInit(DB_FOLDER"/"EXERCICIOS"COrd.dat");
+    *fcli = cdbInit(DB_FOLDER"/"CLIENTES".dat");
+    *ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
+    *ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
+    *fexerc = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
 
     // Recarregar as tabelas se necessário
     cInitTables(*fcli, *ffunc, *ftreino, *fexerc);

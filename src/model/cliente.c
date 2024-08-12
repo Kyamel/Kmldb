@@ -93,7 +93,7 @@ TCliente TCliente_GetByPK(FILE *file, const char* table_name, long unsigned pk) 
         log_attempt(log_file, middle, cliente.pk);
         if (cliente.pk == pk) {
             // Registrar tentativa no log
-            log_attempt(log_file, middle, cliente.pk);
+            log_total_time(log_file, start_time);
             fclose(log_file);  // Fecha o arquivo de log
             return cliente;
         }
