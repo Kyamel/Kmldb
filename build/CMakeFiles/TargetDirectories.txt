@@ -1,3 +1,0 @@
-C:/Users/lucas/programs/CPrograms/AEDS2/Kmldb/build/CMakeFiles/programa.dir
-C:/Users/lucas/programs/CPrograms/AEDS2/Kmldb/build/CMakeFiles/edit_cache.dir
-C:/Users/lucas/programs/CPrograms/AEDS2/Kmldb/build/CMakeFiles/rebuild_cache.dir
