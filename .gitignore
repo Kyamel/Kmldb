@@ -2,3 +2,5 @@
 build/
 # Ignorar a pasta data e todos os seus conteúdos
 data/
+# Ignorar o log
+log.txt
