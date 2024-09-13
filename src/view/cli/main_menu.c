@@ -3,13 +3,13 @@
 #include <string.h>
 #include <time.h>
 
-#include "../controler/db_wrapper.h"
-#include "../controler/crud.h"
+#include "../../controler/db_wrapper.h"
+#include "../../controler/crud.h"
 
-#include "../model/exercicio.h"
-#include "../model/cliente.h"
-#include "../model/treino.h"
-#include "../model/funcionario.h"
+#include "../../model/exercicio.h"
+#include "../../model/cliente.h"
+#include "../../model/treino.h"
+#include "../../model/funcionario.h"
 
 #include "../../utils/util.h"
 
@@ -363,9 +363,10 @@ int cli_main_menu() {
             case 8:
                 buscarTreino(ftreino, fexerc);
                 break;
-            case 9:
+            case 9: {
                 int ok = cCloseDatabase(fcli, ffunc, ftreino, fexerc);
                 return ok;
+            }
             case 10:
                 ordenarESubstituirArquivos(fcli, ffunc, ftreino, fexerc);
                 trocarParaArquivosOrdenados(&fcli, &ffunc, &ftreino, &fexerc);

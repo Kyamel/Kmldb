@@ -6,6 +6,7 @@
 
 #include "../kmldb/db.h"
 #include "../utils/log.h"
+#include "../utils/util.h"
 
 // Calcula o tamanho da estrutura TExerc
 int TExerc_Size() {
@@ -270,5 +271,231 @@ int TExercIntercalacaoBasica(FILE *file, DatabaseHeader *header, int num_partico
     }
 
     free(v);
+    return 0;
+}
+
+
+// Função para realizar a seleção com substituição como método de ordenação
+int TExercSelecaoComSubstituicao(FILE *file, const char *table_name) {
+    fflush(file);
+    int ok = clearFolder("data/particions");
+    if (ok == -1) return ok;
+
+    int numeroDeParticoes = 0;
+    unsigned long menorId;
+    int comparacao = 0;
+
+    int M = 6;
+    TExerc exerc_vet[6]; // Array de M registros
+    unsigned long auxVetPks[6] = {0}; // IDs dos registros
+    int vetCongelado[6] = {0}; // Controle de congelamento
+
+    DatabaseHeader header;
+    fseek(file, 0, SEEK_SET);
+    if (fread(&header, sizeof(DatabaseHeader), 1, file) != 1) {
+        perror("Erro ao ler o cabeçalho do arquivo");
+        return -1;
+    }
+    int index = dbFindTable(file, table_name);
+    if (index == -1) {
+        perror("Tabela não encontrada");
+        return -1;
+    }
+    if (header.tables[index].size != sizeof(TExerc)) {
+        perror("Tamanho do membro incompatível com a tabela");
+        return -1;
+    }
+
+    // Ler M registros do arquivo para a memória
+    fseek(file, header.tables[index].start_offset, SEEK_SET);
+    for (int i = 0; i < M; ++i) {
+        if (fread(&exerc_vet[i], sizeof(TExerc), 1, file) != 1) {
+            auxVetPks[i] = ULONG_MAX;  // Marcar posição como vazia se não for possível ler
+        } else {
+            auxVetPks[i] = exerc_vet[i].pk; // Guardar o ID do registro
+        }
+    }
+
+   /*  // Cria o diretório se não existir
+    if (!checkIfFolderExist("src/partitions")) {
+        _mkdir("src/partitions");
+    } */
+
+    // Loop principal para processar o arquivo de entrada
+    while (1) {
+        // Criar uma nova partição
+        char nomeParticao[100];
+        sprintf(nomeParticao, "data/particions/particion_%d.dat", numeroDeParticoes);
+        FILE *filePartition = fopen(nomeParticao, "wb+");
+        if (!filePartition) {
+            perror("Erro ao criar a partição");
+            return -1;
+        }
+
+        // Processar registros até que todos estejam congelados
+        while (1) {
+            menorId = ULONG_MAX;
+            int posicaoMenorId = -1;
+
+            // Encontrar o menor registro não congelado
+            for (int i = 0; i < M; ++i) {
+                if (!vetCongelado[i] && auxVetPks[i] < menorId) {
+                    menorId = auxVetPks[i];
+                    posicaoMenorId = i;
+                }
+            }
+
+            // Se não houver mais registros não congelados, saia do loop
+            if (posicaoMenorId == -1) break;
+
+            // Gravar o registro com o menor ID na partição
+            fwrite(&exerc_vet[posicaoMenorId], sizeof(TExerc), 1, filePartition);
+
+            // Ler o próximo registro do arquivo
+            TExerc novoFunc;
+            if (fread(&novoFunc, sizeof(TExerc), 1, file) == 1) {
+                // Substituir o registro no buffer
+                exerc_vet[posicaoMenorId] = novoFunc;
+                auxVetPks[posicaoMenorId] = novoFunc.pk;
+
+                // Congelar se o novo ID for menor que o último gravado
+                if (novoFunc.pk < menorId) {
+                    vetCongelado[posicaoMenorId] = 1;
+                }
+            } else {
+                // Se não houver mais registros, marcar como congelado e indicar fim da leitura
+                auxVetPks[posicaoMenorId] = ULONG_MAX; // Indicar que não há mais registros
+                vetCongelado[posicaoMenorId] = 1;
+            }
+        }
+
+        // Fechar a partição atual
+        fclose(filePartition);
+        numeroDeParticoes++;
+
+        // Verificar se todos os registros estão congelados
+        int todosCongelados = 1;
+        for (int i = 0; i < M; ++i) {
+            if (auxVetPks[i] != ULONG_MAX) { // Se houver registros válidos não congelados
+                todosCongelados = 0;
+                break;
+            }
+        }
+
+        // Se todos estão congelados, descongelar e iniciar nova partição
+        if (todosCongelados) break;
+
+        for (int i = 0; i < M; ++i) {
+            vetCongelado[i] = 0;  // Descongelar todos os registros
+        }
+    }
+
+    return numeroDeParticoes;
+}
+
+typedef struct vetor {
+    TExerc exerc;
+    FILE *aux;
+} TVet;
+
+
+// Função auxiliar para construir a árvore de vencedores
+void TExercConstruirArvoreVencedores(TVet *v, int *arvore, int num_particoes) {
+    // Inicializa a árvore de vencedores
+    for (int i = 0; i < num_particoes; i++) {
+        arvore[num_particoes + i] = i; // Folhas são as partições
+    }
+
+    // Constroi a árvore de vencedores
+    for (int i = num_particoes - 1; i > 0; i--) {
+        int esquerda = arvore[2 * i];
+        int direita = arvore[2 * i + 1];
+        arvore[i] = (v[esquerda].exerc.pk <= v[direita].exerc.pk) ? esquerda : direita;
+    }
+}
+
+// Atualiza a árvore de vencedores após uma mudança em uma das folhas
+void TExercAtualizarArvoreVencedores(TVet *v, int *arvore, int num_particoes, int pos) {
+    pos += num_particoes;
+    while (pos > 1) {
+        pos /= 2;
+        int esquerda = arvore[2 * pos];
+        int direita = arvore[2 * pos + 1];
+        arvore[pos] = (v[esquerda].exerc.pk <= v[direita].exerc.pk) ? esquerda : direita;
+    }
+}
+
+int TExercIntercalacaoComArvore(FILE *file, DatabaseHeader *header, int num_particoes) {
+    if (num_particoes <= 0) {
+        perror("Número de partições inválido");
+        return -1;
+    }
+
+    TVet *v = malloc(num_particoes * sizeof(TVet));
+    if (v == NULL) {
+        perror("Erro ao alocar memória para vetores de partições");
+        return -1;
+    }
+    // O filho esquerdo está em 2 * i.
+    // O filho direito está em 2 * i + 1.
+    // O pai está em i / 2.
+    int *arvore = malloc((2 * num_particoes) * sizeof(int));
+    if (arvore == NULL) {
+        perror("Erro ao alocar memória para a árvore de vencedores");
+        free(v);
+        return -1;
+    }
+
+    int fim = 0;
+    char nome_file[256];
+
+    for (int i = 0; i < num_particoes; i++) {
+        snprintf(nome_file, sizeof(nome_file), "data/particions/particion_%d.dat", i);
+        v[i].aux = fopen(nome_file, "rb");
+
+        if (v[i].aux != NULL) {
+            fread(&v[i].exerc, sizeof(TExerc), 1, v[i].aux);
+            if (v[i].exerc.pk == 0) {
+                v[i].exerc.pk = ULONG_MAX;
+            }
+        } else {
+            v[i].exerc.pk = ULONG_MAX;  // Marca a partição como finalizada
+        }
+    }
+
+    // Constroi a árvore de vencedores inicialmente
+    TExercConstruirArvoreVencedores(v, arvore, num_particoes);
+
+    // Reinicializa o arquivo de saída
+    rewind(file);
+    fwrite(header, sizeof(DatabaseHeader), 1, file);
+
+    while (!fim) {
+        int vencedor = arvore[1]; // A raiz da árvore de vencedores contém o índice do menor elemento
+
+        if (v[vencedor].exerc.pk == ULONG_MAX) {
+            fim = 1;  // Todas as partições acabaram
+        } else {
+            fwrite(&v[vencedor].exerc, sizeof(TExerc), 1, file);
+
+            // Carrega o próximo elemento da partição vencedora
+            if (fread(&v[vencedor].exerc, sizeof(TExerc), 1, v[vencedor].aux) != 1) {
+                v[vencedor].exerc.pk = ULONG_MAX; // Marca a partição como finalizada
+            }
+
+            // Atualiza a árvore de vencedores com o novo elemento da partição vencedora
+            TExercAtualizarArvoreVencedores(v, arvore, num_particoes, vencedor);
+        }
+    }
+
+    // Fecha os arquivos auxiliares
+    for (int i = 0; i < num_particoes; i++) {
+        if (v[i].aux != NULL) {
+            fclose(v[i].aux);
+        }
+    }
+
+    free(v);
+    free(arvore);
     return 0;
 }

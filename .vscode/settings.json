@@ -1,6 +1,5 @@
 {
     "C_Cpp.default.compilerArgs": [
-        "-Wall",
         "-Wextra",
         "-Wunreachable-code"
     ],
@@ -16,6 +15,7 @@
         "funcionario.h": "c",
         "db.h": "c",
         "crud.h": "c",
-        "db_wrapper.h": "c"
+        "db_wrapper.h": "c",
+        "util.h": "c"
     }
 }

@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../controler/db_wrapper.h"
-#include "../controler/crud.h"
-#include "../model/exercicio.h"
-#include "../model/cliente.h"
-#include "../model/treino.h"
-#include "../model/funcionario.h"
 
-#include "../utils/util.h"
+#include "controler/db_wrapper.h"
+#include "controler/crud.h"
+#include "model/exercicio.h"
+#include "model/cliente.h"
+#include "model/treino.h"
+#include "model/funcionario.h"
+#include "utils/util.h"
 
 #include <stdlib.h>
 #include <time.h>
@@ -110,10 +110,8 @@ void escreveClienteDesordenado(FILE *fcli, int *vet, int tam, int progress_start
     long unsigned offset = sizeof(DatabaseHeader);
 
     for (int i = 0; i < tam; i++) {
-        cliente = TCliente_New(vet[i], "Alice", "12345678901", "alice@example.com", "(99)99999-9999", "16-04-1980");
-        fseek(fcli, offset, SEEK_SET);
+        cliente = TCliente_New(vet[i], "Alice", "12345678901", "alice@example.com", "(99)99999-9999", "16/04/1980");
         fwrite(&cliente, sizeof(TCliente), 1, fcli);
-        offset += sizeof(TCliente);
 
         // Atualiza a barra de progresso
         clock_t end_time = clock();
@@ -123,7 +121,7 @@ void escreveClienteDesordenado(FILE *fcli, int *vet, int tam, int progress_start
     }
 
     // Atualiza o header
-    header.tables[0].end_offset = offset;
+    header.tables[0].end_offset = offset + (sizeof(TCliente) * tam);;
     header.tables[0].next_pk = tam + 1;
     updateHeader(fcli, &header);
 }
@@ -139,10 +137,8 @@ void escreveFuncDesordenado(FILE *ffunc, int *vet, int tam, int progress_start, 
     long unsigned offset = sizeof(DatabaseHeader);
 
     for (int i = 0; i < tam; i++) {
-        func = TFunc_New(vet[i], "Joao", "12345678901", "joao@example.com", "(99)99999-9999", "31-12-2000", 3500.00);
-        fseek(ffunc, offset, SEEK_SET);
+        func = TFunc_New(vet[i], "Joao", "12345678901", "joao@example.com", "(99)99999-9999", "31/12/2000", 3500.00);
         fwrite(&func, sizeof(TFunc), 1, ffunc);
-        offset += sizeof(TFunc);
 
         // Atualiza a barra de progresso
         clock_t end_time = clock();
@@ -152,7 +148,7 @@ void escreveFuncDesordenado(FILE *ffunc, int *vet, int tam, int progress_start, 
     }
 
     // Atualiza o header
-    header.tables[0].end_offset = offset;
+    header.tables[0].end_offset = offset + (sizeof(TFunc) * tam);
     header.tables[0].next_pk = tam + 1;
     updateHeader(ffunc, &header);
 }
@@ -168,10 +164,8 @@ void escreveExercDesordenado(FILE *fexer, int *vet, int tam, int progress_start,
 
     for (int i = 0; i < tam; i++) {
         exerc = TExerc_New(vet[i], "Agachamento", "Strenght", 60*15);
-        fseek(fexer, offset, SEEK_SET);
         fwrite(&exerc, sizeof(TExerc), 1, fexer);
-        offset += sizeof(TExerc);
-
+      
         // Atualiza a barra de progresso
         clock_t end_time = clock();
         double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
@@ -180,7 +174,7 @@ void escreveExercDesordenado(FILE *fexer, int *vet, int tam, int progress_start,
     }
 
     // Atualiza o header
-    header.tables[0].end_offset = offset;
+    header.tables[0].end_offset = offset + (sizeof(TExerc) * tam);
     header.tables[0].next_pk = tam + 1;
     updateHeader(fexer, &header);
 }
@@ -197,9 +191,7 @@ void escreveTreinoDesordenado(FILE *ftreino, int *vet, int tam, int progress_sta
 
     for (int i = 0; i < tam; i++) {
         treino = TTreino_New(vet[i], "Alice", "12345678901", vet[i], vet[i], 60*100);
-        fseek(ftreino, offset, SEEK_SET);
         fwrite(&treino, sizeof(TTreino), 1, ftreino);
-        offset += sizeof(TTreino);
 
         // Atualiza a barra de progresso
         clock_t end_time = clock();
@@ -209,7 +201,7 @@ void escreveTreinoDesordenado(FILE *ftreino, int *vet, int tam, int progress_sta
     }
 
     // Atualiza o header
-    header.tables[0].end_offset = offset;
+    header.tables[0].end_offset = offset + (sizeof(TTreino) * tam);
     header.tables[0].next_pk = tam + 1;
     updateHeader(ftreino, &header);
 }
@@ -464,6 +456,57 @@ int teste_classificasao_interna_func(){
 
     cdbClose(ffunc);
     //  cdbClose(ffuncOrd); 
+
+    return 0;
+}
+
+int teste_selecao_com_substituicao_func(){
+    FILE *ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
+    cdbCreateTable(ffunc, FUNCIONARIOS, sizeof(TFunc));
+    int ok = 0;
+
+
+
+    printf("Teste de classificacaoInterna...\n");
+
+    int particions = TFuncSelecaoComSubstituicao(ffunc, FUNCIONARIOS);
+    printf("Particoes: %d\n", particions);
+
+    int j = 0;
+    TFunc func;
+    /* for (int i = 0; i < particions; i++){
+        printf("\nImprimindo Particao %d:\n", i);
+        char nome_arq[256];
+        sprintf_s(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", i);
+
+        FILE *particionFile = fopen(nome_arq, "r+b");
+        j += cdbReadAllNoHeader(particionFile, &func, sizeof(TFunc), printFunc);
+        fclose(particionFile);
+    }
+    printf("Particoes geradas: %d\n", particions);
+    printf("Total de registros lidos: %d\n", j); */
+
+    // Carrega o cabeçalho
+    DatabaseHeader header;
+    fseek(ffunc, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, ffunc);
+
+    FILE *ffuncOrd =  fopen(DB_FOLDER"/"FUNCIONARIOS"COrd.dat", "w+b");
+    if (ffuncOrd == NULL){
+        perror("Erro ao abrir o arquivo\n");
+    }
+    //ok = intercalacaoBasica(ftreinoOrd, header, particions, TREINOS);
+    ok = TFuncIntercalacaoComArvore(ffuncOrd, &header, particions);
+    if (ok < 0) perror("Erro ao intercalar as particoes\n");
+
+    //j = cdbReadAllNoHeader(ffuncOrd, &func, sizeof(TFunc), printFunc);
+    j = cdbReadAll(ffuncOrd, FUNCIONARIOS, &func, sizeof(TFunc), TFunc_PrintGeneric);
+    printf("Total de registros lidos: %d\n", j);
+
+    printf("Numero de particoes geradas: %d\n", particions);
+
+    cdbClose(ffunc);
+    cdbClose(ffuncOrd);
 
     return 0;
 }

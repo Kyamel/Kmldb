@@ -44,4 +44,11 @@ int TTreinoClassificacaoInterna(FILE *file, const char* table_name);
 
 int TTreinoIntercalacaoBasica(FILE *file, DatabaseHeader *header, int num_particoes);
 
+
+// ###
+
+int TTreinoSelecaoComSubstituicao(FILE *file, const char *table_name);
+
+int TTreinoIntercalacaoComArvore(FILE *file, DatabaseHeader *header, int num_particoes);
+
 #endif

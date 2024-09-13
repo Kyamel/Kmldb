@@ -6,16 +6,18 @@
 
 #include "../kmldb/db.h"
 #include "../utils/log.h"
+#include "../utils/util.h"
+#include "../utils/binTree.h"
 
 
 // Calcula o tamanho da estrutura TFunc
 int TFunc_Size() {
-    return sizeof(long unsigned) 
+    return sizeof(long unsigned)
          + sizeof(char) * BF_NOME 
          + sizeof(char) * BF_CPF 
          + sizeof(char) * BF_EMAIL 
-         + sizeof(char) * BF_TELEFONE 
-         + sizeof(char) * BF_DATA_NASCIMENTO 
+         + sizeof(char) * BF_TELEFONE
+         + sizeof(char) * BF_DATA_NASCIMENTO
          + sizeof(double);
 }
 
@@ -186,7 +188,6 @@ int TFuncClassificacaoInterna(FILE *file, const char* table_name) {
 
     int start_offset = header.tables[index].start_offset;
     int end_offset = header.tables[index].end_offset;
-    int nFunc = (end_offset - start_offset) / sizeof(TFunc);
 
     fseek(file, start_offset, SEEK_SET);
 
@@ -246,8 +247,6 @@ int TFuncClassificacaoInterna(FILE *file, const char* table_name) {
 
     return qtdParticoes;
 }
-
-
 
 
 // Função para realizar a intercalação das partições geradas por seleção com substituição
@@ -317,4 +316,392 @@ int TFuncIntercalacaoBasica(FILE *file, DatabaseHeader *header, int num_particoe
 
     free(v);
     return 0;
+}
+
+// Função de comparação para qsort
+int compararTFunc(const void *a, const void *b) {
+    TFunc *funcA = *(TFunc **)a;
+    TFunc *funcB = *(TFunc **)b;
+
+    if (funcA->pk > funcB->pk) return 1;
+    if (funcA->pk < funcB->pk) return -1;
+    return 0;
+}
+
+// Função para realizar a intercalação das partições geradas por seleção com substituição
+int TFuncIntercalacaoOtima(char nomeDaParticao[], int qtdParticoes) {
+    if (qtdParticoes <= 0) {
+        perror("Número de partições inválido");
+        return -1;
+    }
+
+    FILE *particoes[qtdParticoes];
+    TFunc *funcVet[qtdParticoes];
+
+    for (int i = 0; i < qtdParticoes; i++) {
+        char nomeArqParticao[100];
+        snprintf(nomeArqParticao, sizeof(nomeArqParticao), "%s%d.dat", nomeDaParticao, i);
+        particoes[i] = fopen(nomeArqParticao, "rb");
+
+        if (!particoes[i]) {
+            printf("Erro ao abrir o arquivo da partição %s\n", nomeArqParticao);
+            return -1;
+        }
+
+        funcVet[i] = (TFunc *)malloc(sizeof(TFunc));
+        if (!funcVet[i]) {
+            perror("Erro ao alocar memória");
+            return -1;
+        }
+
+        if (fread(funcVet[i], sizeof(TFunc), 1, particoes[i]) != 1) {
+            if (feof(particoes[i])) {
+                free(funcVet[i]);
+                funcVet[i] = NULL;
+            } else {
+                perror("Erro ao ler o registro");
+                free(funcVet[i]);
+                return -1;
+            }
+        }
+    }
+
+    // Intercalação ótima em grupos de partições
+    for (int grupo = 0; grupo < qtdParticoes; grupo += 4) {
+        TFunc *grupoFunc[4];
+        int idx = 0;
+
+        // Carrega e intercala os registros do grupo
+        for (int i = grupo; i < grupo + 4 && i < qtdParticoes; i++) {
+            while (funcVet[i]) {
+                grupoFunc[idx++] = funcVet[i];
+
+                TFunc *func = (TFunc *)malloc(sizeof(TFunc));
+                if (!func) {
+                    perror("Erro ao alocar memória");
+                    return -1;
+                }
+
+                if (fread(func, sizeof(TFunc), 1, particoes[i]) != 1) {
+                    if (feof(particoes[i])) {
+                        free(func);
+                        funcVet[i] = NULL;
+                    } else {
+                        perror("Erro ao ler o registro");
+                        free(func);
+                        return -1;
+                    }
+                } else {
+                    funcVet[i] = func;
+                }
+            }
+        }
+
+        // Ordenação eficiente usando qsort
+        qsort(grupoFunc, idx, sizeof(TFunc *), compararTFunc);
+
+        // Escreve as partições intercadas em arquivos
+        char nomeParticao[100];
+        snprintf(nomeParticao, sizeof(nomeParticao), "%s%d.dat", nomeDaParticao, qtdParticoes + 1 + grupo / 4);
+        FILE *filePartition = fopen(nomeParticao, "wb+");
+        if (!filePartition) {
+            printf("Erro ao criar a particao %s\n", nomeParticao);
+            return -1;
+        }
+
+        for (int i = 0; i < idx; i++) {
+            fwrite(grupoFunc[i], sizeof(TFunc), 1, filePartition);
+            free(grupoFunc[i]);
+        }
+
+        fclose(filePartition);
+    }
+
+    for (int i = 0; i < qtdParticoes; i++) {
+        if (particoes[i]) fclose(particoes[i]);
+        free(funcVet[i]);
+    }
+
+    return 0;
+}
+
+
+// Função para realizar a seleção com substituição como método de ordenação
+int TFuncSelecaoComSubstituicao(FILE *file, const char *table_name) {
+    fflush(file);
+    int ok = clearFolder("data/particions");
+    if (ok == -1) return ok;
+
+    int numeroDeParticoes = 0;
+    unsigned long menorId;
+    int comparacao = 0;
+
+    int M = 6;
+    TFunc func_vet[6]; // Array de M registros
+    unsigned long auxVetPks[6] = {0}; // IDs dos registros
+    int vetCongelado[6] = {0}; // Controle de congelamento
+
+    DatabaseHeader header;
+    fseek(file, 0, SEEK_SET);
+    if (fread(&header, sizeof(DatabaseHeader), 1, file) != 1) {
+        perror("Erro ao ler o cabeçalho do arquivo");
+        return -1;
+    }
+    int index = dbFindTable(file, table_name);
+    if (index == -1) {
+        perror("Tabela não encontrada");
+        return -1;
+    }
+    if (header.tables[index].size != sizeof(TFunc)) {
+        perror("Tamanho do membro incompatível com a tabela");
+        return -1;
+    }
+
+    // Ler M registros do arquivo para a memória
+    fseek(file, header.tables[index].start_offset, SEEK_SET);
+    for (int i = 0; i < M; ++i) {
+        if (fread(&func_vet[i], sizeof(TFunc), 1, file) != 1) {
+            auxVetPks[i] = ULONG_MAX;  // Marcar posição como vazia se não for possível ler
+        } else {
+            auxVetPks[i] = func_vet[i].pk; // Guardar o ID do registro
+        }
+    }
+
+   /*  // Cria o diretório se não existir
+    if (!checkIfFolderExist("src/partitions")) {
+        _mkdir("src/partitions");
+    } */
+
+    // Loop principal para processar o arquivo de entrada
+    while (1) {
+        // Criar uma nova partição
+        char nomeParticao[100];
+        sprintf(nomeParticao, "data/particions/particion_%d.dat", numeroDeParticoes);
+        FILE *filePartition = fopen(nomeParticao, "wb+");
+        if (!filePartition) {
+            perror("Erro ao criar a partição");
+            return -1;
+        }
+
+        // Processar registros até que todos estejam congelados
+        while (1) {
+            menorId = ULONG_MAX;
+            int posicaoMenorId = -1;
+
+            // Encontrar o menor registro não congelado
+            for (int i = 0; i < M; ++i) {
+                if (!vetCongelado[i] && auxVetPks[i] < menorId) {
+                    menorId = auxVetPks[i];
+                    posicaoMenorId = i;
+                }
+            }
+
+            // Se não houver mais registros não congelados, saia do loop
+            if (posicaoMenorId == -1) break;
+
+            // Gravar o registro com o menor ID na partição
+            fwrite(&func_vet[posicaoMenorId], sizeof(TFunc), 1, filePartition);
+
+            // Ler o próximo registro do arquivo
+            TFunc novoFunc;
+            if (fread(&novoFunc, sizeof(TFunc), 1, file) == 1) {
+                // Substituir o registro no buffer
+                func_vet[posicaoMenorId] = novoFunc;
+                auxVetPks[posicaoMenorId] = novoFunc.pk;
+
+                // Congelar se o novo ID for menor que o último gravado
+                if (novoFunc.pk < menorId) {
+                    vetCongelado[posicaoMenorId] = 1;
+                }
+            } else {
+                // Se não houver mais registros, marcar como congelado e indicar fim da leitura
+                auxVetPks[posicaoMenorId] = ULONG_MAX; // Indicar que não há mais registros
+                vetCongelado[posicaoMenorId] = 1;
+            }
+        }
+
+        // Fechar a partição atual
+        fclose(filePartition);
+        numeroDeParticoes++;
+
+        // Verificar se todos os registros estão congelados
+        int todosCongelados = 1;
+        for (int i = 0; i < M; ++i) {
+            if (auxVetPks[i] != ULONG_MAX) { // Se houver registros válidos não congelados
+                todosCongelados = 0;
+                break;
+            }
+        }
+
+        // Se todos estão congelados, descongelar e iniciar nova partição
+        if (todosCongelados) break;
+
+        for (int i = 0; i < M; ++i) {
+            vetCongelado[i] = 0;  // Descongelar todos os registros
+        }
+    }
+
+    return numeroDeParticoes;
+}
+
+typedef struct vetor {
+    TFunc exerc;
+    FILE *aux;
+} TVet;
+
+
+// Função auxiliar para construir a árvore de vencedores
+void TFuncConstruirArvoreVencedores(TVet *v, int *arvore, int num_particoes) {
+    // Inicializa a árvore de vencedores
+    for (int i = 0; i < num_particoes; i++) {
+        arvore[num_particoes + i] = i; // Folhas são as partições
+    }
+
+    // Constroi a árvore de vencedores
+    for (int i = num_particoes - 1; i > 0; i--) {
+        int esquerda = arvore[2 * i];
+        int direita = arvore[2 * i + 1];
+        arvore[i] = (v[esquerda].exerc.pk <= v[direita].exerc.pk) ? esquerda : direita;
+    }
+}
+
+// Atualiza a árvore de vencedores após uma mudança em uma das folhas
+void TFuncAtualizarArvoreVencedores(TVet *v, int *arvore, int num_particoes, int pos) {
+    pos += num_particoes;
+    while (pos > 1) {
+        pos /= 2;
+        int esquerda = arvore[2 * pos];
+        int direita = arvore[2 * pos + 1];
+        arvore[pos] = (v[esquerda].exerc.pk <= v[direita].exerc.pk) ? esquerda : direita;
+    }
+}
+
+int TFuncIntercalacaoComArvore(FILE *file, DatabaseHeader *header, int num_particoes) {
+    if (num_particoes <= 0) {
+        perror("Número de partições inválido");
+        return -1;
+    }
+
+    TVet *v = malloc(num_particoes * sizeof(TVet));
+    if (v == NULL) {
+        perror("Erro ao alocar memória para vetores de partições");
+        return -1;
+    }
+    // O filho esquerdo está em 2 * i.
+    // O filho direito está em 2 * i + 1.
+    // O pai está em i / 2.
+    int *arvore = malloc((2 * num_particoes) * sizeof(int));
+    if (arvore == NULL) {
+        perror("Erro ao alocar memória para a árvore de vencedores");
+        free(v);
+        return -1;
+    }
+
+    int fim = 0;
+    char nome_file[256];
+
+    for (int i = 0; i < num_particoes; i++) {
+        snprintf(nome_file, sizeof(nome_file), "data/particions/particion_%d.dat", i);
+        v[i].aux = fopen(nome_file, "rb");
+
+        if (v[i].aux != NULL) {
+            fread(&v[i].exerc, sizeof(TFunc), 1, v[i].aux);
+            if (v[i].exerc.pk == 0) {
+                v[i].exerc.pk = ULONG_MAX;
+            }
+        } else {
+            v[i].exerc.pk = ULONG_MAX;  // Marca a partição como finalizada
+        }
+    }
+
+    // Constroi a árvore de vencedores inicialmente
+    TFuncConstruirArvoreVencedores(v, arvore, num_particoes);
+
+    // Reinicializa o arquivo de saída
+    rewind(file);
+    fwrite(header, sizeof(DatabaseHeader), 1, file);
+
+    while (!fim) {
+        int vencedor = arvore[1]; // A raiz da árvore de vencedores contém o índice do menor elemento
+
+        if (v[vencedor].exerc.pk == ULONG_MAX) {
+            fim = 1;  // Todas as partições acabaram
+        } else {
+            fwrite(&v[vencedor].exerc, sizeof(TFunc), 1, file);
+
+            // Carrega o próximo elemento da partição vencedora
+            if (fread(&v[vencedor].exerc, sizeof(TFunc), 1, v[vencedor].aux) != 1) {
+                v[vencedor].exerc.pk = ULONG_MAX; // Marca a partição como finalizada
+            }
+
+            // Atualiza a árvore de vencedores com o novo elemento da partição vencedora
+            TFuncAtualizarArvoreVencedores(v, arvore, num_particoes, vencedor);
+        }
+    }
+
+    // Fecha os arquivos auxiliares
+    for (int i = 0; i < num_particoes; i++) {
+        if (v[i].aux != NULL) {
+            fclose(v[i].aux);
+        }
+    }
+
+    free(v);
+    free(arvore);
+    return 0;
+}
+
+
+void unirParticoesOrdenadas(DatabaseHeader *header, char nomeDaParticao[], int qtdParticoes) {
+    FILE *saidaFinal = fopen("saidaFinalOrdenada.dat", "wb+");
+    if (!saidaFinal) {
+        perror("Erro ao criar o arquivo de saída final ordenada.");
+        exit(1);
+    }
+
+    fwrite(header, sizeof(DatabaseHeader), 1, saidaFinal);
+
+    TFunc *registros[qtdParticoes];
+    FILE *particoes[qtdParticoes];
+    char nomeArqParticao[100];
+
+    for (int i = 0; i < qtdParticoes; i++) {
+        snprintf(nomeArqParticao, sizeof(nomeArqParticao), "%s%d.dat", nomeDaParticao, i);
+        particoes[i] = fopen(nomeArqParticao, "rb");
+        if (!particoes[i]) {
+            printf("Erro ao abrir o arquivo da partição %s\n", nomeArqParticao);
+            exit(1);
+        }
+
+        registros[i] = (TFunc *)malloc(sizeof(TFunc));
+        if (!registros[i] || fread(registros[i], sizeof(TFunc), 1, particoes[i]) != 1) {
+            registros[i] = NULL;
+        }
+    }
+
+    while (1) {
+        int idxMenor = -1;
+        unsigned long menorPk = ULONG_MAX;
+
+        for (int i = 0; i < qtdParticoes; i++) {
+            if (registros[i] && registros[i]->pk < menorPk) {
+                menorPk = registros[i]->pk;
+                idxMenor = i;
+            }
+        }
+
+        if (idxMenor == -1) break;
+
+        fwrite(registros[idxMenor], sizeof(TFunc), 1, saidaFinal);
+        free(registros[idxMenor]);
+
+        registros[idxMenor] = (TFunc *)malloc(sizeof(TFunc));
+        if (!registros[idxMenor] || fread(registros[idxMenor], sizeof(TFunc), 1, particoes[idxMenor]) != 1) {
+            free(registros[idxMenor]);
+            registros[idxMenor] = NULL;
+            fclose(particoes[idxMenor]);
+        }
+    }
+
+    fclose(saidaFinal);
 }

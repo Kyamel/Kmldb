@@ -31,4 +31,11 @@ int TExercClassificacaoInterna(FILE *file, const char* table_name);
 
 int TExercIntercalacaoBasica(FILE *file, DatabaseHeader *header, int num_particions);
 
+
+// ###
+
+int TExercSelecaoComSubstituicao(FILE *file, const char *table_name);
+
+int TExercIntercalacaoComArvore(FILE *file, DatabaseHeader *header, int num_particoes);
+
 #endif

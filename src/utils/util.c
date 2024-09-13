@@ -33,7 +33,7 @@ void atualizarBarraProgresso(int progresso, int total, double tempoGasto, const 
     const char *cor_laranja = "\033[38;5;208m";  // Laranja
     const char *cor_amarelo = "\033[33m";         // Amarelo
     const char *cor_verde = "\033[32m";          // Verde
-    const char *cor_reset = "\033[0m";           // Reset para cor padrão
+    //const char *cor_reset = "\033[0m";           // Reset para cor padrão
 
     // Calcula a cor da barra com base no progresso
     const char *cor_barra;
@@ -95,11 +95,21 @@ int evaluateArithmeticExpression(const char *expr) {
 // Função para converter string do tipo char para WCHAR
 wchar_t *charToWChar(const char *text) {
     size_t size = strlen(text) + 1;
-    wchar_t *wText = malloc(sizeof(wchar_t) * size);
-    size_t tamanho = mbstowcs(wText, text, size);
-    if (tamanho == (size_t)-1) {
-        perror("Erro na conversão de string char para WCHAR.\n");
+    wchar_t *wText = (wchar_t *)malloc(sizeof(wchar_t) * size);
+    if (wText == NULL) {
+        perror("Erro ao alocar memória.\n");
+        return NULL;
     }
+
+    size_t convertedChars = 0;
+    errno_t err = mbstowcs_s(&convertedChars, wText, size, text, size - 1);
+
+    if (err != 0) {
+        perror("Erro na conversão de string char para WCHAR.\n");
+        free(wText);
+        return NULL;
+    }
+
     return wText;
 }
 
@@ -305,7 +315,7 @@ Metodos selecionarMetodos(const char* table_name) {
     return m;
 }
 
-// Função genérica de classificação interna
+/* // Função genérica de classificação interna
 int classificacaoInterna(FILE *file, const char* table_name) {
     int M = 100;
     rewind(file); // Posiciona cursor no início do arquivo
@@ -572,3 +582,4 @@ int intercalacaoBasica_TTreino(FILE *file, DatabaseHeader header, int num_p) {
 
     return 0; // Sucesso
 }
+ */

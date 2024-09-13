@@ -39,4 +39,11 @@ int TClienteClassificacaoInterna(FILE *file, const char* table_name);
 int TClienteIntercalacaoBasica(FILE *file, DatabaseHeader *header, int num_particoes);
 
 
+// ###
+
+int TClienteSelecaoComSubstituicao(FILE *file, const char *table_name);
+
+int TClienteIntercalacaoComArvore(FILE *file, DatabaseHeader *header, int num_particoes);
+
+
 #endif

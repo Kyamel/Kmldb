@@ -9,7 +9,7 @@
 
 /* Basic example person data structure. */
 typedef struct {
-    char *name;
+    const char *name;
     unsigned int age;
 } person_t;
 
@@ -34,7 +34,7 @@ typedef struct __node_t {
 
 /* Initialises a node in a doubly-linked list, returning a pointer to the node. */
 node_t *list_node_init() {
-    node_t *node = calloc(1, sizeof(node_t));
+    node_t *node = (node_t *)calloc(1, sizeof(node_t));
     return node;
 }
 
@@ -181,15 +181,15 @@ void print_person_list(node_t *node) {
 }
 
 /* Create a person with a name and age, returning a pointer to the person. */
-person_t *create_person(char *name, int age) {
-    person_t *person = malloc(sizeof(person_t));
+person_t *create_person(const char *name, int age) {
+    person_t *person = (person_t *)malloc(sizeof(person_t));
     person->name = name;
     person->age = age;
     return person;
 }
 
 /* Find a person by name in a list of persons, returning a pointer to the person. */
-person_t *find_person(node_t *node, char *name) {
+person_t *find_person(node_t *node, const char *name) {
     node_t *curr = list_get_head(node);
     while (curr) {
         person_t *person = (person_t *)curr->data;

@@ -37,4 +37,10 @@ int TFuncIntercalacaoBasica(FILE *file, DatabaseHeader *header, int num_particio
 
 int TFuncClassificacaoInterna(FILE *file, const char* table_name);
 
+// ###
+
+int TFuncSelecaoComSubstituicao(FILE *file, const char *table_name);
+
+int TFuncIntercalacaoComArvore(FILE *file, DatabaseHeader *header, int num_particoes);
+
 #endif // FUNCIONARIO_H

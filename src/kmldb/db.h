@@ -50,9 +50,13 @@ typedef void (*PrintCallback)(void*);
 // READ_FAILED 1
 // WRITE_FAILED 2
 // CLOSE_FAILED 3
+// OPEN_FAILED 4
+
+#define ERR_OPEN_FAILED -004
 
 #define DB_OK 0
 #define ERR_DB_CLOSE_FAILED -403
+#define ERR_DB_OPEN_FAILED -404
 
 #define ERR_REGISTER_NOT_FOUND -110
 #define ERR_REGISTER_EXISTS -120

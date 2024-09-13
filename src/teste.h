@@ -11,12 +11,12 @@ int particion_test();
 
 int teste_classificasao_interna_func();
 
+int teste_selecao_com_substituicao_func();
+
 int teste_classificasao_interna_treino();
 
 int teste_classificasao_interna_exerc();
 
 int teste_classificasao_interna_cliente();
-
-
 
 #endif
