@@ -652,7 +652,7 @@ int TFuncIntercalacaoComArvore(FILE *file, DatabaseHeader *header, int num_parti
 }
 
 
-void unirParticoesOrdenadas(DatabaseHeader *header, char nomeDaParticao[], int qtdParticoes) {
+/* void unirParticoesOrdenadas(DatabaseHeader *header, char nomeDaParticao[], int qtdParticoes) {
     FILE *saidaFinal = fopen("saidaFinalOrdenada.dat", "wb+");
     if (!saidaFinal) {
         perror("Erro ao criar o arquivo de saída final ordenada.");
@@ -704,4 +704,4 @@ void unirParticoesOrdenadas(DatabaseHeader *header, char nomeDaParticao[], int q
     }
 
     fclose(saidaFinal);
-}
+} */

@@ -105,7 +105,7 @@ int binTreeTeste() {
     int values[] = {5, 3, 8, 1, 4, 7, 9};
 
     // Inserir dados na árvore
-    for (int i = 0; i < sizeof(values) / sizeof(values[0]); ++i) {
+    for (unsigned long i = 0; i < sizeof(values) / sizeof(values[0]); ++i) {
         root = insert_node(root, &values[i], compare_int);
     }
 

@@ -1,10 +1,10 @@
 #ifndef TREINO_H
 #define TREINO_H
 
+#include <stdio.h>
+
 #include "../kmldb/db.h"
 #include "../utils/list.h"
-
-#include <stdio.h>
 
 #define BT_NOME 50
 #define BT_TIPO 15

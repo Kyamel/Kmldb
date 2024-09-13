@@ -200,7 +200,7 @@ void cadastrarTreino(FILE *ftreino, FILE *fexerc, FILE *fcli) {
 void buscarTreino(FILE *ftreino, FILE *fexerc) {
     printf("Buscar Treino:\n");
     unsigned long cpk;
-   
+
     printf("Cliente PK: ");
     scanf_s("%lu", &cpk);
     cClearInputBuffer();
@@ -225,11 +225,17 @@ void ordenarESubstituirArquivos(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fe
 
     // FUNCIONARIOS
     printf("\nOrdenando funcionarios...\n");
-    particions = TFuncClassificacaoInterna(ffunc, FUNCIONARIOS);
+    particions = TFuncSelecaoComSubstituicao(ffunc, FUNCIONARIOS);
     fseek(ffunc, 0, SEEK_SET);
     fread(&header, sizeof(DatabaseHeader), 1, ffunc);
-    FILE *ffuncOrd = fopen(DB_FOLDER"/"FUNCIONARIOS".dat", "w+b");
-    TFuncIntercalacaoBasica(ffuncOrd, &header, particions);
+
+    FILE *ffuncOrd = fopen(DB_FOLDER "/" FUNCIONARIOS ".dat", "w+b");
+    if (ffuncOrd == NULL) {  // Verificar se o arquivo foi aberto corretamente
+        printf("Erro ao abrir o arquivo %s: %d\n", DB_FOLDER "/" EXERCICIOS ".dat");
+        return;
+    }
+
+    TFuncIntercalacaoComArvore(ffuncOrd, &header, particions);
     fclose(ffuncOrd);
     fclose(ffunc);
     progressoAtual++;
@@ -240,11 +246,18 @@ void ordenarESubstituirArquivos(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fe
     // CLIENTES
     printf("\nOrdenando clientes...\n");
     start_time = clock();
-    particions = TClienteClassificacaoInterna(fcli, CLIENTES);
+    particions = TClienteSelecaoComSubstituicao(fcli, CLIENTES);
     fseek(fcli, 0, SEEK_SET);
     fread(&header, sizeof(DatabaseHeader), 1, fcli);
-    FILE *fcliOrd = fopen(DB_FOLDER"/"CLIENTES".dat", "w+b");
-    TClienteIntercalacaoBasica(fcliOrd, &header, particions);
+
+     // Declarar um ponteiro FILE
+    FILE *fcliOrd = fopen(DB_FOLDER "/" CLIENTES ".dat", "w+b");
+    if (fcliOrd == NULL) {  // Verificar se o arquivo foi aberto corretamente
+        printf("Erro ao abrir o arquivo %s: %d\n", DB_FOLDER "/" EXERCICIOS ".dat");
+        return;
+    }
+
+    TClienteIntercalacaoComArvore(fcliOrd, &header, particions);
     fclose(fcliOrd);
     fclose(fcli);
     progressoAtual++;
@@ -255,11 +268,18 @@ void ordenarESubstituirArquivos(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fe
     // EXERCICIOS
     printf("\nOrdenando exercicios...\n");
     start_time = clock();
-    particions = TExercClassificacaoInterna(fexerc, EXERCICIOS);
+    particions = TExercSelecaoComSubstituicao(fexerc, EXERCICIOS);
     fseek(fexerc, 0, SEEK_SET);
     fread(&header, sizeof(DatabaseHeader), 1, fexerc);
-    FILE *fexercOrd = fopen(DB_FOLDER"/"EXERCICIOS".dat", "w+b");
-    TExercIntercalacaoBasica(fexercOrd, &header, particions);
+
+
+    FILE *fexercOrd = fopen(DB_FOLDER "/" EXERCICIOS ".dat", "w+b");
+    if (fexercOrd == NULL) {  // Verificar se o arquivo foi aberto corretamente
+        printf("Erro ao abrir o arquivo %s: %d\n", DB_FOLDER "/" EXERCICIOS ".dat");
+        return;
+    }
+
+    TExercIntercalacaoComArvore(fexercOrd, &header, particions);
     fclose(fexercOrd);
     fclose(fexerc);
     progressoAtual++;
@@ -270,13 +290,19 @@ void ordenarESubstituirArquivos(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fe
     // TREINOS
     printf("\nOrdenando treinos...\n");
     start_time = clock();
-    particions = TTreinoClassificacaoInterna(ftreino, TREINOS);
+    particions = TTreinoSelecaoComSubstituicao(ftreino, TREINOS);
     fseek(ftreino, 0, SEEK_SET);
     fread(&header, sizeof(DatabaseHeader), 1, ftreino);
-    FILE *ftreinoOrd = fopen(DB_FOLDER"/"TREINOS".dat", "w+b");
-    TTreinoIntercalacaoBasica(ftreinoOrd, &header, particions);
+
+    FILE *ftreinoOrd = fopen(DB_FOLDER "/" TREINOS ".dat", "w+b");
+    if (ftreinoOrd == NULL) {  // Verificar se o arquivo foi aberto corretamente
+        printf("Erro ao abrir o arquivo %s: %d\n", DB_FOLDER "/" EXERCICIOS ".dat");
+        return;
+    }
+    TTreinoIntercalacaoComArvore(ftreinoOrd, &header, particions);
     fclose(ftreinoOrd);
     fclose(ftreino);
+
     progressoAtual++;
     end_time = clock();
     time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
@@ -295,10 +321,10 @@ void trocarParaArquivosOrdenados(FILE **fcli, FILE **ffunc, FILE **ftreino, FILE
     fclose(*fexerc);
 
     // Reabrindo arquivos ordenados
-    *fcli = cdbInit(DB_FOLDER"/"CLIENTES".dat");
-    *ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
-    *ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
-    *fexerc = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
+    *fcli = cdbInit(DB_FOLDER"/" CLIENTES".dat");
+    *ffunc = cdbInit(DB_FOLDER"/" FUNCIONARIOS".dat");
+    *ftreino = cdbInit(DB_FOLDER"/" TREINOS".dat");
+    *fexerc = cdbInit(DB_FOLDER"/" EXERCICIOS".dat");
 
     // Recarregar as tabelas se necessário
     cInitTables(*fcli, *ffunc, *ftreino, *fexerc);
@@ -312,10 +338,10 @@ int cli_main_menu() {
     FILE *fexerc;
 
     // Inicialmente, abre os arquivos não ordenados
-    fcli = cdbInit(DB_FOLDER"/"CLIENTES".dat");
-    ffunc = cdbInit(DB_FOLDER"/"FUNCIONARIOS".dat");
-    ftreino = cdbInit(DB_FOLDER"/"TREINOS".dat");
-    fexerc = cdbInit(DB_FOLDER"/"EXERCICIOS".dat");
+    fcli = cdbInit(DB_FOLDER"/" CLIENTES".dat");
+    ffunc = cdbInit(DB_FOLDER"/" FUNCIONARIOS".dat");
+    ftreino = cdbInit(DB_FOLDER"/" TREINOS".dat");
+    fexerc = cdbInit(DB_FOLDER"/" EXERCICIOS".dat");
 
     cInitTables(fcli, ffunc, ftreino, fexerc);
     cdbWelcome();
