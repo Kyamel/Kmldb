@@ -262,6 +262,7 @@ void* le_TTreino(FILE *arq) {
     return treino;
 }
 
+
 void salva_TTreino(void *registro, FILE *arq) {
     fwrite((TTreino*)registro, sizeof(TTreino), 1, arq);
 }

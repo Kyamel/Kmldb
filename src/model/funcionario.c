@@ -22,27 +22,31 @@ int TFunc_Size() {
 }
 
 // Cria uma nova instância de TFunc
-TFunc TFunc_New(unsigned long pk, const char* nome, const char* cpf, const char* email, const char* telefone, const char* data_nascimento, double salario) {
+TFunc TFunc_New(unsigned long pk, const char* nome, const char* cpf, const char* email,
+    const char* telefone, const char* data_nascimento, double salario,
+    const char* password, int status, size_t next_pk) {
+
     TFunc func = {0};
 
     // Verifica se os tamanhos das strings são válidos
-    if (strlen(nome) >= BF_NOME || strlen(cpf) >= BF_CPF || strlen(email) >= BF_EMAIL || strlen(telefone) >= BF_TELEFONE || strlen(data_nascimento) >= BF_DATA_NASCIMENTO) {
+    if (strlen(nome) >= BF_NOME || strlen(cpf) >= BF_CPF || strlen(email) >= BF_EMAIL
+        || strlen(telefone) >= BF_TELEFONE || strlen(data_nascimento) >= BF_DATA_NASCIMENTO || strlen(password) >= HASH_SIZE) {
         perror("TFunc buffer overflow");
         return func;
     }
 
-    // Dependendo do ambiente, usa strncpy_s ou strncpy
+    func.pk = pk; // Inicialização comum
+
     #ifdef _MSC_VER
         // Ambiente Microsoft
-        func.pk = pk;
         strncpy_s(func.nome, sizeof(func.nome), nome, _TRUNCATE);
         strncpy_s(func.cpf, sizeof(func.cpf), cpf, _TRUNCATE);
         strncpy_s(func.email, sizeof(func.email), email, _TRUNCATE);
         strncpy_s(func.telefone, sizeof(func.telefone), telefone, _TRUNCATE);
         strncpy_s(func.data_nascimento, sizeof(func.data_nascimento), data_nascimento, _TRUNCATE);
+        strncpy_s(func.password, sizeof(func.password), password, _TRUNCATE);
     #else
         // Ambiente Unix/Linux
-        func.pk = pk;
         strncpy(func.nome, nome, BF_NOME - 1);
         func.nome[BF_NOME - 1] = '\0'; // Garantir que a string está terminada
 
@@ -57,9 +61,15 @@ TFunc TFunc_New(unsigned long pk, const char* nome, const char* cpf, const char*
 
         strncpy(func.data_nascimento, data_nascimento, BF_DATA_NASCIMENTO - 1);
         func.data_nascimento[BF_DATA_NASCIMENTO - 1] = '\0'; // Garantir que a string está terminada
+
+        strncpy(func.password, password, HASH_SIZE - 1);
+        func.password[HASH_SIZE - 1] = '\0'; // Garantir que a string está terminada
     #endif
 
     func.salario = salario;
+    func.status = status;
+    func.next_pk = next_pk;
+
     return func;
 }
 
@@ -130,6 +140,9 @@ TFunc TFunc_ReadReg(FILE *file) {
     fread(func.telefone, sizeof(char), sizeof(func.telefone), file);
     fread(func.data_nascimento, sizeof(char), sizeof(func.data_nascimento), file);
     fread(&func.salario, sizeof(double), 1, file);
+    fread(&func.password, sizeof(char), sizeof(func.password), file);
+    fread(&func.status, sizeof(int), 1, file);
+    fread(&func.next_pk, sizeof(int), 1, file);
     return func;
 }
 
@@ -159,6 +172,9 @@ void TFunc_PrintGeneric(void* member) {
     printf("| Telefone: %s\n", func->telefone);
     printf("| Data de Nascimento: %s\n", func->data_nascimento);
     printf("| Salario: %.2lf\n", func->salario);
+    printf("| password: %s\n", func->password);
+    printf("| status: %d\n", func->status);
+    printf("| next_pk: %lu\n", func->next_pk);
 }
 
 int TFuncClassificacaoInterna(FILE *file, const char* table_name) {
@@ -434,7 +450,6 @@ int TFuncSelecaoComSubstituicao(FILE *file, const char *table_name) {
 
     int numeroDeParticoes = 0;
     unsigned long menorId;
-    int comparacao = 0;
 
     int M = 6;
     TFunc func_vet[6]; // Array de M registros
@@ -582,7 +597,7 @@ int TFuncIntercalacaoComArvore(FILE *file, DatabaseHeader *header, int num_parti
         return -1;
     }
 
-    TVet *v = malloc(num_particoes * sizeof(TVet));
+    TVet *v = (TVet *) malloc(num_particoes * sizeof(TVet));
     if (v == NULL) {
         perror("Erro ao alocar memória para vetores de partições");
         return -1;
@@ -590,7 +605,7 @@ int TFuncIntercalacaoComArvore(FILE *file, DatabaseHeader *header, int num_parti
     // O filho esquerdo está em 2 * i.
     // O filho direito está em 2 * i + 1.
     // O pai está em i / 2.
-    int *arvore = malloc((2 * num_particoes) * sizeof(int));
+    int *arvore = (int *) malloc((2 * num_particoes) * sizeof(int));
     if (arvore == NULL) {
         perror("Erro ao alocar memória para a árvore de vencedores");
         free(v);
@@ -705,3 +720,76 @@ int TFuncIntercalacaoComArvore(FILE *file, DatabaseHeader *header, int num_parti
 
     fclose(saidaFinal);
 } */
+
+
+
+// ###############################################
+
+int TFunc_HashAdd(FILE* file, const char* table_name, TFunc func) {
+    DatabaseHeader header;
+    fseek(file, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, file);
+
+    int index = dbFindTable(file, table_name);
+    if (index == -1) {
+        perror("Tabela não encontrada");
+        return ERR_TABLE_NOT_FOUND;
+    }
+
+    unsigned long pk = func.pk; // Acesso direto ao campo pk
+    if (pk == 0) {
+        pk = header.tables[index].next_pk++;
+        func.pk = pk; // Acesso direto para definir o pk
+    }
+
+    size_t hash_index = hash(pk, header.tables[index].size);
+    printf("Tentando escrever o índice: %zu\n", hash_index);
+
+    TFunc buffer;
+    size_t previous_index = hash_index;
+
+    while (1) {
+        fseek(file, hash_index, SEEK_SET);
+        size_t read_result = fread(&buffer, sizeof(TFunc), 1, file);
+
+        if (read_result != 1) {
+            // Posição vazia encontrada, adicione o novo registro
+            buffer.next_pk = 0; // Este será o último registro
+            fseek(file, previous_index, SEEK_SET);
+            fwrite(&buffer, sizeof(TFunc), 1, file); // Atualiza o registro anterior
+            fseek(file, hash_index, SEEK_SET);
+            fwrite(&func, sizeof(TFunc), 1, file); // Escreve o novo registro
+            break;
+        }
+
+        if (buffer.pk == pk) { // Verifica se a PK já existe
+            perror("PK fornecida já existe");
+            return ERR_REGISTER_WRITE_FAILED;
+        }
+
+        previous_index = hash_index; // Atualiza o índice anterior
+        hash_index = buffer.next_pk; // Acesso direto ao campo next_pk
+        if (hash_index == 0) {
+            fseek(file, 0, SEEK_END);
+            size_t end = ftell(file); // Obtenha a posição final
+
+            buffer.next_pk = end; // Atualiza o ponteiro do registro anterior
+            fseek(file, previous_index, SEEK_SET);
+            fwrite(&buffer, sizeof(TFunc), 1, file);
+
+            func.next_pk = 0; // Fim da lista
+            fseek(file, end, SEEK_SET);
+            fwrite(&func, sizeof(TFunc), 1, file); // Escreve o novo registro no final
+            break;
+        }
+    }
+
+    // Atualiza o cabeçalho conforme necessário...
+    header.tables[index].qtd++; // Atualiza a contagem de registros
+
+    fseek(file, 0, SEEK_SET);
+    fwrite(&header, sizeof(DatabaseHeader), 1, file);
+
+    fflush(file);
+    return DB_OK;
+}

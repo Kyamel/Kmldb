@@ -14,7 +14,6 @@
 #include "../../utils/util.h"
 
 #include "main_menu.h"
-#include "../../teste.h"
 
 void cadastrarCliente(FILE *file) {
     char nome[BC_NOME], cpf[BC_CPF], email[BC_EMAIL], telefone[BC_TELEFONE], exp_date[BC_EXP_DATE];
@@ -360,6 +359,7 @@ int cli_main_menu() {
         printf("8. Buscar Treino\n");
         printf("9. Sair\n");
         printf("10. Ordenar e Substituir Arquivos\n");
+        printf("11. Imprimir Clientes\n");
         printf("Escolha uma opcao: ");
         scanf_s("%d", &opcao);
         cClearInputBuffer();
@@ -396,6 +396,16 @@ int cli_main_menu() {
             case 10:
                 ordenarESubstituirArquivos(fcli, ffunc, ftreino, fexerc);
                 trocarParaArquivosOrdenados(&fcli, &ffunc, &ftreino, &fexerc);
+                break;
+            case 11:
+                TFunc func;
+                TCliente cliente;
+                TExerc exercicio;
+                TTreino treino;
+                cdbReadAll(ffunc, FUNCIONARIOS, &func, sizeof(TFunc), TFunc_PrintGeneric);
+                cdbReadAll(fcli, CLIENTES, &cliente, sizeof(TCliente), TCliente_PrintGeneric);
+                cdbReadAll(fexerc, EXERCICIOS, &exercicio, sizeof(TExerc), TExerc_PrintGeneric);
+                cdbReadAll(ftreino, TREINOS, &treino, sizeof(TTreino), TTreino_PrintGeneric);
                 break;
             default:
                 printf("Opcao invalida. Tente novamente.\n");

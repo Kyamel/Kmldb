@@ -358,6 +358,7 @@ void dbAddMember2(FILE* file, const char* table_name, void* member, size_t membe
     // Atualiza o end_offset da tabela atual
     size_t size = header.tables[index].size;
     header.tables[index].end_offset += size;
+    header.tables[index].qtd += 1;
     // Atualiza os offsets das tabelas subsequentes (empurrando para a direita)
     for (int i = index + 1; i < header.table_count; ++i) {
         header.tables[i].start_offset += size;
@@ -384,4 +385,471 @@ void dbAddMember2(FILE* file, const char* table_name, void* member, size_t membe
         return;
     }
     fflush(file);
+}
+
+// Um novo dia, uma nova aventura
+
+size_t hash(unsigned long pk, size_t tamanho_registro) {
+    return (pk % 31) * tamanho_registro + sizeof(DatabaseHeader); // o 31 é totalmente aleatório.
+}
+
+unsigned long get_pk(void* member, size_t pk_offset) {
+    return *(unsigned long *)((char *)member + pk_offset);
+}
+
+size_t get_next_pk(void* member, size_t next_pk_offset) {
+    return *(size_t *)((char *)member + next_pk_offset);
+}
+
+void set_pk(void* member, size_t pk_offset, unsigned long pk) {
+    *(unsigned long *)((char *)member + pk_offset) = pk;
+}
+
+void set_next_pk(void* member, size_t next_pk_offset, size_t next_pk) {
+    *(size_t *)((char *)member + next_pk_offset) = next_pk;
+}
+
+void* generic_read(FILE* file, size_t offset, size_t member_size) {
+    void* data = malloc(member_size);
+    if (data == NULL) {
+        perror("Erro ao alocar memória");
+        return NULL; // Retorna NULL em caso de erro
+    }
+    fseek(file, offset, SEEK_SET);
+    fread(data, member_size, 1, file);
+    return data;
+}
+
+
+int generic_write(FILE* file, void* data, size_t size) {
+    return fwrite(data, size, 1, file);
+}
+
+
+int dbHashAdd(FILE* file, const char* table_name, void* reg, size_t reg_size,
+              size_t pk_offset, size_t next_pk_offset,
+              void* (*generic_read)(FILE*, size_t, size_t),
+              int (*generic_write)(FILE*, void*, size_t)) {
+
+    DatabaseHeader header;
+    fseek(file, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, file);
+
+    int index = dbFindTable(file, table_name);
+    if (index == -1) {
+        perror("Tabela não encontrada");
+        return ERR_TABLE_NOT_FOUND;
+    }
+
+    unsigned long pk = *(unsigned long*)((char*)reg + pk_offset);
+    if (pk == 0) {
+        pk = header.tables[index].next_pk++;
+        *(unsigned long*)((char*)reg + pk_offset) = pk; // Define o PK
+    }
+
+    size_t hash_index = hash(pk, header.tables[index].size);
+
+    void* buffer = malloc(reg_size);
+    size_t previous_index = hash_index;
+
+    while (1) {
+        fseek(file, hash_index, SEEK_SET);
+        size_t read_result = fread(buffer, reg_size, 1, file);
+
+        if (read_result != 1) {
+            // Posição vazia encontrada, adicione o novo registro
+            *(size_t*)((char*)buffer + next_pk_offset) = 0; // next_pk = 0
+            fseek(file, previous_index, SEEK_SET);
+            generic_write(file, buffer, reg_size); // Atualiza o registro anterior
+            fseek(file, hash_index, SEEK_SET);
+            generic_write(file, reg, reg_size); // Escreve o novo registro
+            free(buffer);
+            break;
+        }
+
+        unsigned long existing_pk = *(unsigned long*)((char*)buffer + pk_offset);
+        if (existing_pk == pk) {
+            perror("PK fornecida já existe");
+            free(buffer);
+            return ERR_REGISTER_WRITE_FAILED;
+        }
+
+        // Colisão
+        printf("Colisão encontrada na posição: %zu (PK existente: %lu). Verificando próximo índice...\n", hash_index, existing_pk);
+        previous_index = hash_index;
+        hash_index = *(size_t*)((char*)buffer + next_pk_offset);
+
+        // Verifique o próximo índice
+        printf("Próximo índice a verificar: %zu\n", hash_index);
+        if (hash_index == 0) {
+
+            fseek(file, 0, SEEK_END);
+            size_t end = ftell(file); // Obtenha a posição final
+
+            // Atualiza o ponteiro do registro anterior
+            *(size_t*)((char*)buffer + next_pk_offset) = end;
+            fseek(file, previous_index, SEEK_SET);
+            generic_write(file, buffer, reg_size);
+
+            *(size_t*)((char*)reg + next_pk_offset) = 0; // 0 demarca Fim da lista
+            fseek(file, end, SEEK_SET);
+            generic_write(file, reg, reg_size); // Escreve o novo registro no final
+            free(buffer);
+            printf("Escreveu no final: %zu\n", end);
+
+            printf("Próximo índice a armazenar (buffer): %zu\n", *(size_t*)((char*)buffer + next_pk_offset));
+            printf("Próximo índice a armazenar (reg): %zu\n", *(size_t*)((char*)reg + next_pk_offset));
+
+            break;
+        }
+    }
+
+    printf("Escreveu no índice: %zu\n\n", hash_index);
+
+    // Atualiza o cabeçalho
+    header.tables[index].qtd++;
+    long position = ftell(file);
+    if (position >= 0) {
+        header.tables[index].end_offset = ((unsigned long)position > header.tables[index].end_offset)
+        ? (unsigned long)position : header.tables[index].end_offset;
+    }
+
+    fseek(file, 0, SEEK_SET);
+    fwrite(&header, sizeof(DatabaseHeader), 1, file);
+
+    fflush(file);
+    return DB_OK;
+}
+
+int dbHashRead(FILE* file, const char* table_name, void* reg, size_t reg_size,
+               size_t pk_offset, size_t next_pk_offset,
+               void* (*generic_read)(FILE*, size_t, size_t),
+               int (*generic_write)(FILE*, void*, size_t)) {
+
+    // Ler o cabeçalho do banco de dados
+    DatabaseHeader header;
+    fseek(file, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, file);
+
+    // Encontrar a tabela pelo nome
+    int index = dbFindTable(file, table_name);
+    if (index == -1) {
+        perror("Tabela não encontrada");
+        return ERR_TABLE_NOT_FOUND;
+    }
+
+    // Obter a chave primária (PK) do registro fornecido
+    unsigned long pk = *(unsigned long*)((char*)reg + pk_offset);
+    if (pk == 0) {
+        perror("PK não pode ser 0 para a leitura");
+        return ERR_REGISTER_READ_FAILED;
+    }
+
+    // Calcular o índice hash com base na PK
+    size_t hash_index = hash(pk, header.tables[index].size);
+    printf("Tentando ler o índice: %zu\n", hash_index);
+
+    // Buffer para armazenar os dados lidos do arquivo
+    void* buffer = malloc(reg_size);
+    if (buffer == NULL) {
+        perror("Erro ao alocar memória");
+        return ERR_REGISTER_ALLOC_FAILED;
+    }
+
+    // Laço para procurar o registro pelo PK, tratando colisões
+    while (1) {
+        fseek(file, hash_index, SEEK_SET);
+        size_t read_result = fread(buffer, reg_size, 1, file);
+
+        if (read_result != 1) {
+            // Registro não encontrado
+            perror("Registro não encontrado");
+            free(buffer);
+            return ERR_REGISTER_NOT_FOUND;
+        }
+
+        // Verificar se o PK do registro lido corresponde ao PK solicitado
+        unsigned long existing_pk = *(unsigned long*)((char*)buffer + pk_offset);
+        if (existing_pk == pk) {
+            // Registro encontrado, copiar os dados para o registro passado
+            memcpy(reg, buffer, reg_size);
+            free(buffer);
+            return DB_OK;
+        }
+
+        // Verificar se há colisão e mover para o próximo registro na lista
+        hash_index = *(size_t*)((char*)buffer + next_pk_offset);
+        if (hash_index == 0) {
+            // Não há mais registros para verificar, fim da lista
+            perror("Registro com PK fornecida não encontrado");
+            free(buffer);
+            return ERR_REGISTER_NOT_FOUND;
+        }
+    }
+
+    free(buffer);
+    return DB_OK;
+}
+
+int dbHashFind(FILE* file, const char* table_name, void* reg, size_t reg_size,
+               size_t pk_offset, size_t next_pk_offset, size_t status_offset,
+               void* (*generic_read)(FILE*, size_t, size_t),
+               int (*generic_write)(FILE*, void*, size_t)) {
+
+    // Ler o cabeçalho do banco de dados
+    DatabaseHeader header;
+    fseek(file, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, file);
+
+    // Encontrar a tabela pelo nome
+    int index = dbFindTable(file, table_name);
+    if (index == -1) {
+        perror("Tabela não encontrada");
+        return ERR_TABLE_NOT_FOUND;
+    }
+
+    // Obter a chave primária (PK) do registro fornecido
+    unsigned long pk = *(unsigned long*)((char*)reg + pk_offset);
+    if (pk == 0) {
+        perror("PK não pode ser 0 para a leitura");
+        return ERR_REGISTER_READ_FAILED;
+    }
+
+    // Calcular o índice hash com base na PK
+    size_t hash_index = hash(pk, header.tables[index].size);
+
+    // Buffer para armazenar os dados lidos do arquivo
+    void* buffer = malloc(reg_size);
+    if (buffer == NULL) {
+        perror("Erro ao alocar memória");
+        return ERR_REGISTER_ALLOC_FAILED;
+    }
+
+    // Laço para procurar o registro pelo PK, tratando colisões
+    while (1) {
+        fseek(file, hash_index, SEEK_SET);
+        size_t read_result = fread(buffer, reg_size, 1, file);
+
+        if (read_result != 1) {
+            // Registro não encontrado
+            perror("Registro não encontrado");
+            free(buffer);
+            return ERR_REGISTER_NOT_FOUND;
+        }
+
+        // Verificar se o PK do registro lido corresponde ao PK solicitado
+        unsigned long existing_pk = *(unsigned long*)((char*)buffer + pk_offset);
+        if (existing_pk == pk) {
+            // Verificar se o registro está marcado como deletado
+            int status = *(int*)((char*)buffer + status_offset);
+            if (status == 1) {  // 1 significa que o registro foi deletado
+                perror("Registro está marcado como deletado");
+                free(buffer);
+                return EXEPTION_REG_DELETED;
+            }
+
+            // Registro encontrado e está ativo, copiar os dados para o registro passado
+            memcpy(reg, buffer, reg_size);
+            free(buffer);
+            return DB_OK;
+        }
+
+        // Verificar se há colisão e mover para o próximo registro na lista
+        hash_index = *(size_t*)((char*)buffer + next_pk_offset);
+        if (hash_index == 0) {
+            // Não há mais registros para verificar, fim da lista
+            perror("Registro com PK fornecida não encontrado");
+            free(buffer);
+            return ERR_REGISTER_NOT_FOUND;
+        }
+
+        // Printar a colisão e a posição
+        printf("Colisão encontrada na posição: %zu\n", hash_index);
+    }
+
+    free(buffer);
+    return DB_OK;
+}
+
+
+int dbHashUpdate(FILE* file, const char* table_name, unsigned long pk,
+                 void* new_reg, size_t reg_size, size_t pk_offset,
+                 size_t next_pk_offset, size_t status_offset,
+                 void* (*generic_read)(FILE*, size_t, size_t),
+                 int (*generic_write)(FILE*, void*, size_t)) {
+
+    DatabaseHeader header;
+    fseek(file, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, file);
+
+    int index = dbFindTable(file, table_name);
+    if (index == -1) {
+        perror("Tabela não encontrada");
+        return ERR_TABLE_NOT_FOUND;
+    }
+
+    size_t hash_index = hash(pk, header.tables[index].size);
+    printf("Tentando atualizar no índice: %zu\n", hash_index);
+
+    void* buffer = malloc(reg_size);
+    size_t previous_index = hash_index;
+
+    while (1) {
+        fseek(file, hash_index, SEEK_SET);
+        size_t read_result = fread(buffer, reg_size, 1, file);
+
+        if (read_result != 1) {
+            perror("Registro não encontrado");
+            free(buffer);
+            return ERR_REGISTER_NOT_FOUND;
+        }
+
+        unsigned long existing_pk = *(unsigned long*)((char*)buffer + pk_offset);
+
+        // Verifica se a PK bate
+        if (existing_pk == pk) {
+            // Verifica se o registro está marcado como deletado
+            int status = *(int*)((char*)buffer + status_offset);
+            if (status == 1) {
+                perror("Registro marcado como deletado, não pode ser atualizado");
+                free(buffer);
+                return ERR_REGISTER_UPDATE_FAILED;
+            }
+
+            // Atualiza o registro com os novos dados
+            fseek(file, hash_index, SEEK_SET);
+            generic_write(file, new_reg, reg_size); // Sobrescreve o registro existente com os novos dados
+            free(buffer);
+            break;
+        }
+
+        // Se o PK não bater, siga para o próximo registro na lista
+        previous_index = hash_index;
+        hash_index = *(size_t*)((char*)buffer + next_pk_offset);
+        if (hash_index == 0) {
+            perror("Registro não encontrado");
+            free(buffer);
+            return ERR_REGISTER_NOT_FOUND;
+        }
+    }
+
+    fflush(file);
+    return DB_OK;
+}
+
+
+
+int dbHashDelete(FILE* file, const char* table_name, unsigned long pk,
+                 size_t reg_size, size_t pk_offset, size_t next_pk_offset,
+                 size_t status_offset,
+                 void* (*generic_read)(FILE*, size_t, size_t),
+                 int (*generic_write)(FILE*, void*, size_t)) {
+
+    DatabaseHeader header;
+    fseek(file, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, file);
+
+    int index = dbFindTable(file, table_name);
+    if (index == -1) {
+        perror("Tabela não encontrada");
+        return ERR_TABLE_NOT_FOUND;
+    }
+
+    size_t hash_index = hash(pk, header.tables[index].size);
+    printf("Tentando deletar no índice: %zu\n", hash_index);
+
+    void* buffer = malloc(reg_size);
+    size_t previous_index = hash_index;
+
+    while (1) {
+        fseek(file, hash_index, SEEK_SET);
+        size_t read_result = fread(buffer, reg_size, 1, file);
+
+        if (read_result != 1) {
+            perror("Registro não encontrado");
+            free(buffer);
+            return ERR_REGISTER_NOT_FOUND;
+        }
+
+        unsigned long existing_pk = *(unsigned long*)((char*)buffer + pk_offset);
+
+        if (existing_pk == pk) {
+            // Encontrou o registro, então marca como deletado
+            *(int*)((char*)buffer + status_offset) = 1; // Marca o status como 1 (deletado)
+
+            fseek(file, hash_index, SEEK_SET);
+            generic_write(file, buffer, reg_size); // Atualiza o registro no arquivo
+            free(buffer);
+            break;
+        }
+
+        // Se o PK não bater, siga para o próximo registro na lista
+        previous_index = hash_index;
+        hash_index = *(size_t*)((char*)buffer + next_pk_offset);
+        if (hash_index == 0) {
+            perror("Registro não encontrado");
+            free(buffer);
+            return ERR_REGISTER_NOT_FOUND;
+        }
+    }
+
+    // Atualiza a quantidade de registros se necessário
+    header.tables[index].qtd--;
+
+    fseek(file, 0, SEEK_SET);
+    fwrite(&header, sizeof(DatabaseHeader), 1, file);
+
+    fflush(file);
+    return DB_OK;
+}
+
+void dbPrintTable(FILE* file, const char* table_name, size_t reg_size,
+                  size_t pk_offset, size_t next_pk_offset,
+                  size_t status_offset,
+                  void (*print_func)(void*)) {
+    // Ler o cabeçalho do banco de dados
+    DatabaseHeader header;
+    fseek(file, 0, SEEK_SET);
+    fread(&header, sizeof(DatabaseHeader), 1, file);
+
+    // Encontrar a tabela pelo nome
+    int index = dbFindTable(file, table_name);
+    if (index == -1) {
+        perror("Tabela não encontrada");
+        return;
+    }
+
+    // Percorrer todos os registros da tabela
+    int count = 0;
+    size_t hash_index = sizeof(DatabaseHeader);  // inicio da tabela
+    while (hash_index < header.tables[index].end_offset) {
+        void* buffer = malloc(reg_size);
+        printf("Tentando ler no índice: %zu\n", hash_index);
+
+        if (buffer == NULL) {
+            perror("Erro ao alocar memória");
+            return;
+        }
+
+        // Ler o registro no índice atual
+        fseek(file, hash_index, SEEK_SET);
+        size_t read_result = fread(buffer, reg_size, 1, file);
+
+        if (read_result != 1) {
+            free(buffer);
+            break;  // Se não for possível ler, saia do laço
+        }
+
+        // Verificar se o registro está ativo
+        int status = *(int*)((char*)buffer + status_offset);
+        int pk = *(int*)((char*)buffer + pk_offset);
+        if (status == 0 && pk != 0) {  // 0 significa que o registro está ativo
+            print_func(buffer);  // Chamar a função de impressão
+            count++;
+        }
+
+        hash_index += reg_size;
+        free(buffer);  // Liberar memória alocada
+    }
+    printf("regisitros lidos: %d\n", count);
 }

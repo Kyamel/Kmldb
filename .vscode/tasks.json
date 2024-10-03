@@ -7,17 +7,18 @@
         "command": "gcc",
         "args": [
             "-g", // Flag para modo de depuração
-            "src/*.c",
+            "src/main.c",
+            "src/teste2.c",
             "src/model/*.c",
             "src/kmldb/*.c",
-            "src/controler/*.c",
-            "src/view/cli/*.c",
+            //"src/controler/*.c",
+            //"src/view/cli/*.c",
             "src/utils/*.c",
             "-I", "src",
             "-I", "src/model",
             "-I", "src/kmldb",
-            "-I", "src/controler",
-            "-I", "src/view",
+            //"-I", "src/controler",
+            //"-I", "src/view",
             "-I", "src/utils",
             "-o", "build/Bin/Debug/programa"
         ],

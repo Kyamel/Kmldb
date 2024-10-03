@@ -18,6 +18,7 @@ typedef struct {
     long unsigned next_pk;
     long unsigned start_offset;
     long unsigned end_offset;
+    long unsigned qtd;
     size_t size;
 } TableMeta;
 
@@ -46,11 +47,15 @@ typedef void (*PrintCallback)(void*);
 // INVALID_STRUCT 4
 // MAX_SIZE_EXCEEDED 5
 // INVALID_NAME 6
+// DELETED 7
 
 // READ_FAILED 1
 // WRITE_FAILED 2
 // CLOSE_FAILED 3
 // OPEN_FAILED 4
+// DEL_FAILED 5
+// UPDATE_FAILED 6
+// INSERT_FAILED 7
 
 #define ERR_OPEN_FAILED -004
 
@@ -64,6 +69,10 @@ typedef void (*PrintCallback)(void*);
 #define ERR_REGISTER_INVALID_STRUCT -140
 #define ERR_REGISTER_READ_FAILED -101
 #define ERR_REGISTER_WRITE_FAILED -102
+#define ERR_REGISTER_DEL_FAILED -105
+#define ERR_REGISTER_UPDATE_FAILED -108
+#define ERR_REGISTER_INSERT_FAILED -107
+#define ERR_REGISTER_ALLOC_FAILED -108
 
 #define ERR_TABLE_NOT_FOUND -210
 #define ERR_TABLE_EXISTS -220
@@ -76,6 +85,8 @@ typedef void (*PrintCallback)(void*);
 #define ERR_HEADER_EXISTS -320
 #define ERR_HEADER_READ_FAILED -301
 #define ERR_HEADER_WRITE_FAILED -302
+
+#define EXEPTION_REG_DELETED 107
 
 // Inicializa o Banco de Dados
 FILE* dbInit(const char* filename);
@@ -102,5 +113,45 @@ int dbReadAll(FILE* file, const char* table_name, void* member, size_t member_si
 int dbReadAllNoHeader(FILE* file, void* member, size_t member_size, PrintCallback printFunc);
 
 void dbAddMember2(FILE* file, const char* table_name, void* member, size_t member_size, size_t pk_offset);
+
+// toma
+
+size_t hash(unsigned long pk, size_t tamanho_registro);
+
+void* generic_read(FILE* file, size_t offset, size_t member_size);
+
+int generic_write(FILE* file, void* data, size_t size);
+
+int dbHashAdd(FILE* file, const char* table_name, void* member, size_t member_size,
+              size_t pk_offset, size_t next_pk_offset,
+              void* (*generic_read)(FILE*, size_t, size_t),
+              int (*generic_write)(FILE*, void*, size_t));
+
+int dbHashRead(FILE* file, const char* table_name, void* reg, size_t reg_size,
+               size_t pk_offset, size_t next_pk_offset,
+               void* (*generic_read)(FILE*, size_t, size_t),
+               int (*generic_write)(FILE*, void*, size_t));
+
+int dbHashFind(FILE* file, const char* table_name, void* reg, size_t reg_size,
+               size_t pk_offset, size_t next_pk_offset, size_t status_offset,
+               void* (*generic_read)(FILE*, size_t, size_t),
+               int (*generic_write)(FILE*, void*, size_t));
+
+int dbHashUpdate(FILE* file, const char* table_name, unsigned long pk,
+                 void* new_reg, size_t reg_size, size_t pk_offset,
+                 size_t next_pk_offset, size_t status_offset,
+                 void* (*generic_read)(FILE*, size_t, size_t),
+                 int (*generic_write)(FILE*, void*, size_t));
+
+int dbHashDelete(FILE* file, const char* table_name, unsigned long pk,
+                 size_t reg_size, size_t pk_offset, size_t next_pk_offset,
+                 size_t status_offset,
+                 void* (*generic_read)(FILE*, size_t, size_t),
+                 int (*generic_write)(FILE*, void*, size_t));
+
+void dbPrintTable(FILE* file, const char* table_name, size_t reg_size,
+                  size_t pk_offset, size_t next_pk_offset,
+                  size_t status_offset,
+                  void (*print_func)(void*));
 
 #endif
