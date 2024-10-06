@@ -4,12 +4,20 @@
 // Função para iniciar o log
 FILE* init_log() {
     FILE *log_file = NULL;
-    errno_t err = fopen_s(&log_file, "log.txt", "w");
+    errno_t err = fopen_s(&log_file, "dblog.txt", "a");
     if (err != 0) {
         perror("Erro ao abrir o arquivo de log");
         return NULL;
     }
+
+    fprintf_s(log_file, "\nLog inicializado.\n");
     return log_file;
+}
+
+void close_log(FILE* log_file) {
+    if (log_file) {
+        fclose(log_file);
+    }
 }
 
 // Função para registrar uma tentativa no log

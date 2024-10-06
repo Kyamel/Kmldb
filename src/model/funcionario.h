@@ -10,7 +10,7 @@
 #define BF_DATA_NASCIMENTO 11
 #define BF_EMAIL 50
 #define BF_TELEFONE 15
-#define HASH_SIZE 30
+#define BF_PASSWORD 30
 
 typedef struct {
     long unsigned pk; // id autogerado e único
@@ -20,7 +20,7 @@ typedef struct {
     char data_nascimento[BF_DATA_NASCIMENTO]; // data de nascimento do funcionário
     char cpf[BF_CPF]; // CPF do funcionário
     char telefone[BF_TELEFONE]; // telefone do funcionário
-    char password[HASH_SIZE]; // hash da senha
+    char password[BF_PASSWORD]; // hash da senha
     char nome[BF_NOME]; // nome do funcionário
     char email[BF_EMAIL]; // email do funcionário
 } TFunc;

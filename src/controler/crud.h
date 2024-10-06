@@ -21,7 +21,7 @@
 void cInitTables(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexec);
 
 int cCloseDatabase(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer);
-
+/*
 // ########
 // #TREINO#
 // ########
@@ -35,11 +35,11 @@ int cAddTreinoNotC(FILE* file, unsigned long pk, const char* nome, const char* t
 TTreino cSearchTreino(FILE* file, long unsigned pk);
 
 TTreino cSearchTreinoByCpkEpk(FILE* file, long unsigned cpk, long unsigned epk);
-
+ */
 // imprime os dados do exercício
 int cSearchPrintTreinoFullByCpk(FILE* ftreino, FILE* fexerc, long unsigned epk);
 
-// não imprime os dados do exercício
+/* // não imprime os dados do exercício
 int cSearchPrintTreinoByCpk(FILE* file, const char* table_name, long unsigned cpk);
 
 void cPrintTreino(TTreino* treino);
@@ -76,5 +76,5 @@ int cAddCliente(FILE* file, const char* table_name, unsigned long pk, const char
 TCliente cSearchCliente(FILE* file, const char* table_name, long unsigned pk);
 
 void cPrintCliente(TCliente* cliente);
-
+ */
 #endif

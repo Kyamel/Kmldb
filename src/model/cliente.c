@@ -19,27 +19,31 @@ int TCliente_Size() {
 }
 
 // Cria uma nova instância de TCliente
-TCliente TCliente_New(unsigned long pk, const char* nome, const char* cpf, const char* email, const char* telefone, const char* exp_date) {
+TCliente TCliente_New(unsigned long pk, const char* nome, const char* cpf,
+                        const char* email, const char* telefone, const char* exp_date, size_t next_pk, int status){
     TCliente cliente = {0};
 
     // Verifica se os tamanhos das strings são válidos
-    if (strlen(nome) >= BC_NOME || strlen(cpf) >= BC_CPF || strlen(email) >= BC_EMAIL || strlen(telefone) >= BC_TELEFONE || strlen(exp_date) >= BC_EXP_DATE) {
+    if (strlen(nome) >= BC_NOME || strlen(cpf) >= BC_CPF || strlen(email) >= BC_EMAIL ||
+        strlen(telefone) >= BC_TELEFONE || strlen(exp_date) >= BC_EXP_DATE) {
         perror("TCliente buffer overflow");
         return cliente;
     }
 
+    cliente.pk = pk;
+    cliente.status = status;
+    cliente.next_pk = next_pk;
+
     // Dependendo do ambiente, usa strncpy_s ou strncpy
     #ifdef _MSC_VER
         // Ambiente Microsoft
-        cliente.pk = pk;
+
         strncpy_s(cliente.nome, sizeof(cliente.nome), nome, _TRUNCATE);
         strncpy_s(cliente.cpf, sizeof(cliente.cpf), cpf, _TRUNCATE);
         strncpy_s(cliente.email, sizeof(cliente.email), email, _TRUNCATE);
         strncpy_s(cliente.telefone, sizeof(cliente.telefone), telefone, _TRUNCATE);
         strncpy_s(cliente.exp_date, sizeof(cliente.exp_date), exp_date, _TRUNCATE);
     #else
-        // Ambiente Unix/Linux
-        cliente.pk = pk;
         strncpy(cliente.nome, nome, BC_NOME - 1);
         cliente.nome[BC_NOME - 1] = '\0'; // Garantir que a string está terminada
 
@@ -153,81 +157,6 @@ void TCliente_PrintGeneric(void* member) {
     printf("| Data de Expiracao: %s\n", cliente->exp_date);
 }
 
-int TClienteIntercalacaoBasicaTeste(FILE *file, DatabaseHeader *header, int num_particions) {
-    typedef struct vetor {
-        TCliente cliente;
-        FILE *aux;
-    } TVet;
-
-    int fim = 0; // variável que controla o fim do procedimento
-    int particao = 0;
-    char nome_arq[256]; // Alocar memória suficiente para o nome do arquivo
-
-    // Cria vetor de partições
-    TVet *v = malloc(num_particions * sizeof(TVet));
-    if (v == NULL) {
-        perror("Erro ao alocar memória para vetores de partições");
-        return -1; // Retorna código de erro
-    }
-
-    // Abre arquivos das partições e lê o primeiro registro
-    for (int i = 0; i < num_particions; i++) {
-        snprintf(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", i);
-
-        v[i].aux = fopen(nome_arq, "rb");
-        if (v[i].aux != NULL) {
-            TCliente cliente = {0};
-            if (fread(&cliente, sizeof(TCliente), 1, v[i].aux) == 1) {
-                v[i].cliente = cliente;
-            } else {
-                // Arquivo estava vazio
-                v[i].cliente = TCliente_New(ULONG_MAX, "", "", "", "", ""); // Supondo que TCliente_New cria um TCliente com PK muito alto
-            }
-        } else {
-            fim = 1; // Marcar o fim se algum arquivo não puder ser aberto
-        }
-    }
-
-    rewind(file);
-    fwrite(header, sizeof(DatabaseHeader), 1, file);
-
-    // Processa os registros
-    while (!fim) {
-        unsigned long menor = ULONG_MAX;
-        int pos_menor = -1;
-
-        // Encontra o cliente com menor chave no vetor
-        for (int i = 0; i < num_particions; i++) {
-            if (v[i].cliente.pk < menor) {
-                menor = v[i].cliente.pk;
-                pos_menor = i;
-            }
-        }
-
-        if (pos_menor == -1) {
-            fim = 1; // Termina o processamento se não encontrar um menor
-        } else {
-            fwrite(&v[pos_menor].cliente, sizeof(TCliente), 1, file);
-
-            TCliente cliente = {0};
-            if (fread(&cliente, sizeof(TCliente), 1, v[pos_menor].aux) == 1) {
-                v[pos_menor].cliente = cliente;
-            } else {
-                v[pos_menor].cliente = TCliente_New(ULONG_MAX, "", "", "", "", ""); // Supondo que TCliente_New cria um TCliente com PK muito alto
-            }
-        }
-    }
-
-    // Fecha arquivos das partições de entrada
-    for (int i = 0; i < num_particions; i++) {
-        if (v[i].aux != NULL) {
-            fclose(v[i].aux);
-        }
-    }
-
-    free(v);
-    return 0; // Retorna 0 em caso de sucesso
-}
 
 int TClienteClassificacaoInterna(FILE *file, const char* table_name) {
     rewind(file);

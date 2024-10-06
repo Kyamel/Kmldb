@@ -30,7 +30,7 @@ TFunc TFunc_New(unsigned long pk, const char* nome, const char* cpf, const char*
 
     // Verifica se os tamanhos das strings são válidos
     if (strlen(nome) >= BF_NOME || strlen(cpf) >= BF_CPF || strlen(email) >= BF_EMAIL
-        || strlen(telefone) >= BF_TELEFONE || strlen(data_nascimento) >= BF_DATA_NASCIMENTO || strlen(password) >= HASH_SIZE) {
+        || strlen(telefone) >= BF_TELEFONE || strlen(data_nascimento) >= BF_DATA_NASCIMENTO || strlen(password) >= BF_PASSWORD) {
         perror("TFunc buffer overflow");
         return func;
     }
@@ -62,8 +62,8 @@ TFunc TFunc_New(unsigned long pk, const char* nome, const char* cpf, const char*
         strncpy(func.data_nascimento, data_nascimento, BF_DATA_NASCIMENTO - 1);
         func.data_nascimento[BF_DATA_NASCIMENTO - 1] = '\0'; // Garantir que a string está terminada
 
-        strncpy(func.password, password, HASH_SIZE - 1);
-        func.password[HASH_SIZE - 1] = '\0'; // Garantir que a string está terminada
+        strncpy(func.password, password, BF_PASSWORD - 1);
+        func.password[BF_PASSWORD - 1] = '\0'; // Garantir que a string está terminada
     #endif
 
     func.salario = salario;

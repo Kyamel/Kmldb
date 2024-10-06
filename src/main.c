@@ -4,9 +4,9 @@
 #include "teste2.h"
 
 int main(){
-    //int ok = cli_main_menu();
+    int ok = cli_main_menu();
     //int ok = run_test();
-     //int ok = teste_criar_base_desordenada(2000);
+    //int ok = teste_criar_base_desordenada(2000);
     //int ok = teste_criar_base_ordenada(2500);
     //int ok = particion_test();
     //int ok = teste_criar_base_desordenada(2000);
@@ -17,7 +17,7 @@ int main(){
 
     // ##############
 
-    int ok = teste2();
+    //int ok = teste2();
 
     return ok;
 }

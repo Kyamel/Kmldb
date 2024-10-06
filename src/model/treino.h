@@ -13,6 +13,8 @@ typedef struct {
     long unsigned pk; // id autogerado e único
     long unsigned cpk; // referencia o cliente
     long unsigned epk; // referencia o exercicio
+    size_t next_pk; // próximo índice na lista encadeada
+    int status; // status do funcionário
     char nome[BT_NOME];
     char tipo[BT_TIPO];
     int duration; // duracao do exercicio em segundos
@@ -20,7 +22,8 @@ typedef struct {
 
 int TTreino_Size();
 
-TTreino TTreino_New(unsigned long pk, const char* nome, const char* tipo, long unsigned cpk, long unsigned epk, int duration);
+TTreino TTreino_New(unsigned long pk, const char* nome, const char* tipo,
+    long unsigned cpk, long unsigned epk, int duration, size_t next_pk, int status);
 
 TTreino TTreino_GetByPK(FILE *file, const char* table_name, long unsigned pk);
 
@@ -37,8 +40,6 @@ void TTreino_Print(TTreino *treino);
 void TTreino_PrintGeneric(void* member);
 
 int TTreinoSelecaoComSubstituicaoCpkk(FILE *file, const char *table_name);
-
-int TTreinoIntercalacaoBasicaCpk(FILE *file, DatabaseHeader *header, int num_particions);
 
 int TTreinoClassificacaoInterna(FILE *file, const char* table_name);
 

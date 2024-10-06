@@ -86,7 +86,7 @@ typedef void (*PrintCallback)(void*);
 #define ERR_HEADER_READ_FAILED -301
 #define ERR_HEADER_WRITE_FAILED -302
 
-#define EXEPTION_REG_DELETED 107
+#define EXEPTION_REG_DELETED -170
 
 // Inicializa o Banco de Dados
 FILE* dbInit(const char* filename);
@@ -124,34 +124,27 @@ int generic_write(FILE* file, void* data, size_t size);
 
 int dbHashAdd(FILE* file, const char* table_name, void* member, size_t member_size,
               size_t pk_offset, size_t next_pk_offset,
-              void* (*generic_read)(FILE*, size_t, size_t),
               int (*generic_write)(FILE*, void*, size_t));
 
 int dbHashRead(FILE* file, const char* table_name, void* reg, size_t reg_size,
-               size_t pk_offset, size_t next_pk_offset,
-               void* (*generic_read)(FILE*, size_t, size_t),
-               int (*generic_write)(FILE*, void*, size_t));
+               size_t pk_offset, size_t next_pk_offset);
 
 int dbHashFind(FILE* file, const char* table_name, void* reg, size_t reg_size,
-               size_t pk_offset, size_t next_pk_offset, size_t status_offset,
-               void* (*generic_read)(FILE*, size_t, size_t),
-               int (*generic_write)(FILE*, void*, size_t));
+               size_t pk_offset, size_t next_pk_offset, size_t status_offset);
 
 int dbHashUpdate(FILE* file, const char* table_name, unsigned long pk,
                  void* new_reg, size_t reg_size, size_t pk_offset,
                  size_t next_pk_offset, size_t status_offset,
-                 void* (*generic_read)(FILE*, size_t, size_t),
                  int (*generic_write)(FILE*, void*, size_t));
 
 int dbHashDelete(FILE* file, const char* table_name, unsigned long pk,
                  size_t reg_size, size_t pk_offset, size_t next_pk_offset,
                  size_t status_offset,
-                 void* (*generic_read)(FILE*, size_t, size_t),
                  int (*generic_write)(FILE*, void*, size_t));
 
-void dbPrintTable(FILE* file, const char* table_name, size_t reg_size,
-                  size_t pk_offset, size_t next_pk_offset,
-                  size_t status_offset,
-                  void (*print_func)(void*));
+int dbPrintTable(FILE* file, const char* table_name,
+                    size_t pk_offset, size_t status_offset,
+                    size_t reg_size,
+                    void (*print_func)(void*));
 
 #endif

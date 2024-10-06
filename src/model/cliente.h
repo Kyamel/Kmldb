@@ -13,6 +13,8 @@
 
 typedef struct {
     long unsigned pk; // id autogerado e único
+    size_t next_pk; // próximo índice na lista encadeada
+    int status; // status do funcionário
     char nome[BC_NOME];
     char cpf[BC_CPF];
     char email[BC_NOME];
@@ -22,7 +24,8 @@ typedef struct {
 
 int TCliente_Size();
 
-TCliente TCliente_New(unsigned long pk, const char* nome, const char* cpf, const char* email, const char* telefone, const char* exp_date);
+TCliente TCliente_New(unsigned long pk, const char* nome, const char* cpf,
+                        const char* email, const char* telefone, const char* exp_date, size_t next_pk, int status);
 
 TCliente TCliente_GetByPK(FILE *file, const char* table_name, long unsigned pk);
 
@@ -31,8 +34,6 @@ TCliente TCliente_ReadReg(FILE *file);
 void TCliente_Print(TCliente *cliente);
 
 void TCliente_PrintGeneric(void* member);
-
-int TClienteIntercalacaoBasicaTeste(FILE *file, DatabaseHeader *header, int num_particions);
 
 int TClienteClassificacaoInterna(FILE *file, const char* table_name);
 

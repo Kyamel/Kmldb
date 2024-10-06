@@ -1,0 +1,1770 @@
+
+Log inicializado.
+Colisão encontrada na posição: 3688
+
+Log inicializado.
+Colisão encontrada na posição: 7208
+Colisão encontrada na posição: 7712
+Colisão encontrada na posição: 11576
+
+Log inicializado.
+Colisão encontrada na posição: 3176
+Colisão encontrada na posição: 4616
+Colisão encontrada na posição: 7784
+Colisão encontrada na posição: 10664
+Colisão encontrada na posição: 13352
+Colisão encontrada na posição: 13544
+Colisão encontrada na posição: 16040
+Colisão encontrada na posição: 16520
+Colisão encontrada na posição: 17288
+Colisão encontrada na posição: 21320
+Colisão encontrada na posição: 21512
+Colisão encontrada na posição: 22760
+Colisão encontrada na posição: 23816
+Colisão encontrada na posição: 25448
+Colisão encontrada na posição: 29000
+Colisão encontrada na posição: 29480
+Colisão encontrada na posição: 32360
+Colisão encontrada na posição: 32936
+Colisão encontrada na posição: 33128
+Colisão encontrada na posição: 37448
+Colisão encontrada na posição: 37928
+Colisão encontrada na posição: 38696
+Colisão encontrada na posição: 40328
+Colisão encontrada na posição: 41096
+Colisão encontrada na posição: 42248
+Colisão encontrada na posição: 47432
+Colisão encontrada na posição: 48488
+Colisão encontrada na posição: 51656
+Colisão encontrada na posição: 53768
+Colisão encontrada na posição: 54440
+Colisão encontrada na posição: 54920
+Colisão encontrada na posição: 56744
+Colisão encontrada na posição: 57224
+Colisão encontrada na posição: 57512
+Colisão encontrada na posição: 58184
+Colisão encontrada na posição: 60680
+Colisão encontrada na posição: 61736
+Colisão encontrada na posição: 62792
+Colisão encontrada na posição: 63464
+Colisão encontrada na posição: 65384
+Colisão encontrada na posição: 65768
+Colisão encontrada na posição: 66536
+Colisão encontrada na posição: 67112
+Colisão encontrada na posição: 69320
+Colisão encontrada na posição: 73064
+Colisão encontrada na posição: 73736
+Colisão encontrada na posição: 74600
+Colisão encontrada na posição: 76136
+Colisão encontrada na posição: 76616
+Colisão encontrada na posição: 77384
+Colisão encontrada na posição: 79400
+Colisão encontrada na posição: 80072
+Colisão encontrada na posição: 82088
+Colisão encontrada na posição: 82472
+Colisão encontrada na posição: 83048
+Colisão encontrada na posição: 88520
+Colisão encontrada na posição: 88904
+Colisão encontrada na posição: 89096
+Colisão encontrada na posição: 91400
+Colisão encontrada na posição: 91976
+Colisão encontrada na posição: 93800
+Colisão encontrada na posição: 94568
+Colisão encontrada na posição: 95816
+
+Log inicializado.
+1 - Colisão encontrada na posição: 10888
+
+Log inicializado.
+1 - Colisão encontrada na posição: 6288
+2 - Colisão encontrada na posição: 13888
+3 - Colisão encontrada na posição: 14488
+4 - Colisão encontrada na posição: 26688
+5 - Colisão encontrada na posição: 33088
+6 - Colisão encontrada na posição: 35288
+7 - Colisão encontrada na posição: 35888
+8 - Colisão encontrada na posição: 36288
+9 - Colisão encontrada na posição: 36488
+10 - Colisão encontrada na posição: 37288
+11 - Colisão encontrada na posição: 38088
+12 - Colisão encontrada na posição: 38688
+13 - Colisão encontrada na posição: 39688
+14 - Colisão encontrada na posição: 40688
+15 - Colisão encontrada na posição: 45488
+16 - Colisão encontrada na posição: 48488
+17 - Colisão encontrada na posição: 50088
+18 - Colisão encontrada na posição: 50488
+19 - Colisão encontrada na posição: 51488
+20 - Colisão encontrada na posição: 52888
+21 - Colisão encontrada na posição: 53088
+22 - Colisão encontrada na posição: 54688
+23 - Colisão encontrada na posição: 56088
+24 - Colisão encontrada na posição: 57488
+25 - Colisão encontrada na posição: 61688
+26 - Colisão encontrada na posição: 62288
+27 - Colisão encontrada na posição: 66488
+28 - Colisão encontrada na posição: 67488
+29 - Colisão encontrada na posição: 67688
+30 - Colisão encontrada na posição: 70288
+31 - Colisão encontrada na posição: 71688
+32 - Colisão encontrada na posição: 71888
+33 - Colisão encontrada na posição: 72488
+34 - Colisão encontrada na posição: 72688
+35 - Colisão encontrada na posição: 75888
+36 - Colisão encontrada na posição: 76688
+37 - Colisão encontrada na posição: 78688
+38 - Colisão encontrada na posição: 80688
+39 - Colisão encontrada na posição: 81088
+40 - Colisão encontrada na posição: 81688
+41 - Colisão encontrada na posição: 82688
+42 - Colisão encontrada na posição: 84888
+43 - Colisão encontrada na posição: 85488
+44 - Colisão encontrada na posição: 85688
+45 - Colisão encontrada na posição: 89688
+46 - Colisão encontrada na posição: 90288
+47 - Colisão encontrada na posição: 90688
+48 - Colisão encontrada na posição: 93088
+49 - Colisão encontrada na posição: 94488
+50 - Colisão encontrada na posição: 101288
+51 - Colisão encontrada na posição: 101688
+52 - Colisão encontrada na posição: 107288
+53 - Colisão encontrada na posição: 108888
+54 - Colisão encontrada na posição: 109688
+55 - Colisão encontrada na posição: 113088
+56 - Colisão encontrada na posição: 115888
+57 - Colisão encontrada na posição: 118688
+58 - Colisão encontrada na posição: 119888
+59 - Colisão encontrada na posição: 121088
+60 - Colisão encontrada na posição: 129488
+61 - Colisão encontrada na posição: 131288
+62 - Colisão encontrada na posição: 136688
+63 - Colisão encontrada na posição: 138688
+64 - Colisão encontrada na posição: 139488
+65 - Colisão encontrada na posição: 140688
+66 - Colisão encontrada na posição: 144288
+67 - Colisão encontrada na posição: 145888
+68 - Colisão encontrada na posição: 147488
+69 - Colisão encontrada na posição: 149688
+70 - Colisão encontrada na posição: 151888
+71 - Colisão encontrada na posição: 152088
+72 - Colisão encontrada na posição: 157088
+73 - Colisão encontrada na posição: 158888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 888
+
+Log inicializado.
+Tentativa: posicao=62, pk=94
+Tentativa: posicao=30, pk=7
+Tentativa: posicao=14, pk=0
+Tentativa: posicao=22, pk=0
+Tentativa: posicao=26, pk=3
+Tentativa: posicao=28, pk=80
+Tentativa: posicao=27, pk=62
+Tempo total de busca binaria: 0.000000 segundos
+
+Log inicializado.
+Tentativa: posicao=62, pk=94
+Tentativa: posicao=30, pk=7
+Tentativa: posicao=14, pk=0
+Tentativa: posicao=22, pk=0
+Tentativa: posicao=26, pk=3
+Tentativa: posicao=28, pk=80
+Tentativa: posicao=27, pk=62
+Tempo total de busca binaria: 0.000000 segundos
+
+Log inicializado.
+Tentativa: posicao=62, pk=94
+Tentativa: posicao=30, pk=7
+Tentativa: posicao=46, pk=97
+Tentativa: posicao=38, pk=64
+Tentativa: posicao=34, pk=10
+Tentativa: posicao=36, pk=36
+Tentativa: posicao=37, pk=14
+Tempo total de busca binaria: 0.000000 segundos
+
+Log inicializado.
+Tentativa: posicao=62, pk=94
+Tentativa: posicao=30, pk=7
+Tentativa: posicao=14, pk=0
+Tentativa: posicao=22, pk=0
+Tentativa: posicao=26, pk=3
+Tentativa: posicao=28, pk=80
+Tentativa: posicao=27, pk=62
+Tempo total de busca binaria: 0.000000 segundos
+
+Log inicializado.
+Tentativa: posicao=62, pk=94
+Tentativa: posicao=30, pk=7
+Tentativa: posicao=14, pk=0
+Tentativa: posicao=22, pk=0
+Tentativa: posicao=26, pk=3
+Tentativa: posicao=28, pk=80
+Tentativa: posicao=27, pk=62
+Tempo total de busca binaria: 0.000000 segundos
+
+Log inicializado.
+Tentativa: posicao=62, pk=94
+Tentativa: posicao=30, pk=7
+Tentativa: posicao=14, pk=0
+Tentativa: posicao=22, pk=0
+Tentativa: posicao=26, pk=3
+Tentativa: posicao=24, pk=0
+Tentativa: posicao=25, pk=87
+Tempo total de busca binaria: 0.000000 segundos
+
+Log inicializado.
+1 - Colisão encontrada na posição: 2984
+
+Log inicializado.
+1 - Colisão encontrada na posição: 8888
+
+Log inicializado.
+Tentativa: posicao=62, pk=94
+Tentativa: posicao=30, pk=7
+Tentativa: posicao=14, pk=0
+Tentativa: posicao=22, pk=0
+Tentativa: posicao=26, pk=3
+Tentativa: posicao=24, pk=0
+Tentativa: posicao=25, pk=87
+Tempo total de busca binaria: 0.000000 segundos
+
+Log inicializado.
+Tentativa: posicao=62, pk=94
+Tentativa: posicao=30, pk=7
+Tentativa: posicao=14, pk=0
+Tentativa: posicao=22, pk=0
+Tentativa: posicao=26, pk=3
+Tentativa: posicao=24, pk=0
+Tentativa: posicao=25, pk=87
+Tempo total de busca binaria: 0.000000 segundos
+
+Log inicializado.
+Tentativa: posicao=62, pk=94
+Tentativa: posicao=30, pk=7
+Tentativa: posicao=14, pk=0
+Tentativa: posicao=22, pk=0
+Tentativa: posicao=26, pk=3
+Tentativa: posicao=28, pk=80
+Tentativa: posicao=27, pk=62
+Tempo total de busca binaria: 0.000000 segundos
+
+Log inicializado.
+1 - Colisão encontrada na posição: 5288
+
+Log inicializado.
+1 - Colisão encontrada na posição: 5288
+
+Log inicializado.
+1 - Colisão encontrada na posição: 4136
+2 - Colisão encontrada na posição: 7496
+3 - Colisão encontrada na posição: 9512
+
+Log inicializado.
+1 - Colisão encontrada na posição: 8888
+
+Log inicializado.
+
+Log inicializado.
+1 - Colisão encontrada na posição: 5528
+2 - Colisão encontrada na posição: 6872
+3 - Colisão encontrada na posição: 9224
+4 - Colisão encontrada na posição: 11744
+5 - Colisão encontrada na posição: 14432
+6 - Colisão encontrada na posição: 20480
+7 - Colisão encontrada na posição: 21152
+
+Log inicializado.
+1 - Colisão encontrada na posição: 6704
+2 - Colisão encontrada na posição: 13088
+3 - Colisão encontrada na posição: 15440
+4 - Colisão encontrada na posição: 15944
+5 - Colisão encontrada na posição: 18968
+6 - Colisão encontrada na posição: 20984
+7 - Colisão encontrada na posição: 21152
+8 - Colisão encontrada na posição: 21656
+9 - Colisão encontrada na posição: 23000
+10 - Colisão encontrada na posição: 24176
+11 - Colisão encontrada na posição: 28544
+12 - Colisão encontrada na posição: 29216
+13 - Colisão encontrada na posição: 47024
+14 - Colisão encontrada na posição: 48872
+15 - Colisão encontrada na posição: 49880
+16 - Colisão encontrada na posição: 52904
+17 - Colisão encontrada na posição: 55424
+18 - Colisão encontrada na posição: 55592
+19 - Colisão encontrada na posição: 55928
+20 - Colisão encontrada na posição: 64160
+21 - Colisão encontrada na posição: 65672
+22 - Colisão encontrada na posição: 66176
+23 - Colisão encontrada na posição: 72392
+24 - Colisão encontrada na posição: 74072
+25 - Colisão encontrada na posição: 77096
+26 - Colisão encontrada na posição: 77600
+27 - Colisão encontrada na posição: 77936
+28 - Colisão encontrada na posição: 78608
+29 - Colisão encontrada na posição: 80960
+30 - Colisão encontrada na posição: 83144
+31 - Colisão encontrada na posição: 86672
+32 - Colisão encontrada na posição: 92720
+
+Log inicializado.
+1 - Colisão encontrada na posição: 2840
+2 - Colisão encontrada na posição: 6032
+3 - Colisão encontrada na posição: 6872
+4 - Colisão encontrada na posição: 8048
+5 - Colisão encontrada na posição: 8552
+6 - Colisão encontrada na posição: 9392
+7 - Colisão encontrada na posição: 12584
+8 - Colisão encontrada na posição: 13592
+9 - Colisão encontrada na posição: 15272
+10 - Colisão encontrada na posição: 26024
+11 - Colisão encontrada na posição: 26696
+12 - Colisão encontrada na posição: 29888
+13 - Colisão encontrada na posição: 31064
+14 - Colisão encontrada na posição: 31232
+15 - Colisão encontrada na posição: 32408
+16 - Colisão encontrada na posição: 34592
+17 - Colisão encontrada na posição: 34760
+18 - Colisão encontrada na posição: 36440
+19 - Colisão encontrada na posição: 36944
+20 - Colisão encontrada na posição: 40472
+21 - Colisão encontrada na posição: 41480
+
+Log inicializado.
+1 - Colisão encontrada na posição: 2336
+2 - Colisão encontrada na posição: 7544
+3 - Colisão encontrada na posição: 9560
+4 - Colisão encontrada na posição: 10400
+5 - Colisão encontrada na posição: 12248
+6 - Colisão encontrada na posição: 16448
+7 - Colisão encontrada na posição: 21488
+8 - Colisão encontrada na posição: 29048
+9 - Colisão encontrada na posição: 30392
+10 - Colisão encontrada na posição: 30728
+11 - Colisão encontrada na posição: 34256
+12 - Colisão encontrada na posição: 34424
+13 - Colisão encontrada na posição: 42488
+14 - Colisão encontrada na posição: 43496
+15 - Colisão encontrada na posição: 46352
+16 - Colisão encontrada na posição: 50048
+17 - Colisão encontrada na posição: 51560
+18 - Colisão encontrada na posição: 53072
+19 - Colisão encontrada na posição: 54080
+20 - Colisão encontrada na posição: 54248
+21 - Colisão encontrada na posição: 56768
+22 - Colisão encontrada na posição: 60800
+23 - Colisão encontrada na posição: 61304
+24 - Colisão encontrada na posição: 62312
+25 - Colisão encontrada na posição: 64328
+26 - Colisão encontrada na posição: 69032
+27 - Colisão encontrada na posição: 69536
+28 - Colisão encontrada na posição: 70040
+29 - Colisão encontrada na posição: 74744
+30 - Colisão encontrada na posição: 76088
+31 - Colisão encontrada na posição: 76592
+32 - Colisão encontrada na posição: 78776
+33 - Colisão encontrada na posição: 80456
+34 - Colisão encontrada na posição: 87680
+35 - Colisão encontrada na posição: 88184
+36 - Colisão encontrada na posição: 88520
+37 - Colisão encontrada na posição: 94904
+38 - Colisão encontrada na posição: 99776
+39 - Colisão encontrada na posição: 99944
+40 - Colisão encontrada na posição: 103304
+41 - Colisão encontrada na posição: 105152
+42 - Colisão encontrada na posição: 105320
+43 - Colisão encontrada na posição: 107168
+44 - Colisão encontrada na posição: 116912
+45 - Colisão encontrada na posição: 118088
+46 - Colisão encontrada na posição: 124472
+47 - Colisão encontrada na posição: 126656
+48 - Colisão encontrada na posição: 127664
+49 - Colisão encontrada na posição: 139088
+50 - Colisão encontrada na posição: 140432
+51 - Colisão encontrada na posição: 142448
+52 - Colisão encontrada na posição: 144464
+53 - Colisão encontrada na posição: 146984
+54 - Colisão encontrada na posição: 147824
+55 - Colisão encontrada na posição: 148832
+56 - Colisão encontrada na posição: 149000
+57 - Colisão encontrada na posição: 151184
+58 - Colisão encontrada na posição: 155048
+59 - Colisão encontrada na posição: 158072
+60 - Colisão encontrada na posição: 158912
+61 - Colisão encontrada na posição: 160256
+62 - Colisão encontrada na posição: 166136
+63 - Colisão encontrada na posição: 166304
+64 - Colisão encontrada na posição: 166472
+
+Log inicializado.
+1 - Colisão encontrada na posição: 2336
+2 - Colisão encontrada na posição: 7544
+3 - Colisão encontrada na posição: 9560
+4 - Colisão encontrada na posição: 10400
+5 - Colisão encontrada na posição: 12248
+6 - Colisão encontrada na posição: 16448
+7 - Colisão encontrada na posição: 21488
+8 - Colisão encontrada na posição: 29048
+9 - Colisão encontrada na posição: 30392
+10 - Colisão encontrada na posição: 30728
+11 - Colisão encontrada na posição: 34256
+12 - Colisão encontrada na posição: 34424
+13 - Colisão encontrada na posição: 42488
+14 - Colisão encontrada na posição: 43496
+15 - Colisão encontrada na posição: 46352
+16 - Colisão encontrada na posição: 50048
+17 - Colisão encontrada na posição: 51560
+18 - Colisão encontrada na posição: 53072
+19 - Colisão encontrada na posição: 54080
+20 - Colisão encontrada na posição: 54248
+21 - Colisão encontrada na posição: 56768
+22 - Colisão encontrada na posição: 60800
+23 - Colisão encontrada na posição: 61304
+24 - Colisão encontrada na posição: 62312
+25 - Colisão encontrada na posição: 64328
+26 - Colisão encontrada na posição: 69032
+27 - Colisão encontrada na posição: 69536
+28 - Colisão encontrada na posição: 70040
+29 - Colisão encontrada na posição: 74744
+30 - Colisão encontrada na posição: 76088
+31 - Colisão encontrada na posição: 76592
+32 - Colisão encontrada na posição: 78776
+33 - Colisão encontrada na posição: 80456
+34 - Colisão encontrada na posição: 87680
+35 - Colisão encontrada na posição: 88184
+36 - Colisão encontrada na posição: 88520
+37 - Colisão encontrada na posição: 94904
+38 - Colisão encontrada na posição: 99776
+39 - Colisão encontrada na posição: 99944
+40 - Colisão encontrada na posição: 103304
+41 - Colisão encontrada na posição: 105152
+42 - Colisão encontrada na posição: 105320
+43 - Colisão encontrada na posição: 107168
+44 - Colisão encontrada na posição: 116912
+45 - Colisão encontrada na posição: 118088
+46 - Colisão encontrada na posição: 124472
+47 - Colisão encontrada na posição: 126656
+48 - Colisão encontrada na posição: 127664
+49 - Colisão encontrada na posição: 139088
+50 - Colisão encontrada na posição: 140432
+51 - Colisão encontrada na posição: 142448
+52 - Colisão encontrada na posição: 144464
+53 - Colisão encontrada na posição: 146984
+54 - Colisão encontrada na posição: 147824
+55 - Colisão encontrada na posição: 148832
+56 - Colisão encontrada na posição: 149000
+57 - Colisão encontrada na posição: 151184
+58 - Colisão encontrada na posição: 155048
+59 - Colisão encontrada na posição: 158072
+60 - Colisão encontrada na posição: 158912
+61 - Colisão encontrada na posição: 160256
+62 - Colisão encontrada na posição: 166136
+63 - Colisão encontrada na posição: 166304
+64 - Colisão encontrada na posição: 166472
+65 - Colisão encontrada na posição: 171008
+
+Log inicializado.
+1 - Colisão encontrada na posição: 7784
+2 - Colisão encontrada na posição: 8840
+3 - Colisão encontrada na posição: 10568
+4 - Colisão encontrada na posição: 11816
+5 - Colisão encontrada na posição: 12296
+6 - Colisão encontrada na posição: 15656
+7 - Colisão encontrada na posição: 19112
+8 - Colisão encontrada na posição: 20264
+9 - Colisão encontrada na posição: 23720
+10 - Colisão encontrada na posição: 29768
+11 - Colisão encontrada na posição: 30440
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3080
+
+Log inicializado.
+1 - Colisão encontrada na posição: 18632
+2 - Colisão encontrada na posição: 19976
+3 - Colisão encontrada na posição: 22496
+4 - Colisão encontrada na posição: 25016
+5 - Colisão encontrada na posição: 27200
+6 - Colisão encontrada na posição: 33752
+
+Log inicializado.
+1 - Colisão encontrada na posição: 7784
+2 - Colisão encontrada na posição: 8840
+3 - Colisão encontrada na posição: 10568
+4 - Colisão encontrada na posição: 11816
+5 - Colisão encontrada na posição: 12296
+6 - Colisão encontrada na posição: 15656
+7 - Colisão encontrada na posição: 19112
+8 - Colisão encontrada na posição: 20264
+9 - Colisão encontrada na posição: 23720
+10 - Colisão encontrada na posição: 29768
+11 - Colisão encontrada na posição: 30440
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3080
+
+Log inicializado.
+1 - Colisão encontrada na posição: 7784
+2 - Colisão encontrada na posição: 8840
+3 - Colisão encontrada na posição: 10568
+4 - Colisão encontrada na posição: 11816
+5 - Colisão encontrada na posição: 12296
+6 - Colisão encontrada na posição: 15656
+7 - Colisão encontrada na posição: 19112
+8 - Colisão encontrada na posição: 20264
+9 - Colisão encontrada na posição: 23720
+10 - Colisão encontrada na posição: 29768
+11 - Colisão encontrada na posição: 30440
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3080
+
+Log inicializado.
+1 - Colisão encontrada na posição: 992
+
+Log inicializado.
+1 - Colisão encontrada na posição: 992
+
+Log inicializado.
+1 - Colisão encontrada na posição: 7784
+2 - Colisão encontrada na posição: 8840
+3 - Colisão encontrada na posição: 10568
+4 - Colisão encontrada na posição: 11816
+5 - Colisão encontrada na posição: 12296
+6 - Colisão encontrada na posição: 15656
+7 - Colisão encontrada na posição: 19112
+8 - Colisão encontrada na posição: 20264
+9 - Colisão encontrada na posição: 23720
+10 - Colisão encontrada na posição: 29768
+11 - Colisão encontrada na posição: 30440
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3080
+
+Log inicializado.
+1 - Colisão encontrada na posição: 7784
+2 - Colisão encontrada na posição: 8840
+3 - Colisão encontrada na posição: 10568
+4 - Colisão encontrada na posição: 11816
+5 - Colisão encontrada na posição: 12296
+6 - Colisão encontrada na posição: 15656
+7 - Colisão encontrada na posição: 19112
+8 - Colisão encontrada na posição: 20264
+9 - Colisão encontrada na posição: 23720
+10 - Colisão encontrada na posição: 29768
+11 - Colisão encontrada na posição: 30440
+
+Log inicializado.
+1 - Colisão encontrada na posição: 7784
+2 - Colisão encontrada na posição: 8840
+3 - Colisão encontrada na posição: 10568
+4 - Colisão encontrada na posição: 11816
+5 - Colisão encontrada na posição: 12296
+6 - Colisão encontrada na posição: 15656
+7 - Colisão encontrada na posição: 19112
+8 - Colisão encontrada na posição: 20264
+9 - Colisão encontrada na posição: 23720
+10 - Colisão encontrada na posição: 29768
+11 - Colisão encontrada na posição: 30440
+
+Log inicializado.
+1 - Colisão encontrada na posição: 5576
+2 - Colisão encontrada na posição: 8264
+3 - Colisão encontrada na posição: 9032
+4 - Colisão encontrada na posição: 12008
+5 - Colisão encontrada na posição: 14600
+6 - Colisão encontrada na posição: 15944
+7 - Colisão encontrada na posição: 27560
+8 - Colisão encontrada na posição: 30056
+9 - Colisão encontrada na posição: 31688
+10 - Colisão encontrada na posição: 33032
+11 - Colisão encontrada na posição: 36008
+12 - Colisão encontrada na posição: 38600
+13 - Colisão encontrada na posição: 45416
+14 - Colisão encontrada na posição: 45896
+15 - Colisão encontrada na posição: 48488
+
+Log inicializado.
+1 - Colisão encontrada na posição: 992
+
+Log inicializado.
+1 - Colisão encontrada na posição: 992
+
+Log inicializado.
+1 - Colisão encontrada na posição: 5576
+2 - Colisão encontrada na posição: 8264
+3 - Colisão encontrada na posição: 9032
+4 - Colisão encontrada na posição: 12008
+5 - Colisão encontrada na posição: 14600
+6 - Colisão encontrada na posição: 15944
+7 - Colisão encontrada na posição: 27560
+8 - Colisão encontrada na posição: 30056
+9 - Colisão encontrada na posição: 31688
+10 - Colisão encontrada na posição: 33032
+11 - Colisão encontrada na posição: 36008
+12 - Colisão encontrada na posição: 38600
+13 - Colisão encontrada na posição: 45416
+14 - Colisão encontrada na posição: 45896
+15 - Colisão encontrada na posição: 48488
+
+Log inicializado.
+1 - Colisão encontrada na posição: 6704
+2 - Colisão encontrada na posição: 13088
+3 - Colisão encontrada na posição: 15440
+4 - Colisão encontrada na posição: 15944
+5 - Colisão encontrada na posição: 18968
+6 - Colisão encontrada na posição: 20984
+7 - Colisão encontrada na posição: 21152
+8 - Colisão encontrada na posição: 21656
+9 - Colisão encontrada na posição: 23000
+10 - Colisão encontrada na posição: 24176
+11 - Colisão encontrada na posição: 28544
+12 - Colisão encontrada na posição: 29216
+13 - Colisão encontrada na posição: 47024
+14 - Colisão encontrada na posição: 48872
+15 - Colisão encontrada na posição: 49880
+16 - Colisão encontrada na posição: 52904
+17 - Colisão encontrada na posição: 55424
+18 - Colisão encontrada na posição: 55592
+19 - Colisão encontrada na posição: 55928
+20 - Colisão encontrada na posição: 64160
+21 - Colisão encontrada na posição: 65672
+22 - Colisão encontrada na posição: 66176
+23 - Colisão encontrada na posição: 72392
+24 - Colisão encontrada na posição: 74072
+25 - Colisão encontrada na posição: 77096
+26 - Colisão encontrada na posição: 77600
+27 - Colisão encontrada na posição: 77936
+28 - Colisão encontrada na posição: 78608
+29 - Colisão encontrada na posição: 80960
+30 - Colisão encontrada na posição: 83144
+31 - Colisão encontrada na posição: 86672
+32 - Colisão encontrada na posição: 92720
+33 - Colisão encontrada na posição: 93056
+34 - Colisão encontrada na posição: 93896
+35 - Colisão encontrada na posição: 94232
+36 - Colisão encontrada na posição: 95744
+37 - Colisão encontrada na posição: 97088
+38 - Colisão encontrada na posição: 102128
+39 - Colisão encontrada na posição: 104984
+40 - Colisão encontrada na posição: 107504
+41 - Colisão encontrada na posição: 111368
+42 - Colisão encontrada na posição: 112712
+43 - Colisão encontrada na posição: 114896
+44 - Colisão encontrada na posição: 116072
+45 - Colisão encontrada na posição: 117920
+46 - Colisão encontrada na posição: 119264
+47 - Colisão encontrada na posição: 121448
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3080
+
+Log inicializado.
+1 - Colisão encontrada na posição: 5576
+2 - Colisão encontrada na posição: 8264
+3 - Colisão encontrada na posição: 9032
+4 - Colisão encontrada na posição: 12008
+5 - Colisão encontrada na posição: 14600
+6 - Colisão encontrada na posição: 15944
+7 - Colisão encontrada na posição: 27560
+8 - Colisão encontrada na posição: 30056
+9 - Colisão encontrada na posição: 31688
+10 - Colisão encontrada na posição: 33032
+11 - Colisão encontrada na posição: 36008
+12 - Colisão encontrada na posição: 38600
+13 - Colisão encontrada na posição: 45416
+14 - Colisão encontrada na posição: 45896
+15 - Colisão encontrada na posição: 48488
+
+Log inicializado.
+1 - Colisão encontrada na posição: 5576
+2 - Colisão encontrada na posição: 8264
+3 - Colisão encontrada na posição: 9032
+4 - Colisão encontrada na posição: 12008
+5 - Colisão encontrada na posição: 14600
+6 - Colisão encontrada na posição: 15944
+7 - Colisão encontrada na posição: 27560
+8 - Colisão encontrada na posição: 30056
+9 - Colisão encontrada na posição: 31688
+10 - Colisão encontrada na posição: 33032
+11 - Colisão encontrada na posição: 36008
+12 - Colisão encontrada na posição: 38600
+13 - Colisão encontrada na posição: 45416
+14 - Colisão encontrada na posição: 45896
+15 - Colisão encontrada na posição: 48488
+
+Log inicializado.
+1 - Colisão encontrada na posição: 7784
+2 - Colisão encontrada na posição: 8840
+3 - Colisão encontrada na posição: 10568
+4 - Colisão encontrada na posição: 11816
+5 - Colisão encontrada na posição: 12296
+6 - Colisão encontrada na posição: 15656
+7 - Colisão encontrada na posição: 19112
+8 - Colisão encontrada na posição: 20264
+9 - Colisão encontrada na posição: 23720
+10 - Colisão encontrada na posição: 29768
+11 - Colisão encontrada na posição: 30440
+
+Log inicializado.
+1 - Colisão encontrada na posição: 4904
+2 - Colisão encontrada na posição: 5960
+3 - Colisão encontrada na posição: 7592
+4 - Colisão encontrada na posição: 11912
+5 - Colisão encontrada na posição: 16136
+6 - Colisão encontrada na posição: 16808
+7 - Colisão encontrada na posição: 21032
+8 - Colisão encontrada na posição: 21512
+9 - Colisão encontrada na posição: 23240
+10 - Colisão encontrada na posição: 26696
+11 - Colisão encontrada na posição: 27176
+12 - Colisão encontrada na posição: 32744
+13 - Colisão encontrada na posição: 38888
+14 - Colisão encontrada na posição: 39272
+15 - Colisão encontrada na posição: 41096
+16 - Colisão encontrada na posição: 41384
+17 - Colisão encontrada na posição: 43688
+18 - Colisão encontrada na posição: 44648
+19 - Colisão encontrada na posição: 48776
+20 - Colisão encontrada na posição: 50888
+21 - Colisão encontrada na posição: 53480
+22 - Colisão encontrada na posição: 58472
+23 - Colisão encontrada na posição: 62504
+24 - Colisão encontrada na posição: 62696
+25 - Colisão encontrada na posição: 64136
+26 - Colisão encontrada na posição: 65768
+27 - Colisão encontrada na posição: 68456
+28 - Colisão encontrada na posição: 69608
+29 - Colisão encontrada na posição: 80840
+
+Log inicializado.
+1 - Colisão encontrada na posição: 5584
+2 - Colisão encontrada na posição: 9848
+3 - Colisão encontrada na posição: 12864
+4 - Colisão encontrada na posição: 17752
+5 - Colisão encontrada na posição: 19520
+6 - Colisão encontrada na posição: 22744
+7 - Colisão encontrada na posição: 23056
+8 - Colisão encontrada na posição: 23992
+9 - Colisão encontrada na posição: 35432
+10 - Colisão encontrada na posição: 36056
+11 - Colisão encontrada na posição: 37616
+12 - Colisão encontrada na posição: 39280
+
+Log inicializado.
+1 - Colisão encontrada na posição: 5576
+2 - Colisão encontrada na posição: 8264
+3 - Colisão encontrada na posição: 9032
+4 - Colisão encontrada na posição: 12008
+5 - Colisão encontrada na posição: 14600
+6 - Colisão encontrada na posição: 15944
+7 - Colisão encontrada na posição: 27560
+8 - Colisão encontrada na posição: 30056
+9 - Colisão encontrada na posição: 31688
+10 - Colisão encontrada na posição: 33032
+11 - Colisão encontrada na posição: 36008
+12 - Colisão encontrada na posição: 38600
+13 - Colisão encontrada na posição: 45416
+14 - Colisão encontrada na posição: 45896
+15 - Colisão encontrada na posição: 48488
+
+Log inicializado.
+1 - Colisão encontrada na posição: 5576
+2 - Colisão encontrada na posição: 8264
+3 - Colisão encontrada na posição: 9032
+4 - Colisão encontrada na posição: 12008
+5 - Colisão encontrada na posição: 14600
+6 - Colisão encontrada na posição: 15944
+7 - Colisão encontrada na posição: 27560
+8 - Colisão encontrada na posição: 30056
+9 - Colisão encontrada na posição: 31688
+10 - Colisão encontrada na posição: 33032
+11 - Colisão encontrada na posição: 36008
+12 - Colisão encontrada na posição: 38600
+13 - Colisão encontrada na posição: 45416
+14 - Colisão encontrada na posição: 45896
+15 - Colisão encontrada na posição: 48488
+
+Log inicializado.
+1 - Colisão encontrada na posição: 5576
+2 - Colisão encontrada na posição: 8264
+3 - Colisão encontrada na posição: 9032
+4 - Colisão encontrada na posição: 12008
+5 - Colisão encontrada na posição: 14600
+6 - Colisão encontrada na posição: 15944
+7 - Colisão encontrada na posição: 27560
+8 - Colisão encontrada na posição: 30056
+9 - Colisão encontrada na posição: 31688
+10 - Colisão encontrada na posição: 33032
+11 - Colisão encontrada na posição: 36008
+12 - Colisão encontrada na posição: 38600
+13 - Colisão encontrada na posição: 45416
+14 - Colisão encontrada na posição: 45896
+15 - Colisão encontrada na posição: 48488
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3656
+2 - Colisão encontrada na posição: 5864
+3 - Colisão encontrada na posição: 7400
+4 - Colisão encontrada na posição: 12104
+5 - Colisão encontrada na posição: 16712
+6 - Colisão encontrada na posição: 19784
+7 - Colisão encontrada na posição: 19976
+8 - Colisão encontrada na posição: 20648
+9 - Colisão encontrada na posição: 23336
+10 - Colisão encontrada na posição: 32936
+11 - Colisão encontrada na posição: 33896
+
+Log inicializado.
+1 - Colisão encontrada na posição: 5576
+2 - Colisão encontrada na posição: 8264
+3 - Colisão encontrada na posição: 9032
+4 - Colisão encontrada na posição: 12008
+5 - Colisão encontrada na posição: 14600
+6 - Colisão encontrada na posição: 15944
+7 - Colisão encontrada na posição: 27560
+8 - Colisão encontrada na posição: 30056
+9 - Colisão encontrada na posição: 31688
+10 - Colisão encontrada na posição: 33032
+11 - Colisão encontrada na posição: 36008
+12 - Colisão encontrada na posição: 38600
+13 - Colisão encontrada na posição: 45416
+14 - Colisão encontrada na posição: 45896
+15 - Colisão encontrada na posição: 48488
+
+Log inicializado.
+1 - Colisão encontrada na posição: 5576
+2 - Colisão encontrada na posição: 8264
+3 - Colisão encontrada na posição: 9032
+4 - Colisão encontrada na posição: 12008
+5 - Colisão encontrada na posição: 14600
+6 - Colisão encontrada na posição: 15944
+7 - Colisão encontrada na posição: 27560
+8 - Colisão encontrada na posição: 30056
+9 - Colisão encontrada na posição: 31688
+10 - Colisão encontrada na posição: 33032
+11 - Colisão encontrada na posição: 36008
+12 - Colisão encontrada na posição: 38600
+13 - Colisão encontrada na posição: 45416
+14 - Colisão encontrada na posição: 45896
+15 - Colisão encontrada na posição: 48488
+
+Log inicializado.
+1 - Colisão encontrada na posição: 5576
+2 - Colisão encontrada na posição: 8264
+3 - Colisão encontrada na posição: 9032
+4 - Colisão encontrada na posição: 12008
+5 - Colisão encontrada na posição: 14600
+6 - Colisão encontrada na posição: 15944
+7 - Colisão encontrada na posição: 27560
+8 - Colisão encontrada na posição: 30056
+9 - Colisão encontrada na posição: 31688
+10 - Colisão encontrada na posição: 33032
+11 - Colisão encontrada na posição: 36008
+12 - Colisão encontrada na posição: 38600
+13 - Colisão encontrada na posição: 45416
+14 - Colisão encontrada na posição: 45896
+15 - Colisão encontrada na posição: 48488
+
+Log inicializado.
+1 - Colisão encontrada na posição: 7784
+2 - Colisão encontrada na posição: 8840
+3 - Colisão encontrada na posição: 10568
+4 - Colisão encontrada na posição: 11816
+5 - Colisão encontrada na posição: 12296
+6 - Colisão encontrada na posição: 15656
+7 - Colisão encontrada na posição: 19112
+8 - Colisão encontrada na posição: 20264
+9 - Colisão encontrada na posição: 23720
+10 - Colisão encontrada na posição: 29768
+11 - Colisão encontrada na posição: 30440
+
+Log inicializado.
+1 - Colisão encontrada na posição: 5576
+2 - Colisão encontrada na posição: 8264
+3 - Colisão encontrada na posição: 9032
+4 - Colisão encontrada na posição: 12008
+5 - Colisão encontrada na posição: 14600
+6 - Colisão encontrada na posição: 15944
+7 - Colisão encontrada na posição: 27560
+8 - Colisão encontrada na posição: 30056
+9 - Colisão encontrada na posição: 31688
+10 - Colisão encontrada na posição: 33032
+11 - Colisão encontrada na posição: 36008
+12 - Colisão encontrada na posição: 38600
+13 - Colisão encontrada na posição: 45416
+14 - Colisão encontrada na posição: 45896
+15 - Colisão encontrada na posição: 48488
+
+Log inicializado.
+1 - Colisão encontrada na posição: 4904
+2 - Colisão encontrada na posição: 5960
+3 - Colisão encontrada na posição: 7592
+4 - Colisão encontrada na posição: 11912
+5 - Colisão encontrada na posição: 16136
+6 - Colisão encontrada na posição: 16808
+7 - Colisão encontrada na posição: 21032
+8 - Colisão encontrada na posição: 21512
+9 - Colisão encontrada na posição: 23240
+10 - Colisão encontrada na posição: 26696
+11 - Colisão encontrada na posição: 27176
+12 - Colisão encontrada na posição: 32744
+13 - Colisão encontrada na posição: 38888
+14 - Colisão encontrada na posição: 39272
+15 - Colisão encontrada na posição: 41096
+16 - Colisão encontrada na posição: 41384
+17 - Colisão encontrada na posição: 43688
+18 - Colisão encontrada na posição: 44648
+19 - Colisão encontrada na posição: 48776
+20 - Colisão encontrada na posição: 50888
+21 - Colisão encontrada na posição: 53480
+22 - Colisão encontrada na posição: 58472
+23 - Colisão encontrada na posição: 62504
+24 - Colisão encontrada na posição: 62696
+25 - Colisão encontrada na posição: 64136
+26 - Colisão encontrada na posição: 65768
+27 - Colisão encontrada na posição: 68456
+28 - Colisão encontrada na posição: 69608
+29 - Colisão encontrada na posição: 80840
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3464
+2 - Colisão encontrada na posição: 4040
+3 - Colisão encontrada na posição: 7112
+4 - Colisão encontrada na posição: 14120
+5 - Colisão encontrada na posição: 16424
+6 - Colisão encontrada na posição: 19208
+7 - Colisão encontrada na posição: 20840
+8 - Colisão encontrada na posição: 22856
+9 - Colisão encontrada na posição: 23816
+10 - Colisão encontrada na posição: 26984
+11 - Colisão encontrada na posição: 27848
+12 - Colisão encontrada na posição: 28616
+13 - Colisão encontrada na posição: 33224
+14 - Colisão encontrada na posição: 35336
+15 - Colisão encontrada na posição: 36296
+16 - Colisão encontrada na posição: 38120
+17 - Colisão encontrada na posição: 39656
+18 - Colisão encontrada na posição: 43304
+19 - Colisão encontrada na posição: 44936
+20 - Colisão encontrada na posição: 49256
+21 - Colisão encontrada na posição: 56648
+22 - Colisão encontrada na posição: 67112
+23 - Colisão encontrada na posição: 72776
+
+Log inicializado.
+1 - Colisão encontrada na posição: 992
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3464
+2 - Colisão encontrada na posição: 4040
+3 - Colisão encontrada na posição: 7112
+4 - Colisão encontrada na posição: 14120
+5 - Colisão encontrada na posição: 16424
+6 - Colisão encontrada na posição: 19208
+7 - Colisão encontrada na posição: 20840
+8 - Colisão encontrada na posição: 22856
+9 - Colisão encontrada na posição: 23816
+10 - Colisão encontrada na posição: 26984
+11 - Colisão encontrada na posição: 27848
+12 - Colisão encontrada na posição: 28616
+13 - Colisão encontrada na posição: 33224
+14 - Colisão encontrada na posição: 35336
+15 - Colisão encontrada na posição: 36296
+16 - Colisão encontrada na posição: 38120
+17 - Colisão encontrada na posição: 39656
+18 - Colisão encontrada na posição: 43304
+19 - Colisão encontrada na posição: 44936
+20 - Colisão encontrada na posição: 49256
+21 - Colisão encontrada na posição: 56648
+22 - Colisão encontrada na posição: 67112
+23 - Colisão encontrada na posição: 72776
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3464
+2 - Colisão encontrada na posição: 4040
+3 - Colisão encontrada na posição: 7112
+4 - Colisão encontrada na posição: 14120
+5 - Colisão encontrada na posição: 16424
+6 - Colisão encontrada na posição: 19208
+7 - Colisão encontrada na posição: 20840
+8 - Colisão encontrada na posição: 22856
+9 - Colisão encontrada na posição: 23816
+10 - Colisão encontrada na posição: 26984
+11 - Colisão encontrada na posição: 27848
+12 - Colisão encontrada na posição: 28616
+13 - Colisão encontrada na posição: 33224
+14 - Colisão encontrada na posição: 35336
+15 - Colisão encontrada na posição: 36296
+16 - Colisão encontrada na posição: 38120
+17 - Colisão encontrada na posição: 39656
+18 - Colisão encontrada na posição: 43304
+19 - Colisão encontrada na posição: 44936
+20 - Colisão encontrada na posição: 49256
+21 - Colisão encontrada na posição: 56648
+22 - Colisão encontrada na posição: 67112
+23 - Colisão encontrada na posição: 72776
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3464
+2 - Colisão encontrada na posição: 4040
+3 - Colisão encontrada na posição: 7112
+4 - Colisão encontrada na posição: 14120
+5 - Colisão encontrada na posição: 16424
+6 - Colisão encontrada na posição: 19208
+7 - Colisão encontrada na posição: 20840
+8 - Colisão encontrada na posição: 22856
+9 - Colisão encontrada na posição: 23816
+10 - Colisão encontrada na posição: 26984
+11 - Colisão encontrada na posição: 27848
+12 - Colisão encontrada na posição: 28616
+13 - Colisão encontrada na posição: 33224
+14 - Colisão encontrada na posição: 35336
+15 - Colisão encontrada na posição: 36296
+16 - Colisão encontrada na posição: 38120
+17 - Colisão encontrada na posição: 39656
+18 - Colisão encontrada na posição: 43304
+19 - Colisão encontrada na posição: 44936
+20 - Colisão encontrada na posição: 49256
+21 - Colisão encontrada na posição: 56648
+22 - Colisão encontrada na posição: 67112
+23 - Colisão encontrada na posição: 72776
+
+Log inicializado.
+1 - Colisão encontrada na posição: 18632
+2 - Colisão encontrada na posição: 19976
+3 - Colisão encontrada na posição: 22496
+4 - Colisão encontrada na posição: 25016
+5 - Colisão encontrada na posição: 27200
+6 - Colisão encontrada na posição: 33752
+
+Log inicializado.
+1 - Colisão encontrada na posição: 7784
+2 - Colisão encontrada na posição: 8840
+3 - Colisão encontrada na posição: 10568
+4 - Colisão encontrada na posição: 11816
+5 - Colisão encontrada na posição: 12296
+6 - Colisão encontrada na posição: 15656
+7 - Colisão encontrada na posição: 19112
+8 - Colisão encontrada na posição: 20264
+9 - Colisão encontrada na posição: 23720
+10 - Colisão encontrada na posição: 29768
+11 - Colisão encontrada na posição: 30440
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3464
+2 - Colisão encontrada na posição: 4040
+3 - Colisão encontrada na posição: 7112
+4 - Colisão encontrada na posição: 14120
+5 - Colisão encontrada na posição: 16424
+6 - Colisão encontrada na posição: 19208
+7 - Colisão encontrada na posição: 20840
+8 - Colisão encontrada na posição: 22856
+9 - Colisão encontrada na posição: 23816
+10 - Colisão encontrada na posição: 26984
+11 - Colisão encontrada na posição: 27848
+12 - Colisão encontrada na posição: 28616
+13 - Colisão encontrada na posição: 33224
+14 - Colisão encontrada na posição: 35336
+15 - Colisão encontrada na posição: 36296
+16 - Colisão encontrada na posição: 38120
+17 - Colisão encontrada na posição: 39656
+18 - Colisão encontrada na posição: 43304
+19 - Colisão encontrada na posição: 44936
+20 - Colisão encontrada na posição: 49256
+21 - Colisão encontrada na posição: 56648
+22 - Colisão encontrada na posição: 67112
+23 - Colisão encontrada na posição: 72776
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3464
+2 - Colisão encontrada na posição: 4040
+3 - Colisão encontrada na posição: 7112
+4 - Colisão encontrada na posição: 14120
+5 - Colisão encontrada na posição: 16424
+6 - Colisão encontrada na posição: 19208
+7 - Colisão encontrada na posição: 20840
+8 - Colisão encontrada na posição: 22856
+9 - Colisão encontrada na posição: 23816
+10 - Colisão encontrada na posição: 26984
+11 - Colisão encontrada na posição: 27848
+12 - Colisão encontrada na posição: 28616
+13 - Colisão encontrada na posição: 33224
+14 - Colisão encontrada na posição: 35336
+15 - Colisão encontrada na posição: 36296
+16 - Colisão encontrada na posição: 38120
+17 - Colisão encontrada na posição: 39656
+18 - Colisão encontrada na posição: 43304
+19 - Colisão encontrada na posição: 44936
+20 - Colisão encontrada na posição: 49256
+21 - Colisão encontrada na posição: 56648
+22 - Colisão encontrada na posição: 67112
+23 - Colisão encontrada na posição: 72776
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3464
+2 - Colisão encontrada na posição: 4040
+3 - Colisão encontrada na posição: 7112
+4 - Colisão encontrada na posição: 14120
+5 - Colisão encontrada na posição: 16424
+6 - Colisão encontrada na posição: 19208
+7 - Colisão encontrada na posição: 20840
+8 - Colisão encontrada na posição: 22856
+9 - Colisão encontrada na posição: 23816
+10 - Colisão encontrada na posição: 26984
+11 - Colisão encontrada na posição: 27848
+12 - Colisão encontrada na posição: 28616
+13 - Colisão encontrada na posição: 33224
+14 - Colisão encontrada na posição: 35336
+15 - Colisão encontrada na posição: 36296
+16 - Colisão encontrada na posição: 38120
+17 - Colisão encontrada na posição: 39656
+18 - Colisão encontrada na posição: 43304
+19 - Colisão encontrada na posição: 44936
+20 - Colisão encontrada na posição: 49256
+21 - Colisão encontrada na posição: 56648
+22 - Colisão encontrada na posição: 67112
+23 - Colisão encontrada na posição: 72776
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3464
+2 - Colisão encontrada na posição: 4040
+3 - Colisão encontrada na posição: 7112
+4 - Colisão encontrada na posição: 14120
+5 - Colisão encontrada na posição: 16424
+6 - Colisão encontrada na posição: 19208
+7 - Colisão encontrada na posição: 20840
+8 - Colisão encontrada na posição: 22856
+9 - Colisão encontrada na posição: 23816
+10 - Colisão encontrada na posição: 26984
+11 - Colisão encontrada na posição: 27848
+12 - Colisão encontrada na posição: 28616
+13 - Colisão encontrada na posição: 33224
+14 - Colisão encontrada na posição: 35336
+15 - Colisão encontrada na posição: 36296
+16 - Colisão encontrada na posição: 38120
+17 - Colisão encontrada na posição: 39656
+18 - Colisão encontrada na posição: 43304
+19 - Colisão encontrada na posição: 44936
+20 - Colisão encontrada na posição: 49256
+21 - Colisão encontrada na posição: 56648
+22 - Colisão encontrada na posição: 67112
+23 - Colisão encontrada na posição: 72776
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3464
+2 - Colisão encontrada na posição: 4040
+3 - Colisão encontrada na posição: 7112
+4 - Colisão encontrada na posição: 14120
+5 - Colisão encontrada na posição: 16424
+6 - Colisão encontrada na posição: 19208
+7 - Colisão encontrada na posição: 20840
+8 - Colisão encontrada na posição: 22856
+9 - Colisão encontrada na posição: 23816
+10 - Colisão encontrada na posição: 26984
+11 - Colisão encontrada na posição: 27848
+12 - Colisão encontrada na posição: 28616
+13 - Colisão encontrada na posição: 33224
+14 - Colisão encontrada na posição: 35336
+15 - Colisão encontrada na posição: 36296
+16 - Colisão encontrada na posição: 38120
+17 - Colisão encontrada na posição: 39656
+18 - Colisão encontrada na posição: 43304
+19 - Colisão encontrada na posição: 44936
+20 - Colisão encontrada na posição: 49256
+21 - Colisão encontrada na posição: 56648
+22 - Colisão encontrada na posição: 67112
+23 - Colisão encontrada na posição: 72776
+
+Log inicializado.
+1 - Colisão encontrada na posição: 24288
+2 - Colisão encontrada na posição: 24888
+3 - Colisão encontrada na posição: 32288
+4 - Colisão encontrada na posição: 33688
+5 - Colisão encontrada na posição: 46888
+6 - Colisão encontrada na posição: 47088
+7 - Colisão encontrada na posição: 50288
+8 - Colisão encontrada na posição: 51288
+9 - Colisão encontrada na posição: 61888
+10 - Colisão encontrada na posição: 63488
+11 - Colisão encontrada na posição: 78288
+12 - Colisão encontrada na posição: 82488
+13 - Colisão encontrada na posição: 82688
+14 - Colisão encontrada na posição: 84088
+15 - Colisão encontrada na posição: 94088
+16 - Colisão encontrada na posição: 104088
+17 - Colisão encontrada na posição: 117088
+18 - Colisão encontrada na posição: 121488
+19 - Colisão encontrada na posição: 128688
+20 - Colisão encontrada na posição: 148088
+21 - Colisão encontrada na posição: 148288
+22 - Colisão encontrada na posição: 152088
+23 - Colisão encontrada na posição: 162688
+
+Log inicializado.
+1 - Colisão encontrada na posição: 24288
+2 - Colisão encontrada na posição: 24888
+3 - Colisão encontrada na posição: 32288
+4 - Colisão encontrada na posição: 33688
+5 - Colisão encontrada na posição: 46888
+6 - Colisão encontrada na posição: 47088
+7 - Colisão encontrada na posição: 50288
+8 - Colisão encontrada na posição: 51288
+9 - Colisão encontrada na posição: 61888
+10 - Colisão encontrada na posição: 63488
+11 - Colisão encontrada na posição: 78288
+12 - Colisão encontrada na posição: 82488
+13 - Colisão encontrada na posição: 82688
+14 - Colisão encontrada na posição: 84088
+15 - Colisão encontrada na posição: 94088
+16 - Colisão encontrada na posição: 104088
+17 - Colisão encontrada na posição: 117088
+18 - Colisão encontrada na posição: 121488
+19 - Colisão encontrada na posição: 128688
+20 - Colisão encontrada na posição: 148088
+21 - Colisão encontrada na posição: 148288
+22 - Colisão encontrada na posição: 152088
+23 - Colisão encontrada na posição: 162688
+
+Log inicializado.
+1 - Colisão encontrada na posição: 24288
+2 - Colisão encontrada na posição: 24888
+3 - Colisão encontrada na posição: 32288
+4 - Colisão encontrada na posição: 33688
+5 - Colisão encontrada na posição: 46888
+6 - Colisão encontrada na posição: 47088
+7 - Colisão encontrada na posição: 50288
+8 - Colisão encontrada na posição: 51288
+9 - Colisão encontrada na posição: 61888
+10 - Colisão encontrada na posição: 63488
+11 - Colisão encontrada na posição: 78288
+12 - Colisão encontrada na posição: 82488
+13 - Colisão encontrada na posição: 82688
+14 - Colisão encontrada na posição: 84088
+15 - Colisão encontrada na posição: 94088
+16 - Colisão encontrada na posição: 104088
+17 - Colisão encontrada na posição: 117088
+18 - Colisão encontrada na posição: 121488
+19 - Colisão encontrada na posição: 128688
+20 - Colisão encontrada na posição: 148088
+21 - Colisão encontrada na posição: 148288
+22 - Colisão encontrada na posição: 152088
+23 - Colisão encontrada na posição: 162688
+24 - Colisão encontrada na posição: 166688
+25 - Colisão encontrada na posição: 171288
+26 - Colisão encontrada na posição: 173088
+27 - Colisão encontrada na posição: 177088
+28 - Colisão encontrada na posição: 183488
+29 - Colisão encontrada na posição: 189488
+30 - Colisão encontrada na posição: 190888
+31 - Colisão encontrada na posição: 195688
+32 - Colisão encontrada na posição: 203688
+
+Log inicializado.
+1 - Colisão encontrada na posição: 16488
+2 - Colisão encontrada na posição: 21288
+3 - Colisão encontrada na posição: 23088
+4 - Colisão encontrada na posição: 23488
+5 - Colisão encontrada na posição: 24488
+6 - Colisão encontrada na posição: 27088
+7 - Colisão encontrada na posição: 34488
+8 - Colisão encontrada na posição: 42088
+9 - Colisão encontrada na posição: 54288
+10 - Colisão encontrada na posição: 55088
+11 - Colisão encontrada na posição: 55488
+12 - Colisão encontrada na posição: 58888
+13 - Colisão encontrada na posição: 70488
+14 - Colisão encontrada na posição: 79288
+15 - Colisão encontrada na posição: 91088
+16 - Colisão encontrada na posição: 92288
+17 - Colisão encontrada na posição: 106088
+18 - Colisão encontrada na posição: 118288
+19 - Colisão encontrada na posição: 122288
+20 - Colisão encontrada na posição: 130888
+21 - Colisão encontrada na posição: 136088
+22 - Colisão encontrada na posição: 137888
+
+Log inicializado.
+1 - Colisão encontrada na posição: 16488
+2 - Colisão encontrada na posição: 21288
+3 - Colisão encontrada na posição: 23088
+4 - Colisão encontrada na posição: 23488
+5 - Colisão encontrada na posição: 24488
+6 - Colisão encontrada na posição: 27088
+7 - Colisão encontrada na posição: 34488
+8 - Colisão encontrada na posição: 42088
+9 - Colisão encontrada na posição: 54288
+10 - Colisão encontrada na posição: 55088
+11 - Colisão encontrada na posição: 55488
+12 - Colisão encontrada na posição: 58888
+13 - Colisão encontrada na posição: 70488
+14 - Colisão encontrada na posição: 79288
+15 - Colisão encontrada na posição: 91088
+16 - Colisão encontrada na posição: 92288
+17 - Colisão encontrada na posição: 106088
+18 - Colisão encontrada na posição: 118288
+19 - Colisão encontrada na posição: 122288
+20 - Colisão encontrada na posição: 130888
+21 - Colisão encontrada na posição: 136088
+22 - Colisão encontrada na posição: 137888
+
+Log inicializado.
+1 - Colisão encontrada na posição: 9128
+2 - Colisão encontrada na posição: 9224
+3 - Colisão encontrada na posição: 14312
+4 - Colisão encontrada na posição: 18632
+5 - Colisão encontrada na posição: 24584
+6 - Colisão encontrada na posição: 28520
+7 - Colisão encontrada na posição: 28808
+8 - Colisão encontrada na posição: 30536
+9 - Colisão encontrada na posição: 31592
+10 - Colisão encontrada na posição: 33320
+11 - Colisão encontrada na posição: 34472
+12 - Colisão encontrada na posição: 38216
+13 - Colisão encontrada na posição: 40040
+14 - Colisão encontrada na posição: 49448
+15 - Colisão encontrada na posição: 54344
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3656
+2 - Colisão encontrada na posição: 5864
+3 - Colisão encontrada na posição: 7400
+4 - Colisão encontrada na posição: 12104
+5 - Colisão encontrada na posição: 16712
+6 - Colisão encontrada na posição: 19784
+7 - Colisão encontrada na posição: 19976
+8 - Colisão encontrada na posição: 20648
+9 - Colisão encontrada na posição: 23336
+10 - Colisão encontrada na posição: 32936
+11 - Colisão encontrada na posição: 33896
+12 - Colisão encontrada na posição: 35912
+13 - Colisão encontrada na posição: 42248
+14 - Colisão encontrada na posição: 48968
+15 - Colisão encontrada na posição: 49736
+16 - Colisão encontrada na posição: 52712
+17 - Colisão encontrada na posição: 55496
+18 - Colisão encontrada na posição: 56744
+19 - Colisão encontrada na posição: 57608
+20 - Colisão encontrada na posição: 59624
+21 - Colisão encontrada na posição: 62888
+22 - Colisão encontrada na posição: 66536
+23 - Colisão encontrada na posição: 68264
+
+Log inicializado.
+1 - Colisão encontrada na posição: 14936
+2 - Colisão encontrada na posição: 17792
+3 - Colisão encontrada na posição: 25352
+4 - Colisão encontrada na posição: 30560
+5 - Colisão encontrada na posição: 35768
+6 - Colisão encontrada na posição: 42656
+7 - Colisão encontrada na posição: 46184
+8 - Colisão encontrada na posição: 55256
+9 - Colisão encontrada na posição: 61136
+10 - Colisão encontrada na posição: 61976
+11 - Colisão encontrada na posição: 63152
+12 - Colisão encontrada na posição: 63824
+13 - Colisão encontrada na posição: 67184
+14 - Colisão encontrada na posição: 72560
+15 - Colisão encontrada na posição: 77432
+16 - Colisão encontrada na posição: 94400
+17 - Colisão encontrada na posição: 108848
+18 - Colisão encontrada na posição: 114056
+19 - Colisão encontrada na posição: 117584
+20 - Colisão encontrada na posição: 119096
+21 - Colisão encontrada na posição: 122456
+22 - Colisão encontrada na posição: 124808
+23 - Colisão encontrada na posição: 129008
+24 - Colisão encontrada na posição: 132536
+25 - Colisão encontrada na posição: 134888
+26 - Colisão encontrada na posição: 135392
+
+Log inicializado.
+1 - Colisão encontrada na posição: 9128
+2 - Colisão encontrada na posição: 9224
+3 - Colisão encontrada na posição: 14312
+4 - Colisão encontrada na posição: 18632
+5 - Colisão encontrada na posição: 24584
+6 - Colisão encontrada na posição: 28520
+7 - Colisão encontrada na posição: 28808
+8 - Colisão encontrada na posição: 30536
+9 - Colisão encontrada na posição: 31592
+10 - Colisão encontrada na posição: 33320
+11 - Colisão encontrada na posição: 34472
+12 - Colisão encontrada na posição: 38216
+13 - Colisão encontrada na posição: 40040
+14 - Colisão encontrada na posição: 49448
+15 - Colisão encontrada na posição: 54344
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3656
+2 - Colisão encontrada na posição: 5864
+3 - Colisão encontrada na posição: 7400
+4 - Colisão encontrada na posição: 12104
+5 - Colisão encontrada na posição: 16712
+6 - Colisão encontrada na posição: 19784
+7 - Colisão encontrada na posição: 19976
+8 - Colisão encontrada na posição: 20648
+9 - Colisão encontrada na posição: 23336
+10 - Colisão encontrada na posição: 32936
+11 - Colisão encontrada na posição: 33896
+12 - Colisão encontrada na posição: 35912
+13 - Colisão encontrada na posição: 42248
+14 - Colisão encontrada na posição: 48968
+15 - Colisão encontrada na posição: 49736
+16 - Colisão encontrada na posição: 52712
+17 - Colisão encontrada na posição: 55496
+18 - Colisão encontrada na posição: 56744
+19 - Colisão encontrada na posição: 57608
+20 - Colisão encontrada na posição: 59624
+21 - Colisão encontrada na posição: 62888
+22 - Colisão encontrada na posição: 66536
+23 - Colisão encontrada na posição: 68264
+
+Log inicializado.
+1 - Colisão encontrada na posição: 9128
+2 - Colisão encontrada na posição: 9224
+3 - Colisão encontrada na posição: 14312
+4 - Colisão encontrada na posição: 18632
+5 - Colisão encontrada na posição: 24584
+6 - Colisão encontrada na posição: 28520
+7 - Colisão encontrada na posição: 28808
+8 - Colisão encontrada na posição: 30536
+9 - Colisão encontrada na posição: 31592
+10 - Colisão encontrada na posição: 33320
+11 - Colisão encontrada na posição: 34472
+12 - Colisão encontrada na posição: 38216
+13 - Colisão encontrada na posição: 40040
+14 - Colisão encontrada na posição: 49448
+15 - Colisão encontrada na posição: 54344
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3656
+2 - Colisão encontrada na posição: 5864
+3 - Colisão encontrada na posição: 7400
+4 - Colisão encontrada na posição: 12104
+5 - Colisão encontrada na posição: 16712
+6 - Colisão encontrada na posição: 19784
+7 - Colisão encontrada na posição: 19976
+8 - Colisão encontrada na posição: 20648
+9 - Colisão encontrada na posição: 23336
+10 - Colisão encontrada na posição: 32936
+11 - Colisão encontrada na posição: 33896
+12 - Colisão encontrada na posição: 35912
+13 - Colisão encontrada na posição: 42248
+14 - Colisão encontrada na posição: 48968
+15 - Colisão encontrada na posição: 49736
+16 - Colisão encontrada na posição: 52712
+17 - Colisão encontrada na posição: 55496
+18 - Colisão encontrada na posição: 56744
+19 - Colisão encontrada na posição: 57608
+20 - Colisão encontrada na posição: 59624
+21 - Colisão encontrada na posição: 62888
+22 - Colisão encontrada na posição: 66536
+23 - Colisão encontrada na posição: 68264
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3656
+2 - Colisão encontrada na posição: 5864
+3 - Colisão encontrada na posição: 7400
+4 - Colisão encontrada na posição: 12104
+5 - Colisão encontrada na posição: 16712
+6 - Colisão encontrada na posição: 19784
+7 - Colisão encontrada na posição: 19976
+8 - Colisão encontrada na posição: 20648
+9 - Colisão encontrada na posição: 23336
+10 - Colisão encontrada na posição: 32936
+11 - Colisão encontrada na posição: 33896
+12 - Colisão encontrada na posição: 35912
+13 - Colisão encontrada na posição: 42248
+14 - Colisão encontrada na posição: 48968
+15 - Colisão encontrada na posição: 49736
+16 - Colisão encontrada na posição: 52712
+17 - Colisão encontrada na posição: 55496
+18 - Colisão encontrada na posição: 56744
+19 - Colisão encontrada na posição: 57608
+20 - Colisão encontrada na posição: 59624
+21 - Colisão encontrada na posição: 62888
+22 - Colisão encontrada na posição: 66536
+23 - Colisão encontrada na posição: 68264
+
+Log inicializado.
+1 - Colisão encontrada na posição: 9128
+2 - Colisão encontrada na posição: 9224
+3 - Colisão encontrada na posição: 14312
+4 - Colisão encontrada na posição: 18632
+5 - Colisão encontrada na posição: 24584
+6 - Colisão encontrada na posição: 28520
+7 - Colisão encontrada na posição: 28808
+8 - Colisão encontrada na posição: 30536
+9 - Colisão encontrada na posição: 31592
+10 - Colisão encontrada na posição: 33320
+11 - Colisão encontrada na posição: 34472
+12 - Colisão encontrada na posição: 38216
+13 - Colisão encontrada na posição: 40040
+14 - Colisão encontrada na posição: 49448
+15 - Colisão encontrada na posição: 54344
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3656
+2 - Colisão encontrada na posição: 5864
+3 - Colisão encontrada na posição: 7400
+4 - Colisão encontrada na posição: 12104
+5 - Colisão encontrada na posição: 16712
+6 - Colisão encontrada na posição: 19784
+7 - Colisão encontrada na posição: 19976
+8 - Colisão encontrada na posição: 20648
+9 - Colisão encontrada na posição: 23336
+10 - Colisão encontrada na posição: 32936
+11 - Colisão encontrada na posição: 33896
+12 - Colisão encontrada na posição: 35912
+13 - Colisão encontrada na posição: 42248
+14 - Colisão encontrada na posição: 48968
+15 - Colisão encontrada na posição: 49736
+16 - Colisão encontrada na posição: 52712
+17 - Colisão encontrada na posição: 55496
+18 - Colisão encontrada na posição: 56744
+19 - Colisão encontrada na posição: 57608
+20 - Colisão encontrada na posição: 59624
+21 - Colisão encontrada na posição: 62888
+22 - Colisão encontrada na posição: 66536
+23 - Colisão encontrada na posição: 68264
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3656
+2 - Colisão encontrada na posição: 5864
+3 - Colisão encontrada na posição: 7400
+4 - Colisão encontrada na posição: 12104
+5 - Colisão encontrada na posição: 16712
+6 - Colisão encontrada na posição: 19784
+7 - Colisão encontrada na posição: 19976
+8 - Colisão encontrada na posição: 20648
+9 - Colisão encontrada na posição: 23336
+10 - Colisão encontrada na posição: 32936
+11 - Colisão encontrada na posição: 33896
+12 - Colisão encontrada na posição: 35912
+13 - Colisão encontrada na posição: 42248
+14 - Colisão encontrada na posição: 48968
+15 - Colisão encontrada na posição: 49736
+16 - Colisão encontrada na posição: 52712
+17 - Colisão encontrada na posição: 55496
+18 - Colisão encontrada na posição: 56744
+19 - Colisão encontrada na posição: 57608
+20 - Colisão encontrada na posição: 59624
+21 - Colisão encontrada na posição: 62888
+22 - Colisão encontrada na posição: 66536
+23 - Colisão encontrada na posição: 68264
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3656
+2 - Colisão encontrada na posição: 5864
+3 - Colisão encontrada na posição: 7400
+4 - Colisão encontrada na posição: 12104
+5 - Colisão encontrada na posição: 16712
+6 - Colisão encontrada na posição: 19784
+7 - Colisão encontrada na posição: 19976
+8 - Colisão encontrada na posição: 20648
+9 - Colisão encontrada na posição: 23336
+10 - Colisão encontrada na posição: 32936
+11 - Colisão encontrada na posição: 33896
+12 - Colisão encontrada na posição: 35912
+13 - Colisão encontrada na posição: 42248
+14 - Colisão encontrada na posição: 48968
+15 - Colisão encontrada na posição: 49736
+16 - Colisão encontrada na posição: 52712
+17 - Colisão encontrada na posição: 55496
+18 - Colisão encontrada na posição: 56744
+19 - Colisão encontrada na posição: 57608
+20 - Colisão encontrada na posição: 59624
+21 - Colisão encontrada na posição: 62888
+22 - Colisão encontrada na posição: 66536
+23 - Colisão encontrada na posição: 68264
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3656
+2 - Colisão encontrada na posição: 5864
+3 - Colisão encontrada na posição: 7400
+4 - Colisão encontrada na posição: 12104
+5 - Colisão encontrada na posição: 16712
+6 - Colisão encontrada na posição: 19784
+7 - Colisão encontrada na posição: 19976
+8 - Colisão encontrada na posição: 20648
+9 - Colisão encontrada na posição: 23336
+10 - Colisão encontrada na posição: 32936
+11 - Colisão encontrada na posição: 33896
+12 - Colisão encontrada na posição: 35912
+13 - Colisão encontrada na posição: 42248
+14 - Colisão encontrada na posição: 48968
+15 - Colisão encontrada na posição: 49736
+16 - Colisão encontrada na posição: 52712
+17 - Colisão encontrada na posição: 55496
+18 - Colisão encontrada na posição: 56744
+19 - Colisão encontrada na posição: 57608
+20 - Colisão encontrada na posição: 59624
+21 - Colisão encontrada na posição: 62888
+22 - Colisão encontrada na posição: 66536
+23 - Colisão encontrada na posição: 68264
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3656
+2 - Colisão encontrada na posição: 5864
+3 - Colisão encontrada na posição: 7400
+4 - Colisão encontrada na posição: 12104
+5 - Colisão encontrada na posição: 16712
+6 - Colisão encontrada na posição: 19784
+7 - Colisão encontrada na posição: 19976
+8 - Colisão encontrada na posição: 20648
+9 - Colisão encontrada na posição: 23336
+10 - Colisão encontrada na posição: 32936
+11 - Colisão encontrada na posição: 33896
+12 - Colisão encontrada na posição: 35912
+13 - Colisão encontrada na posição: 42248
+14 - Colisão encontrada na posição: 48968
+15 - Colisão encontrada na posição: 49736
+16 - Colisão encontrada na posição: 52712
+17 - Colisão encontrada na posição: 55496
+18 - Colisão encontrada na posição: 56744
+19 - Colisão encontrada na posição: 57608
+20 - Colisão encontrada na posição: 59624
+21 - Colisão encontrada na posição: 62888
+22 - Colisão encontrada na posição: 66536
+23 - Colisão encontrada na posição: 68264
+
+Log inicializado.
+1 - Colisão encontrada na posição: 9128
+2 - Colisão encontrada na posição: 9224
+3 - Colisão encontrada na posição: 14312
+4 - Colisão encontrada na posição: 18632
+5 - Colisão encontrada na posição: 24584
+6 - Colisão encontrada na posição: 28520
+7 - Colisão encontrada na posição: 28808
+8 - Colisão encontrada na posição: 30536
+9 - Colisão encontrada na posição: 31592
+10 - Colisão encontrada na posição: 33320
+11 - Colisão encontrada na posição: 34472
+12 - Colisão encontrada na posição: 38216
+13 - Colisão encontrada na posição: 40040
+14 - Colisão encontrada na posição: 49448
+15 - Colisão encontrada na posição: 54344
+
+Log inicializado.
+1 - Colisão encontrada na posição: 3656
+2 - Colisão encontrada na posição: 5864
+3 - Colisão encontrada na posição: 7400
+4 - Colisão encontrada na posição: 12104
+5 - Colisão encontrada na posição: 16712
+6 - Colisão encontrada na posição: 19784
+7 - Colisão encontrada na posição: 19976
+8 - Colisão encontrada na posição: 20648
+9 - Colisão encontrada na posição: 23336
+10 - Colisão encontrada na posição: 32936
+11 - Colisão encontrada na posição: 33896
+12 - Colisão encontrada na posição: 35912
+13 - Colisão encontrada na posição: 42248
+14 - Colisão encontrada na posição: 48968
+15 - Colisão encontrada na posição: 49736
+16 - Colisão encontrada na posição: 52712
+17 - Colisão encontrada na posição: 55496
+18 - Colisão encontrada na posição: 56744
+19 - Colisão encontrada na posição: 57608
+20 - Colisão encontrada na posição: 59624
+21 - Colisão encontrada na posição: 62888
+22 - Colisão encontrada na posição: 66536
+23 - Colisão encontrada na posição: 68264

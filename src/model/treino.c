@@ -22,13 +22,16 @@ int TTreino_Size() {
 }
 
 // Cria uma nova instância de TTreino
-TTreino TTreino_New(unsigned long pk, const char* nome, const char* tipo, long unsigned cpk, long unsigned epk, int duration) {
+TTreino TTreino_New(unsigned long pk, const char* nome, const char* tipo,
+    long unsigned cpk, long unsigned epk, int duration, size_t next_pk, int status) {
     TTreino treino = {0};
     if (strlen(nome) >= BT_NOME || strlen(tipo) >= BT_TIPO) {
         perror("TTreino buffer overflow");
         return treino;
     }
     treino.pk = pk;
+    treino.next_pk = next_pk;
+    treino.status = status;
     strncpy_s(treino.nome, sizeof(treino.nome), nome, _TRUNCATE);
     strncpy_s(treino.tipo, sizeof(treino.tipo), tipo, _TRUNCATE);
     treino.cpk = cpk;
@@ -148,12 +151,12 @@ node_t *TTreino_GetByCpk(FILE *file, const char* table_name, long unsigned cpk) 
     
     long unsigned start_offset = header.tables[index].start_offset;
     long unsigned end_offset = header.tables[index].end_offset;
-    size_t size = header.tables[index].size;
+    size_t size = sizeof(TTreino);
     
     node_t *list = list_node_init(); // Lista para armazenar os registros encontrados
     
     // Percorre todos os registros na tabela
-    for (long unsigned offset = start_offset; offset < end_offset; offset += size) {
+    for (long unsigned offset = sizeof(DatabaseHeader); offset < end_offset; offset += size) {
         fseek(file, offset, SEEK_SET);
         TTreino current_treino; 
         if (fread(&current_treino, sizeof(TTreino), 1, file) != 1) {
@@ -164,7 +167,7 @@ node_t *TTreino_GetByCpk(FILE *file, const char* table_name, long unsigned cpk) 
         }
         
         // Verifica se o registro corresponde à chave composta
-        if (current_treino.cpk == cpk) {
+        if (current_treino.cpk == cpk && current_treino.status != 1) {
             // Cria um novo nó para o registro encontrado
             node_t *node = list_node_init();
             if (node == NULL) {
@@ -183,7 +186,6 @@ node_t *TTreino_GetByCpk(FILE *file, const char* table_name, long unsigned cpk) 
             }
             memcpy(node->data, &current_treino, sizeof(TTreino));
             // Adiciona o nó à lista
-            printf("Treino encontrado: %s\n", current_treino.nome);
             list_add_end(list, node);
         }
     }
@@ -412,84 +414,6 @@ int TTreinoSelecaoComSubstituicaoCpkk(FILE *file, const char *table_name) {
     free(registers);
     free(freeze);
     return particion + 1;
-}
-
-
-// Função para realizar a intercalação das partições geradas por seleção com substituição
-int TTreinoIntercalacaoBasicaCpk(FILE *file, DatabaseHeader *header,int num_particions) {
-    typedef struct vetor {
-        TTreino treino;
-        FILE *aux;
-    } TVet;
-
-    int fim = 0; // variável que controla o fim do procedimento
-    int particao = 0;
-    char nome_arq[256]; // Alocar memória suficiente para o nome do arquivo
-
-    // Cria vetor de partições
-    TVet *v = malloc(num_particions * sizeof(TVet));
-    if (v == NULL) {
-        perror("Erro ao alocar memória para vetores de partições");
-        return -1; // Retorna código de erro
-    }
-
-    // Abre arquivos das partições e lê o primeiro registro
-    for (int i = 0; i < num_particions; i++) {
-        snprintf(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", i);
-
-        v[i].aux = fopen(nome_arq, "rb");
-        if (v[i].aux != NULL) {
-            TTreino treino = {0};
-            if (fread(&treino, sizeof(TTreino), 1, v[i].aux) == 1) {
-                v[i].treino = treino;
-            } else {
-                // Arquivo estava vazio
-                v[i].treino = TTreino_New(0, "", "", INT_MAX, 0, 0);
-            }
-        } else {
-            fim = 1; // Marcar o fim se algum arquivo não puder ser aberto
-        }
-    }
-
-    rewind(file);
-    fwrite(header, sizeof(DatabaseHeader), 1, file);
-
-    // Processa os registros
-    while (!fim) {
-        int menor = INT_MAX;
-        int pos_menor = -1;
-
-        // Encontra o treino com menor chave no vetor
-        for (int i = 0; i < num_particions; i++) {
-            if (v[i].treino.cpk < menor) {
-                menor = v[i].treino.cpk;
-                pos_menor = i;
-            }
-        }
-
-        if (pos_menor == -1) {
-            fim = 1; // Termina o processamento se não encontrar um menor
-        } else {
-            fwrite(&v[pos_menor].treino, sizeof(TTreino), 1, file);
-
-            TTreino treino = {0};
-            if (fread(&treino, sizeof(TTreino), 1, v[pos_menor].aux) == 1) {
-                v[pos_menor].treino = treino;
-            } else {
-                v[pos_menor].treino = TTreino_New(0, "", "", INT_MAX, 0, 0);
-            }
-        }
-    }
-
-    // Fecha arquivos das partições de entrada
-    for (int i = 0; i < num_particions; i++) {
-        if (v[i].aux != NULL) {
-            fclose(v[i].aux);
-        }
-    }
-
-    free(v);
-    return 0; // Retorna 0 em caso de sucesso
 }
 
 int TTreinoClassificacaoInterna(FILE *file, const char* table_name) {

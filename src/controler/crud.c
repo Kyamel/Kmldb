@@ -33,7 +33,7 @@ int cCloseDatabase(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer) {
     cClearInputBuffer();
     return ok;
 }
-
+/*
 // ########
 // #TREINO#
 // ########
@@ -71,11 +71,11 @@ TTreino cSearchTreino(FILE* file, long unsigned pk) {
 TTreino cSearchTreinoByCpkEpk(FILE* file, long unsigned cpk, long unsigned epk) {
     TTreino treino = TTreino_GetByCpkEpk(file, TREINOS, cpk, epk);
     return treino;
-}
+} */
 
-int cSearchPrintTreinoFullByCpk(FILE* ftreino, FILE* fexerc, long unsigned epk) {
-    node_t *list = TTreino_GetByCpk(ftreino, TREINOS, epk);
-    
+int cSearchPrintTreinoFullByCpk(FILE* ftreino, FILE* fexerc, long unsigned cpk) {
+    node_t *list = TTreino_GetByCpk(ftreino, TREINOS, cpk);
+
     if (list == NULL) {
         printf("Nenhum treino encontrado.\n");
         return ERR_REGISTER_NOT_FOUND;
@@ -92,17 +92,23 @@ int cSearchPrintTreinoFullByCpk(FILE* ftreino, FILE* fexerc, long unsigned epk) 
         
         if (treino != NULL) {
             // Obter o exercício correspondente usando epk
-            TExerc exerc = TExerc_GetByPK(fexerc, EXERCICIOS, treino->epk);
-            
-            // Imprimir o treino
-            TTreino_Print(treino);
-            printf("| > Exercicio:\n");
-            printf("  | PK: %lu\n", exerc.pk);
-            printf("  | Nome: %s\n", exerc.nome);
-            printf("  | Tipo: %s\n", exerc.tipo);
-            printf("  | Duracao: %d segundos\n", exerc.duration);
+            TExerc exerc;
+            exerc.pk = treino->epk;
+            int err = cdbFind(fexerc, EXERCICIOS, &exerc, sizeof(exerc), offsetof(TExerc, pk), offsetof(TExerc, next_pk), offsetof(TExerc, status));
+
+            if (err < 0) {
+                printf("Erro ao obter o exercício correspondente. (err: %d)\n", err);
+            } else{
+                // Imprimir o treino
+                printf("| Treino: %lu\n", treino->pk);
+                printf("| > Exercicio:\n");
+                printf("  | PK: %lu\n", exerc.pk);
+                printf("  | Nome: %s\n", exerc.nome);
+                printf("  | Tipo: %s\n", exerc.tipo);
+                printf("  | Duracao: %d segundos\n", exerc.duration);
+            }
         }
-        
+
         curr = curr->next;
     }
     
@@ -111,12 +117,12 @@ int cSearchPrintTreinoFullByCpk(FILE* ftreino, FILE* fexerc, long unsigned epk) 
     return 0;
 }
 
-
+/* 
 int cSearchPrintTreinoByCpk(FILE* file, const char* table_name, long unsigned cpk) {
     int ok = TTreino_ReadByCpk(file, table_name, cpk);
     if (ok < 0){
         return ok;
-    } 
+    }
     return 0;
 }
 
@@ -179,4 +185,4 @@ TCliente cSearchCliente(FILE* file, const char* table_name, long unsigned pk) {
 
 void cPrintCliente(TCliente* cliente) {
     TCliente_Print(cliente);
-}
+} */
