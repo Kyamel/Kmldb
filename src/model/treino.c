@@ -1,3 +1,4 @@
+#include <limits.h>
 #include "treino.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,8 +33,8 @@ TTreino TTreino_New(unsigned long pk, const char* nome, const char* tipo,
     treino.pk = pk;
     treino.next_pk = next_pk;
     treino.status = status;
-    strncpy_s(treino.nome, sizeof(treino.nome), nome, _TRUNCATE);
-    strncpy_s(treino.tipo, sizeof(treino.tipo), tipo, _TRUNCATE);
+    snprintf(treino.nome, sizeof(treino.nome), "%s", nome);
+    snprintf(treino.tipo, sizeof(treino.tipo), "%s", tipo);
     treino.cpk = cpk;
     treino.epk = epk;
     treino.duration = duration;

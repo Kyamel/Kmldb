@@ -1,3 +1,4 @@
+#include <limits.h>
 #include "exercicio.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,8 +29,8 @@ TExerc TExerc_New(unsigned long pk, const char* nome, const char* tipo, int dura
     exec.pk = pk;
     exec.status = status;
     exec.next_pk = next_pk;
-    strncpy_s(exec.nome, sizeof(exec.nome), nome, _TRUNCATE);
-    strncpy_s(exec.tipo, sizeof(exec.tipo), tipo, _TRUNCATE);
+    snprintf(exec.nome, sizeof(exec.nome), "%s", nome);
+    snprintf(exec.tipo, sizeof(exec.tipo), "%s", tipo);
     exec.duration = duration;
     return exec;
 }
@@ -45,7 +46,7 @@ TExerc TExerc_GetByPK(FILE *file, const char* table_name, long unsigned pk) {
     }
     int index = dbFindTable(file, table_name);
     if (index == -1) {
-        fprintf_s(stderr, "Erro: Tabela '%s' não encontrada.\n", table_name);
+        fprintf(stderr, "Erro: Tabela '%s' não encontrada.\n", table_name);
         return execEmpty;
     }
     // binary search

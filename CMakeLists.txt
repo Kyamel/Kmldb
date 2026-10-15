@@ -1,43 +1,37 @@
-# Defina a versão mínima do CMake e a versão do projeto
 cmake_minimum_required(VERSION 3.10)
-project(programa VERSION 2.0.0 LANGUAGES C)
+project(Kmldb VERSION 2.0.0 LANGUAGES C)
 
-# Defina o padrão do compilador e flags de compilação
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")  # Flag para modo de depuração
 
-# Adicione diretórios onde procurar os arquivos de cabeçalho
-include_directories(src/model src/kmldb src/controler)
+file(GLOB MODEL_SOURCES src/model/*.c)
+file(GLOB DB_SOURCES src/kmldb/*.c)
+file(GLOB CONTROLLER_SOURCES src/controler/*.c)
+file(GLOB UTIL_SOURCES src/utils/*.c)
 
-# Adicione uma opção para selecionar o tipo de aplicação
-option(BUILD_GUI "Build GUI application" OFF)
-
-# Defina o diretório de fontes com base na opção
-if(BUILD_GUI)
-    set(VIEW_DIR src/view/gui)
-else()
-    set(VIEW_DIR src/view/cli)
-endif()
-
-# Coletar todos os arquivos de código fonte
-file(GLOB_RECURSE SOURCES
+add_executable(programa
     src/main.c
-    src/teste.c
-    src/model/*.c
-    src/kmldb/*.c
-    src/controler/*.c
-    src/utils/*.c
-    ${VIEW_DIR}/*.c
+    src/view/cli/main_menu.c
+    ${MODEL_SOURCES}
+    ${DB_SOURCES}
+    ${CONTROLLER_SOURCES}
+    ${UTIL_SOURCES}
 )
-
-# Adicione o executável
-add_executable(programa ${SOURCES})
-
-# Defina o diretório onde o executável será gerado
+target_include_directories(programa PRIVATE src/model src/kmldb src/controler)
+if(NOT WIN32)
+    target_link_libraries(programa PRIVATE m)
+endif()
 set_target_properties(programa PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Bin/Debug
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Bin/Debug"
 )
 
-# Mensagem informativa sobre o tipo de build
-message(STATUS "Building ${BUILD_GUI} application. View directory: ${VIEW_DIR}")
+enable_testing()
+add_executable(db_hash_test
+    tests/db_hash_test.c
+    src/kmldb/db.c
+    src/utils/log.c
+)
+target_include_directories(db_hash_test PRIVATE src/kmldb)
+add_test(NAME db_hash_test COMMAND db_hash_test)
+
+install(TARGETS programa RUNTIME DESTINATION bin)

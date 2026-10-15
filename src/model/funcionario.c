@@ -1,3 +1,4 @@
+#include <limits.h>
 #include "funcionario.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,12 +40,12 @@ TFunc TFunc_New(unsigned long pk, const char* nome, const char* cpf, const char*
 
     #ifdef _MSC_VER
         // Ambiente Microsoft
-        strncpy_s(func.nome, sizeof(func.nome), nome, _TRUNCATE);
-        strncpy_s(func.cpf, sizeof(func.cpf), cpf, _TRUNCATE);
-        strncpy_s(func.email, sizeof(func.email), email, _TRUNCATE);
-        strncpy_s(func.telefone, sizeof(func.telefone), telefone, _TRUNCATE);
-        strncpy_s(func.data_nascimento, sizeof(func.data_nascimento), data_nascimento, _TRUNCATE);
-        strncpy_s(func.password, sizeof(func.password), password, _TRUNCATE);
+        snprintf(func.nome, sizeof(func.nome), "%s", nome);
+        snprintf(func.cpf, sizeof(func.cpf), "%s", cpf);
+        snprintf(func.email, sizeof(func.email), "%s", email);
+        snprintf(func.telefone, sizeof(func.telefone), "%s", telefone);
+        snprintf(func.data_nascimento, sizeof(func.data_nascimento), "%s", data_nascimento);
+        snprintf(func.password, sizeof(func.password), "%s", password);
     #else
         // Ambiente Unix/Linux
         strncpy(func.nome, nome, BF_NOME - 1);

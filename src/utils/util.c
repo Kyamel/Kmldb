@@ -1,3 +1,4 @@
+#include <limits.h>
 #ifdef _WIN32
 #include <windows.h>
 #include <minwinbase.h>
@@ -17,6 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <ctype.h>
 
 // Função para mover o cursor do terminal para uma posição específica
 void moverCursorParaLinha(int linha) {
@@ -101,10 +103,9 @@ wchar_t *charToWChar(const char *text) {
         return NULL;
     }
 
-    size_t convertedChars = 0;
-    errno_t err = mbstowcs_s(&convertedChars, wText, size, text, size - 1);
+    size_t convertedChars = mbstowcs(wText, text, size);
 
-    if (err != 0) {
+    if (convertedChars == (size_t)-1) {
         perror("Erro na conversão de string char para WCHAR.\n");
         free(wText);
         return NULL;
@@ -154,7 +155,7 @@ int clearFolder(const char *pasta) {
 
     if (dir == NULL) {
         perror("Erro ao abrir diretório");
-        return;
+        return -1;
     }
 
     while ((arquivo = readdir(dir)) != NULL) {
@@ -167,7 +168,7 @@ int clearFolder(const char *pasta) {
             if (stat(caminho, &st) == 0) {
                 if (S_ISDIR(st.st_mode)) {
                     // Se for um diretório, chamar limpaPasta recursivamente
-                    limpaPasta(caminho);
+                    clearFolder(caminho);
                     rmdir(caminho); // Remover o diretório vazio
                 } else {
                     // Se for um arquivo, remover

@@ -13,9 +13,9 @@ FILE* dbInit(const char* filename) {
     size_t len = strlen(filename);
     // Verifica se o nome do arquivo já possui a extensão ".dat"
     if (len < strlen(EXT) || strcmp(filename + len - strlen(EXT), EXT) != 0) {
-        _snprintf_s(full_filename, sizeof(full_filename), _TRUNCATE, "%s%s", filename, EXT);
+        snprintf(full_filename, sizeof(full_filename), "%s%s", filename, EXT);
     } else {
-        _snprintf_s(full_filename, sizeof(full_filename), _TRUNCATE, "%s", filename);
+        snprintf(full_filename, sizeof(full_filename), "%s", filename);
     }
     // Tenta abrir o arquivo em modo leitura e escrita binária
     FILE* file = fopen(full_filename, "rb+");
@@ -117,16 +117,13 @@ int dbCreateTable(FILE* file, const char* table_name, size_t size) {
     }
 
     TableMeta* meta = &header.tables[header.table_count];
-    strncpy_s(meta->table_name, sizeof(meta->table_name), table_name, _TRUNCATE);
+    snprintf(meta->table_name, sizeof(meta->table_name), "%s", table_name);
     meta->next_pk = 1; // Define o próximo PK
     meta->start_offset = (header.table_count == 0) ? sizeof(DatabaseHeader) : header.tables[header.table_count - 1].end_offset;
     meta->end_offset = meta->start_offset;
     meta->size = size;
 
     header.table_count++;
-    header.tables[header.table_count - 1].start_offset = sizeof(DatabaseHeader);
-    header.tables[header.table_count - 1].size = size;
-
     fseek(file, 0, SEEK_SET);
     fwrite(&header, sizeof(DatabaseHeader), 1, file);
     fflush(file);
@@ -446,7 +443,7 @@ int dbHashAdd(FILE* file, const char* table_name, void* reg, size_t reg_size,
 
     unsigned long pk = *(unsigned long*)((char*)reg + pk_offset);
     if (pk == 0) {
-        pk = header.tables[index].next_pk++;
+        pk = header.tables[index].next_pk;
         *(unsigned long*)((char*)reg + pk_offset) = pk; // Define o PK
     }
 
@@ -459,13 +456,14 @@ int dbHashAdd(FILE* file, const char* table_name, void* reg, size_t reg_size,
         fseek(file, hash_index, SEEK_SET);
         size_t read_result = fread(buffer, reg_size, 1, file);
 
-        if (read_result != 1) {
-            // Posição vazia encontrada, adicione o novo registro
-            *(size_t*)((char*)buffer + next_pk_offset) = 0; // next_pk = 0
-            fseek(file, previous_index, SEEK_SET);
-            generic_write(file, buffer, reg_size); // Atualiza o registro anterior
+        if (read_result != 1 || *(unsigned long*)((char*)buffer + pk_offset) == 0) {
+            // Um bucket ainda não escrito (ou preenchido com zeros) está livre.
+            *(size_t*)((char*)reg + next_pk_offset) = 0;
             fseek(file, hash_index, SEEK_SET);
-            generic_write(file, reg, reg_size); // Escreve o novo registro
+            if (generic_write(file, reg, reg_size) != 1) {
+                free(buffer);
+                return ERR_REGISTER_WRITE_FAILED;
+            }
             free(buffer);
             break;
         }
@@ -487,7 +485,9 @@ int dbHashAdd(FILE* file, const char* table_name, void* reg, size_t reg_size,
         if (hash_index == 0) {
 
             fseek(file, 0, SEEK_END);
-            size_t end = ftell(file); // Obtenha a posição final
+            size_t end = ftell(file);
+            size_t bucket_end = sizeof(DatabaseHeader) + 31 * reg_size;
+            if (end < bucket_end) end = bucket_end;
 
             // Atualiza o ponteiro do registro anterior
             *(size_t*)((char*)buffer + next_pk_offset) = end;
@@ -511,7 +511,7 @@ int dbHashAdd(FILE* file, const char* table_name, void* reg, size_t reg_size,
 
     // Atualiza o cabeçalho
     header.tables[index].qtd++;
-    header.tables[index].next_pk++;
+    if (pk >= header.tables[index].next_pk) header.tables[index].next_pk = pk + 1;
     long position = ftell(file);
     if (position >= 0) {
         header.tables[index].end_offset = ((unsigned long)position > header.tables[index].end_offset)
@@ -649,7 +649,7 @@ int dbHashFind(FILE* file, const char* table_name, void* reg, size_t reg_size,
             // Verificar se o registro está marcado como deletado
             int status = *(int*)((char*)buffer + status_offset);
             if (status == 1) {  // 1 significa que o registro foi deletado
-                perror("Registro está marcado como deletado");
+                fprintf(stderr, "Registro está marcado como deletado\n");
                 free(buffer);
                 close_log(log_file);
                 return EXEPTION_REG_DELETED;
@@ -674,7 +674,7 @@ int dbHashFind(FILE* file, const char* table_name, void* reg, size_t reg_size,
 
         // Printar a colisão e a posição
         colisao ++;
-        fprintf_s(log_file, "%d - Colisão encontrada na posição: %zu\n", colisao, hash_index);
+        if (log_file) fprintf(log_file, "%d - Colisão encontrada na posição: %zu\n", colisao, hash_index);
     }
 
     close_log(log_file);
@@ -785,6 +785,10 @@ int dbHashDelete(FILE* file, const char* table_name, unsigned long pk,
         unsigned long existing_pk = *(unsigned long*)((char*)buffer + pk_offset);
 
         if (existing_pk == pk) {
+            if (*(int*)((char*)buffer + status_offset) == 1) {
+                free(buffer);
+                return EXEPTION_REG_DELETED;
+            }
             // Encontrou o registro, então marca como deletado
             *(int*)((char*)buffer + status_offset) = 1; // Marca o status como 1 (deletado)
 

@@ -56,7 +56,7 @@ void criaBaseFuncionarios(FILE* file, int num_funcionarios, int num_trocas) {
         start = clock();
 
         // Cria um nome variando com i
-        sprintf_s(func_name, sizeof(func_name), "Funcionario %d", i + 1); // Ex: "Funcionario 1", "Funcionario 2", etc.
+        snprintf(func_name, sizeof(func_name), "Funcionario %d", i + 1); // Ex: "Funcionario 1", "Funcionario 2", etc.
 
         funcionario = TFunc_New(
             pks[i] + 1,
@@ -104,7 +104,7 @@ void createExercBase(FILE* file, int num_exercicios, int num_trocas) {
     for (int i = 0; i < num_exercicios; i++) {
         start = clock();
 
-        sprintf_s(exerc_name, sizeof(exerc_name), "Exercicio %d", i + 1); // Nome do exercício
+        snprintf(exerc_name, sizeof(exerc_name), "Exercicio %d", i + 1); // Nome do exercício
 
         exercicio = TExerc_New(
             pks[i] + 1,
@@ -148,7 +148,7 @@ void createTreinoBase(FILE* file, int num_treinos, int num_trocas) {
     for (int i = 0; i < num_treinos; i++) {
         start = clock();
 
-        sprintf_s(treino_name, sizeof(treino_name), "Treino %d", i + 1); // Nome do treino
+        snprintf(treino_name, sizeof(treino_name), "Treino %d", i + 1); // Nome do treino
 
         treino = TTreino_New(
             pks[i] + 1,
@@ -194,7 +194,7 @@ void createClienteBase(FILE* file, int num_clientes, int num_trocas) {
     for (int i = 0; i < num_clientes; i++) {
         start = clock();
 
-        sprintf_s(cliente_name, sizeof(cliente_name), "Cliente %d", i + 1); // Nome do cliente
+        snprintf(cliente_name, sizeof(cliente_name), "Cliente %d", i + 1); // Nome do cliente
 
         cliente = TCliente_New(
             pks[i] + 1,
@@ -267,7 +267,7 @@ void createBase(int base_size, int num_trocas) {
     printf("4 - Imprimir base de Treinos\n");
     printf("5 - Imprimir todas as bases\n");
     printf("0 - Sair\n");
-    scanf_s("%d", &opcao);
+    scanf("%d", &opcao);
 
     // Imprimir conforme escolha do usuário
     switch (opcao) {

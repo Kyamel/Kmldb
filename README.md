@@ -1,52 +1,48 @@
-# Implementação de um Banco de Dados para a disciplina de AEDS2
+# Kmldb
 
-Este projeto é uma implementação de um banco de dados para a disciplina de Algoritmos e Estruturas de Dados 2 (AEDS2). O projeto utiliza CMake para gerenciar a construção e configuração.
+Projeto acadêmico em C para a disciplina de Algoritmos e Estruturas de Dados 2 (AEDS2). Simula um cadastro de academia em arquivos binários, com menus para clientes, funcionários, exercícios e treinos. Usa tabelas com índice hash e inclui rotinas experimentais de ordenação externa.
 
 ## Requisitos
 
+- Compilador C99 (GCC ou Clang; validação feita em Linux)
 - CMake 3.10 ou superior
-- Compilador C99 (GCC, Clang, etc.)
 
-## Estrutura do Projeto
+## Compilar e executar
 
-- `src/main.c`: Código principal do projeto.
-- `src/teste.c`: Código de teste.
-- `src/model/`: Contém os arquivos de implementação dos modelos.
-- `src/kmldb/`: Contém a implementação do banco de dados.
-- `src/controler/`: Contém a lógica de controle.
-- `src/utils/`: Contém funções utilitárias.
-- `src/view/cli/`: Contém a implementação para a interface de linha de comando.
-- `src/view/gui/`: Contém a implementação para a interface gráfica (opcional).
+A partir da raiz do repositório:
 
-## Construção do Projeto
+```sh
+cmake -S . -B build
+cmake --build build
+./build/Bin/Debug/programa
+```
 
-Para construir o projeto, siga os passos abaixo:
+O programa cria `data/`, `data/particions/` e `data/testes/` no **diretório de trabalho atual**. Por isso, execute-o a partir da raiz do repositório se quiser manter os arquivos em `./data`. Esses arquivos e os logs são ignorados pelo Git.
 
-1. **Clone o repositorio**
-    ```bash
-    git clone https://github.com/Kyamel/Kmldb.git
-    cd Kmldb
+O menu principal oferece cadastro, pesquisa, atualização e exclusão de cada entidade. Escolha `9` para encerrar. As chaves primárias são atribuídas automaticamente nos cadastros normais; treinos usam as chaves de cliente e exercício já cadastrados. A opção `Debug` contém geradores de dados e rotinas de ordenação do trabalho acadêmico.
 
+## Usando Nix
 
-2. **Crie um diretório para o build:**
+Se você usa Nix com flakes habilitados, pode entrar no ambiente de desenvolvimento com `nix develop`. Dentro dele, execute os comandos CMake acima. Para compilar e rodar o teste de regressão em uma derivação isolada, use `nix build` e execute `./result/bin/programa` a partir de um diretório onde você pode criar `data/`. O flake aceita Linux x86_64 e aarch64.
 
-   ```bash
-    mkdir build
-    cd build
-    cmake ..
-    cmake --build .
+## Organização do código
 
+| Caminho | Responsabilidade |
+| --- | --- |
+| `src/main.c` | Entrada da aplicação CLI |
+| `src/view/cli/` | Menus e entrada de dados |
+| `src/controler/` | Encaminhamento das operações de cadastro |
+| `src/kmldb/` | Formato do banco binário e operações hash |
+| `src/model/` | Estruturas de cliente, funcionário, exercício e treino; rotinas de ordenação |
+| `src/utils/` | Funções auxiliares, geração de dados e log |
+| `src/testes/`, `src/teste2.c` | Código de testes e experimentos acadêmicos |
 
-### Explicações:
+Cada tipo de registro é salvo em seu próprio arquivo `.dat` dentro de `data/`. O formato grava estruturas C diretamente; portanto, **não há garantia de compatibilidade entre sistemas, compiladores ou versões das estruturas**. Faça cópia dos dados antes de atualizar o programa. O projeto é didático e não oferece transações, controle de acesso nem proteção para dados pessoais. Use apenas dados fictícios.
 
-1. **Estrutura do Projeto**:
-   - TODO
+## Estado do projeto
 
-2. **Construção do Projeto**:
-   - TODO
+A interface de linha de comando é a interface disponível neste repositório. As opções de ordenação e geração de bases pertencem aos experimentos da disciplina e devem ser usadas com cópias dos arquivos de dados. Há um teste de regressão do índice hash. Após compilar, execute `ctest --test-dir build --output-on-failure`.
 
-3. **Pasta de Dados**:
-   - Crie o diretório `data/particions` no diretório do executável (.exe).
+## Licença
 
-4. **Contribuição e Licença**:
-   - 
+Distribuído sob a **GNU General Public License versão 3** (GPL-3.0-only). Consulte o texto completo em [LICENSE](LICENSE). Ao redistribuir o programa ou versões modificadas, siga os termos dessa licença, incluindo a disponibilização do código-fonte correspondente quando aplicável.

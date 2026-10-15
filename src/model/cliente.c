@@ -1,3 +1,4 @@
+#include <limits.h>
 #include "cliente.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,11 +39,11 @@ TCliente TCliente_New(unsigned long pk, const char* nome, const char* cpf,
     #ifdef _MSC_VER
         // Ambiente Microsoft
 
-        strncpy_s(cliente.nome, sizeof(cliente.nome), nome, _TRUNCATE);
-        strncpy_s(cliente.cpf, sizeof(cliente.cpf), cpf, _TRUNCATE);
-        strncpy_s(cliente.email, sizeof(cliente.email), email, _TRUNCATE);
-        strncpy_s(cliente.telefone, sizeof(cliente.telefone), telefone, _TRUNCATE);
-        strncpy_s(cliente.exp_date, sizeof(cliente.exp_date), exp_date, _TRUNCATE);
+        snprintf(cliente.nome, sizeof(cliente.nome), "%s", nome);
+        snprintf(cliente.cpf, sizeof(cliente.cpf), "%s", cpf);
+        snprintf(cliente.email, sizeof(cliente.email), "%s", email);
+        snprintf(cliente.telefone, sizeof(cliente.telefone), "%s", telefone);
+        snprintf(cliente.exp_date, sizeof(cliente.exp_date), "%s", exp_date);
     #else
         strncpy(cliente.nome, nome, BC_NOME - 1);
         cliente.nome[BC_NOME - 1] = '\0'; // Garantir que a string está terminada

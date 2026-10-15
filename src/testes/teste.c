@@ -393,7 +393,7 @@ int particion_test() {
     for (int i = 0; i < particions; i++){
         printf("\nImprimindo Particao %d:\n", i);
         char nome_arq[256];
-        sprintf_s(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", i);
+        snprintf(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", i);
 
         FILE *particionFile = fopen(nome_arq, "r+b");
         j += cdbReadAllNoHeader(particionFile, &treino, sizeof(TTreino), TTreino_PrintGeneric);
@@ -431,7 +431,7 @@ int teste_classificasao_interna_func(){
     /* for (int i = 0; i < particions; i++){
         printf("\nImprimindo Particao %d:\n", i);
         char nome_arq[256];
-        sprintf_s(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", i);
+        snprintf(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", i);
 
         FILE *particionFile = fopen(nome_arq, "r+b");
         j += cdbReadAllNoHeader(particionFile, &func, sizeof(TFunc), printFunc);
@@ -477,7 +477,7 @@ int teste_selecao_com_substituicao_func(){
     /* for (int i = 0; i < particions; i++){
         printf("\nImprimindo Particao %d:\n", i);
         char nome_arq[256];
-        sprintf_s(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", i);
+        snprintf(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", i);
 
         FILE *particionFile = fopen(nome_arq, "r+b");
         j += cdbReadAllNoHeader(particionFile, &func, sizeof(TFunc), printFunc);
@@ -526,7 +526,7 @@ int teste_classificasao_interna_treino(){
     /* for (int i = 0; i < particions; i++){
         printf("\nImprimindo Particao %d:\n", i);
         char nome_arq[256];
-        sprintf_s(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", i);
+        snprintf(nome_arq, sizeof(nome_arq), "data/particions/particion_%d.dat", i);
 
         FILE *particionFile = fopen(nome_arq, "r+b");
         j += cdbReadAllNoHeader(particionFile, &func, sizeof(TFunc), printFunc);

@@ -2,6 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <errno.h>
+#ifdef _WIN32
+#include <direct.h>
+#define make_directory(path) _mkdir(path)
+#else
+#include <sys/stat.h>
+#define make_directory(path) mkdir(path, 0777)
+#endif
 
 #include "../../controler/db_wrapper.h"
 #include "../../controler/crud.h"
@@ -55,7 +63,7 @@ void buscarCliente(FILE *file) {
     printf("Buscar Cliente:\n");
     printf("PK: ");
     unsigned long pk;
-    scanf_s("%lu", &pk);
+    scanf("%lu", &pk);
     cClearInputBuffer();
 
 
@@ -77,7 +85,7 @@ void updateCliente(FILE *file) {
 
     printf("PK: ");
     unsigned long pk;
-    scanf_s("%lu", &pk);
+    scanf("%lu", &pk);
     cClearInputBuffer();
 
     TCliente cliente;
@@ -86,9 +94,9 @@ void updateCliente(FILE *file) {
 
     if (err < 0) {
         printf("Cliente nao encontrado. (err: %d)\n", err);
+        return;
     } else {
         TCliente_PrintGeneric(&cliente);
-        return;
     }
 
     printf("Nome: ");
@@ -127,7 +135,7 @@ void deletarCliente(FILE *file) {
     printf("Deletar Cliente:\n");
     printf("PK: ");
     unsigned long pk;
-    scanf_s("%lu", &pk);
+    scanf("%lu", &pk);
     cClearInputBuffer();
 
     TCliente cliente;
@@ -173,7 +181,7 @@ void cadastrarFuncionario(FILE *file) {
     password[strcspn(password, "\n")] = 0;
 
     printf("Salário: ");
-    scanf_s("%lf", &salario);
+    scanf("%lf", &salario);
     cClearInputBuffer();
 
     TFunc funcionario = TFunc_New(0, nome, cpf, email, telefone, data_nascimento, salario, password, 0, 0);
@@ -191,7 +199,7 @@ void buscarFuncionario(FILE *file) {
     printf("Buscar Funcionário:\n");
     printf("PK: ");
     unsigned long pk;
-    scanf_s("%lu", &pk);
+    scanf("%lu", &pk);
     cClearInputBuffer();
 
     TFunc funcionario;
@@ -213,7 +221,7 @@ void updateFuncionario(FILE *file) {
 
     printf("PK: ");
     unsigned long pk;
-    scanf_s("%lu", &pk);
+    scanf("%lu", &pk);
     cClearInputBuffer();
 
     TFunc funcionario;
@@ -267,7 +275,7 @@ void deletarFuncionario(FILE *file) {
     printf("Deletar Funcionario:\n");
     printf("PK: ");
     unsigned long pk;
-    scanf_s("%lu", &pk);
+    scanf("%lu", &pk);
     cClearInputBuffer();
 
     TFunc funcionario;
@@ -319,7 +327,7 @@ void buscarExercicio(FILE *file) {
     printf("Buscar Exercicio:\n");
     printf("PK: ");
     unsigned long pk;
-    scanf_s("%lu", &pk);
+    scanf("%lu", &pk);
     cClearInputBuffer();
 
     TExerc exercicio;
@@ -340,7 +348,7 @@ void updateExercicio(FILE *file) {
 
     printf("PK: ");
     unsigned long pk;
-    scanf_s("%lu", &pk);
+    scanf("%lu", &pk);
     cClearInputBuffer();
 
     TExerc exercicio;
@@ -386,7 +394,7 @@ void deletarExercicio(FILE *file) {
     printf("Deletar Exercicio:\n");
     printf("PK: ");
     unsigned long pk;
-    scanf_s("%lu", &pk);
+    scanf("%lu", &pk);
     cClearInputBuffer();
 
     TExerc exercicio;
@@ -408,11 +416,11 @@ void cadastrarTreino(FILE *ftreino, FILE *fexerc, FILE *fcli) {
     printf("Cadastro de Treino:\n");
 
     printf("PK do Cliente: ");
-    scanf_s("%lu", &cpk);
+    scanf("%lu", &cpk);
     cClearInputBuffer();
 
     printf("PK do Exercicio: ");
-    scanf_s("%lu", &epk);
+    scanf("%lu", &epk);
     cClearInputBuffer();
 
     TExerc exercicio;
@@ -467,7 +475,7 @@ void buscarTreino(FILE *ftreino, FILE *fcli) {
     unsigned long cpk;
 
     printf("Cliente PK: ");
-    scanf_s("%lu", &cpk);
+    scanf("%lu", &cpk);
     cClearInputBuffer();
 
     int err = cSearchPrintTreinoFullByCpk(ftreino, fcli, cpk);
@@ -482,7 +490,7 @@ void updateTreino(FILE *file) {
 
     printf("PK: ");
     unsigned long pk;
-    scanf_s("%lu", &pk);
+    scanf("%lu", &pk);
     cClearInputBuffer();
 
     TTreino treino;
@@ -519,7 +527,7 @@ void deletarTreino(FILE *file) {
     printf("Deletar Treino:\n");
     printf("PK: ");
     unsigned long pk;
-    scanf_s("%lu", &pk);
+    scanf("%lu", &pk);
     cClearInputBuffer();
 
     TTreino treino;
@@ -556,7 +564,7 @@ void ordenarESubstituirArquivos(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fe
 
     FILE *ffuncOrd = fopen(DB_FOLDER "/" FUNCIONARIOS ".dat", "w+b");
     if (ffuncOrd == NULL) {  // Verificar se o arquivo foi aberto corretamente
-        printf("Erro ao abrir o arquivo %s: %d\n", DB_FOLDER "/" EXERCICIOS ".dat");
+        printf("Erro ao abrir o arquivo %s\n", DB_FOLDER "/" FUNCIONARIOS ".dat");
         return;
     }
 
@@ -578,7 +586,7 @@ void ordenarESubstituirArquivos(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fe
      // Declarar um ponteiro FILE
     FILE *fcliOrd = fopen(DB_FOLDER "/" CLIENTES ".dat", "w+b");
     if (fcliOrd == NULL) {  // Verificar se o arquivo foi aberto corretamente
-        printf("Erro ao abrir o arquivo %s: %d\n", DB_FOLDER "/" EXERCICIOS ".dat");
+        printf("Erro ao abrir o arquivo %s\n", DB_FOLDER "/" CLIENTES ".dat");
         return;
     }
 
@@ -600,7 +608,7 @@ void ordenarESubstituirArquivos(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fe
 
     FILE *fexercOrd = fopen(DB_FOLDER "/" EXERCICIOS ".dat", "w+b");
     if (fexercOrd == NULL) {  // Verificar se o arquivo foi aberto corretamente
-        printf("Erro ao abrir o arquivo %s: %d\n", DB_FOLDER "/" EXERCICIOS ".dat");
+        printf("Erro ao abrir o arquivo %s\n", DB_FOLDER "/" EXERCICIOS ".dat");
         return;
     }
 
@@ -621,7 +629,7 @@ void ordenarESubstituirArquivos(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fe
 
     FILE *ftreinoOrd = fopen(DB_FOLDER "/" TREINOS ".dat", "w+b");
     if (ftreinoOrd == NULL) {  // Verificar se o arquivo foi aberto corretamente
-        printf("Erro ao abrir o arquivo %s: %d\n", DB_FOLDER "/" EXERCICIOS ".dat");
+        printf("Erro ao abrir o arquivo %s\n", DB_FOLDER "/" TREINOS ".dat");
         return;
     }
     TTreinoIntercalacaoComArvore(ftreinoOrd, &header, particions);
@@ -666,7 +674,7 @@ void submenuCliente(FILE *fcli) {
         printf("5. Exibir Todos os Clientes\n");
         printf("9. Voltar\n");
         printf("Escolha uma opcao: ");
-        scanf_s("%d", &opcao);
+        scanf("%d", &opcao);
         cClearInputBuffer();
 
         switch (opcao) {
@@ -705,7 +713,7 @@ void submenuFuncionario(FILE *ffunc) {
         printf("5. Exibir Todos os Funcionarios\n");
         printf("9. Voltar\n");
         printf("Escolha uma opcao: ");
-        scanf_s("%d", &opcao);
+        scanf("%d", &opcao);
         cClearInputBuffer();
 
         switch (opcao) {
@@ -744,7 +752,7 @@ void submenuExercicio(FILE *fexerc) {
         printf("5. Exibir Todos os Exercicios\n");
         printf("9. Voltar\n");
         printf("Escolha uma opcao: ");
-        scanf_s("%d", &opcao);
+        scanf("%d", &opcao);
         cClearInputBuffer();
 
         switch (opcao) {
@@ -783,7 +791,7 @@ void submenuTreino(FILE *ftreino, FILE *fexerc, FILE *fcli) {
         printf("5. Exibir Todos os Treinos\n");
         printf("9. Voltar\n");
         printf("Escolha uma opcao: ");
-        scanf_s("%d", &opcao);
+        scanf("%d", &opcao);
         cClearInputBuffer();
 
         switch (opcao) {
@@ -822,7 +830,7 @@ void subMenuDebug(FILE **fcli, FILE **ffunc, FILE **ftreino, FILE **fexerc) {
         printf("9. Voltar ao Menu Principal\n");
 
         printf("Escolha uma opcao: ");
-        scanf_s("%d", &opcao);
+        scanf("%d", &opcao);
         cClearInputBuffer();
 
         switch (opcao) {
@@ -830,9 +838,9 @@ void subMenuDebug(FILE **fcli, FILE **ffunc, FILE **ftreino, FILE **fexerc) {
                 printf("Criando base de teste...\n");
                 int size, trocas;
                 printf("Tamanho da base: ");
-                scanf_s("%d", &size);
+                scanf("%d", &size);
                 printf("Quantidade de trocas: ");
-                scanf_s("%d", &trocas);
+                scanf("%d", &trocas);
                 createBase(size, trocas);
                 break;
             }
@@ -880,6 +888,14 @@ void subMenuDebug(FILE **fcli, FILE **ffunc, FILE **ftreino, FILE **fexerc) {
 
 int cli_main_menu() {
 
+    const char *directories[] = {DB_FOLDER, DB_FOLDER "/particions", DB_FOLDER "/testes"};
+    for (size_t i = 0; i < sizeof(directories) / sizeof(directories[0]); ++i) {
+        if (make_directory(directories[i]) != 0 && errno != EEXIST) {
+            perror(directories[i]);
+            return EXIT_FAILURE;
+        }
+    }
+
     FILE *fcli;
     FILE *ffunc;
     FILE *ftreino;
@@ -905,7 +921,7 @@ int cli_main_menu() {
         printf("5. Debug\n");
         printf("9. Sair\n");
         printf("Escolha uma opcao: ");
-        scanf_s("%d", &opcao);
+        scanf("%d", &opcao);
         cClearInputBuffer();
 
         switch (opcao) {

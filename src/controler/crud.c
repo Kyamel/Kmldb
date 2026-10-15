@@ -9,10 +9,10 @@
 #include "db_wrapper.h"
 
 void cInitTables(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexec) {
-    cdbCreateTable(fcli, CLIENTES, sizeof(TCliente));
-    cdbCreateTable(ffunc, FUNCIONARIOS, sizeof(TFunc));
-    cdbCreateTable(ftreino, TREINOS, sizeof(TTreino));
-    cdbCreateTable(fexec, EXERCICIOS, sizeof(TExerc));
+    if (dbFindTable(fcli, CLIENTES) < 0) cdbCreateTable(fcli, CLIENTES, sizeof(TCliente));
+    if (dbFindTable(ffunc, FUNCIONARIOS) < 0) cdbCreateTable(ffunc, FUNCIONARIOS, sizeof(TFunc));
+    if (dbFindTable(ftreino, TREINOS) < 0) cdbCreateTable(ftreino, TREINOS, sizeof(TTreino));
+    if (dbFindTable(fexec, EXERCICIOS) < 0) cdbCreateTable(fexec, EXERCICIOS, sizeof(TExerc));
 }
 
 int cCloseDatabase(FILE *fcli, FILE *ffunc, FILE *ftreino, FILE *fexer) {
