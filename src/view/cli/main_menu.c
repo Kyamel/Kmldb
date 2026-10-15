@@ -3,6 +3,9 @@
 #include <string.h>
 #include <time.h>
 #include <errno.h>
+#include <ctype.h>
+#include <math.h>
+#include <limits.h>
 #ifdef _WIN32
 #include <direct.h>
 #define make_directory(path) _mkdir(path)
@@ -24,29 +27,92 @@
 
 #include "main_menu.h"
 
+// Lê uma linha completa, inclusive quando ela ocupa todo o campo.
+// Uma entrada maior que o campo é descartada para não deslocar os próximos dados.
+static int readText(char *value, size_t size) {
+    for (;;) {
+        if (!fgets(value, size, stdin)) return 0;
+        size_t length = strlen(value);
+        if (length && value[length - 1] == '\n') {
+            value[length - 1] = '\0';
+            return 1;
+        }
+        if (feof(stdin)) return 1;
+        int c = getchar();
+        if (c == '\n' || c == EOF) return 1;
+        while (c != '\n' && c != EOF) c = getchar();
+        printf("Entrada muito longa (máximo de %zu caracteres). Tente novamente: ", size - 1);
+    }
+}
+
+static int readSalary(double *salary) {
+    char input[64];
+    for (;;) {
+        if (!readText(input, sizeof(input))) return 0;
+        // Aceita vírgula decimal usada em português e ponto decimal.
+        for (char *p = input; *p; ++p) if (*p == ',') *p = '.';
+        char *end;
+        errno = 0;
+        double value = strtod(input, &end);
+        while (isspace((unsigned char)*end)) ++end;
+        if (end != input && *end == '\0' && errno == 0 && isfinite(value) && value >= 0) {
+            *salary = value;
+            return 1;
+        }
+        printf("Salário inválido. Digite um valor não negativo: ");
+    }
+}
+
+static int readUnsigned(unsigned long *number) {
+    char input[64];
+    for (;;) {
+        if (!readText(input, sizeof(input))) return 0;
+        char *end;
+        errno = 0;
+        unsigned long value = strtoul(input, &end, 10);
+        while (isspace((unsigned char)*end)) ++end;
+        if (end != input && *end == '\0' && errno == 0 && input[0] != '-' && value != 0) {
+            *number = value;
+            return 1;
+        }
+        printf("PK inválida. Digite um número positivo: ");
+    }
+}
+
+static int readInt(int *number) {
+    char input[64];
+    for (;;) {
+        if (!readText(input, sizeof(input))) return 0;
+        char *end;
+        errno = 0;
+        long value = strtol(input, &end, 10);
+        while (isspace((unsigned char)*end)) ++end;
+        if (end != input && *end == '\0' && errno == 0 && value >= INT_MIN && value <= INT_MAX) {
+            *number = (int)value;
+            return 1;
+        }
+        printf("Opção inválida. Digite um número: ");
+    }
+}
+
 void cadastrarCliente(FILE *file) {
     char nome[BC_NOME], cpf[BC_CPF], email[BC_EMAIL], telefone[BC_TELEFONE], exp_date[BC_EXP_DATE];
 
     printf("Cadastro de Cliente:\n");
     printf("Nome: ");
-    fgets(nome, sizeof(nome), stdin);
-    nome[strcspn(nome, "\n")] = 0;  // Remove a nova linha
+    if (!readText(nome, sizeof(nome))) return;
 
     printf("CPF: ");
-    fgets(cpf, sizeof(cpf), stdin);
-    cpf[strcspn(cpf, "\n")] = 0;
+    if (!readText(cpf, sizeof(cpf))) return;
 
     printf("Email: ");
-    fgets(email, sizeof(email), stdin);
-    email[strcspn(email, "\n")] = 0;
+    if (!readText(email, sizeof(email))) return;
 
     printf("Telefone: ");
-    fgets(telefone, sizeof(telefone), stdin);
-    telefone[strcspn(telefone, "\n")] = 0;
+    if (!readText(telefone, sizeof(telefone))) return;
 
     printf("Data de Expiracao (DD-MM-AAAA): ");
-    fgets(exp_date, sizeof(exp_date), stdin);
-    exp_date[strcspn(exp_date, "\n")] = 0;
+    if (!readText(exp_date, sizeof(exp_date))) return;
 
     TCliente cliente = TCliente_New(0, nome, cpf, email, telefone, exp_date, 0, 0);
 
@@ -63,8 +129,7 @@ void buscarCliente(FILE *file) {
     printf("Buscar Cliente:\n");
     printf("PK: ");
     unsigned long pk;
-    scanf("%lu", &pk);
-    cClearInputBuffer();
+    if (!readUnsigned(&pk)) return;
 
 
 
@@ -85,8 +150,7 @@ void updateCliente(FILE *file) {
 
     printf("PK: ");
     unsigned long pk;
-    scanf("%lu", &pk);
-    cClearInputBuffer();
+    if (!readUnsigned(&pk)) return;
 
     TCliente cliente;
     cliente.pk = pk;
@@ -100,24 +164,19 @@ void updateCliente(FILE *file) {
     }
 
     printf("Nome: ");
-    fgets(nome, sizeof(nome), stdin);
-    nome[strcspn(nome, "\n")] = 0;  // Remove a nova linha
+    if (!readText(nome, sizeof(nome))) return;
 
     printf("CPF: ");
-    fgets(cpf, sizeof(cpf), stdin);
-    cpf[strcspn(cpf, "\n")] = 0;
+    if (!readText(cpf, sizeof(cpf))) return;
 
     printf("Email: ");
-    fgets(email, sizeof(email), stdin);
-    email[strcspn(email, "\n")] = 0;
+    if (!readText(email, sizeof(email))) return;
 
     printf("Telefone: ");
-    fgets(telefone, sizeof(telefone), stdin);
-    telefone[strcspn(telefone, "\n")] = 0;
+    if (!readText(telefone, sizeof(telefone))) return;
 
     printf("Data de Expiracao (DD-MM-AAAA): ");
-    fgets(exp_date, sizeof(exp_date), stdin);
-    exp_date[strcspn(exp_date, "\n")] = 0;
+    if (!readText(exp_date, sizeof(exp_date))) return;
 
     cliente = TCliente_New(0, nome, cpf, email, telefone, exp_date, 0, 0);
 
@@ -135,8 +194,7 @@ void deletarCliente(FILE *file) {
     printf("Deletar Cliente:\n");
     printf("PK: ");
     unsigned long pk;
-    scanf("%lu", &pk);
-    cClearInputBuffer();
+    if (!readUnsigned(&pk)) return;
 
     TCliente cliente;
     cliente.pk = pk;
@@ -157,32 +215,25 @@ void cadastrarFuncionario(FILE *file) {
 
     printf("Cadastro de Funcionario:\n");
     printf("Nome: ");
-    fgets(nome, sizeof(nome), stdin);
-    nome[strcspn(nome, "\n")] = 0;
+    if (!readText(nome, sizeof(nome))) return;
 
     printf("CPF: ");
-    fgets(cpf, sizeof(cpf), stdin);
-    cpf[strcspn(cpf, "\n")] = 0;
+    if (!readText(cpf, sizeof(cpf))) return;
 
     printf("Email: ");
-    fgets(email, sizeof(email), stdin);
-    email[strcspn(email, "\n")] = 0;
+    if (!readText(email, sizeof(email))) return;
 
     printf("Telefone: ");
-    fgets(telefone, sizeof(telefone), stdin);
-    telefone[strcspn(telefone, "\n")] = 0;
+    if (!readText(telefone, sizeof(telefone))) return;
 
     printf("Data de Nascimento (AAAA-MM-DD): ");
-    fgets(data_nascimento, sizeof(data_nascimento), stdin);
-    data_nascimento[strcspn(data_nascimento, "\n")] = 0;
+    if (!readText(data_nascimento, sizeof(data_nascimento))) return;
 
     printf("Senha: ");
-    fgets(password, sizeof(password), stdin);
-    password[strcspn(password, "\n")] = 0;
+    if (!readText(password, sizeof(password))) return;
 
     printf("Salário: ");
-    scanf("%lf", &salario);
-    cClearInputBuffer();
+    if (!readSalary(&salario)) return;
 
     TFunc funcionario = TFunc_New(0, nome, cpf, email, telefone, data_nascimento, salario, password, 0, 0);
 
@@ -199,8 +250,7 @@ void buscarFuncionario(FILE *file) {
     printf("Buscar Funcionário:\n");
     printf("PK: ");
     unsigned long pk;
-    scanf("%lu", &pk);
-    cClearInputBuffer();
+    if (!readUnsigned(&pk)) return;
 
     TFunc funcionario;
     funcionario.pk = pk;
@@ -221,8 +271,7 @@ void updateFuncionario(FILE *file) {
 
     printf("PK: ");
     unsigned long pk;
-    scanf("%lu", &pk);
-    cClearInputBuffer();
+    if (!readUnsigned(&pk)) return;
 
     TFunc funcionario;
     funcionario.pk = pk;
@@ -236,30 +285,28 @@ void updateFuncionario(FILE *file) {
     }
 
     printf("Nome: ");
-    fgets(nome, sizeof(nome), stdin);
-    nome[strcspn(nome, "\n")] = 0;
+    if (!readText(nome, sizeof(nome))) return;
 
     printf("CPF: ");
-    fgets(cpf, sizeof(cpf), stdin);
-    cpf[strcspn(cpf, "\n")] = 0;
+    if (!readText(cpf, sizeof(cpf))) return;
 
     printf("Email: ");
-    fgets(email, sizeof(email), stdin);
-    email[strcspn(email, "\n")] = 0;
+    if (!readText(email, sizeof(email))) return;
 
     printf("Telefone: ");
-    fgets(telefone, sizeof(telefone), stdin);
-    telefone[strcspn(telefone, "\n")] = 0;
+    if (!readText(telefone, sizeof(telefone))) return;
 
-    printf("Data de Nascimento (DD-MM-AAAA): ");
-    fgets(data_nascimento, sizeof(data_nascimento), stdin);
-    data_nascimento[strcspn(data_nascimento, "\n")] = 0;
+    printf("Data de Nascimento (AAAA-MM-DD): ");
+    if (!readText(data_nascimento, sizeof(data_nascimento))) return;
 
     printf("Senha: ");
-    fgets(password, sizeof(password), stdin);
-    password[strcspn(password, "\n")] = 0;
+    if (!readText(password, sizeof(password))) return;
 
-    funcionario = TFunc_New(0, nome, cpf, email, telefone, data_nascimento, 2500.00, password, 0, 0);
+    printf("Salário: ");
+    double salario;
+    if (!readSalary(&salario)) return;
+
+    funcionario = TFunc_New(0, nome, cpf, email, telefone, data_nascimento, salario, password, 0, 0);
 
     err = cdbUpdate(file, FUNCIONARIOS, pk, &funcionario, sizeof(TFunc), offsetof(TFunc, pk),
         offsetof(TFunc, next_pk), offsetof(TFunc, status), generic_write);
@@ -275,8 +322,7 @@ void deletarFuncionario(FILE *file) {
     printf("Deletar Funcionario:\n");
     printf("PK: ");
     unsigned long pk;
-    scanf("%lu", &pk);
-    cClearInputBuffer();
+    if (!readUnsigned(&pk)) return;
 
     TFunc funcionario;
     funcionario.pk = pk;
@@ -297,17 +343,14 @@ void cadastrarExercicio(FILE *file) {
 
     printf("Cadastro de Exercicio:\n");
     printf("Nome: ");
-    fgets(nome, sizeof(nome), stdin);
-    nome[strcspn(nome, "\n")] = 0;
+    if (!readText(nome, sizeof(nome))) return;
 
     printf("Tipo: ");
-    fgets(tipo, sizeof(tipo), stdin);
-    tipo[strcspn(tipo, "\n")] = 0;
+    if (!readText(tipo, sizeof(tipo))) return;
 
     char durationStr[20];
     printf("Duracao (segundos): ");
-    fgets(durationStr, sizeof(durationStr), stdin);
-    durationStr[strcspn(durationStr, "\n")] = 0;
+    if (!readText(durationStr, sizeof(durationStr))) return;
 
     // Avalia a expressão ou converte o número diretamente
     duration = evaluateArithmeticExpression(durationStr);
@@ -327,8 +370,7 @@ void buscarExercicio(FILE *file) {
     printf("Buscar Exercicio:\n");
     printf("PK: ");
     unsigned long pk;
-    scanf("%lu", &pk);
-    cClearInputBuffer();
+    if (!readUnsigned(&pk)) return;
 
     TExerc exercicio;
     exercicio.pk = pk;
@@ -348,8 +390,7 @@ void updateExercicio(FILE *file) {
 
     printf("PK: ");
     unsigned long pk;
-    scanf("%lu", &pk);
-    cClearInputBuffer();
+    if (!readUnsigned(&pk)) return;
 
     TExerc exercicio;
     exercicio.pk = pk;
@@ -363,17 +404,14 @@ void updateExercicio(FILE *file) {
     }
 
     printf("Nome: ");
-    fgets(nome, sizeof(nome), stdin);
-    nome[strcspn(nome, "\n")] = 0;
+    if (!readText(nome, sizeof(nome))) return;
 
     printf("Tipo: ");
-    fgets(tipo, sizeof(tipo), stdin);
-    tipo[strcspn(tipo, "\n")] = 0;
+    if (!readText(tipo, sizeof(tipo))) return;
 
     printf("Duracao (segundos): ");
     char durationStr[20];
-    fgets(durationStr, sizeof(durationStr), stdin);
-    durationStr[strcspn(durationStr, "\n")] = 0;
+    if (!readText(durationStr, sizeof(durationStr))) return;
 
     // Avalia a expressão ou converte o número diretamente
     int duration = evaluateArithmeticExpression(durationStr);
@@ -394,8 +432,7 @@ void deletarExercicio(FILE *file) {
     printf("Deletar Exercicio:\n");
     printf("PK: ");
     unsigned long pk;
-    scanf("%lu", &pk);
-    cClearInputBuffer();
+    if (!readUnsigned(&pk)) return;
 
     TExerc exercicio;
     exercicio.pk = pk;
@@ -416,12 +453,10 @@ void cadastrarTreino(FILE *ftreino, FILE *fexerc, FILE *fcli) {
     printf("Cadastro de Treino:\n");
 
     printf("PK do Cliente: ");
-    scanf("%lu", &cpk);
-    cClearInputBuffer();
+    if (!readUnsigned(&cpk)) return;
 
     printf("PK do Exercicio: ");
-    scanf("%lu", &epk);
-    cClearInputBuffer();
+    if (!readUnsigned(&epk)) return;
 
     TExerc exercicio;
     exercicio.pk = epk;
@@ -443,19 +478,16 @@ void cadastrarTreino(FILE *ftreino, FILE *fexerc, FILE *fcli) {
     TCliente_PrintGeneric(&cliente);
 
     printf("Nome: ");
-    fgets(nome, sizeof(nome), stdin);
-    nome[strcspn(nome, "\n")] = 0;
+    if (!readText(nome, sizeof(nome))) return;
 
     printf("Tipo: ");
-    fgets(tipo, sizeof(tipo), stdin);
-    tipo[strcspn(tipo, "\n")] = 0;
+    if (!readText(tipo, sizeof(tipo))) return;
 
     char durationStr[20];
     int duration;
 
     printf("Duracao do Exercicio (segundos): ");
-    fgets(durationStr, sizeof(durationStr), stdin);
-    durationStr[strcspn(durationStr, "\n")] = 0;
+    if (!readText(durationStr, sizeof(durationStr))) return;
 
     // Avalia a expressão ou converte o número diretamente
     duration = evaluateArithmeticExpression(durationStr);
@@ -470,15 +502,14 @@ void cadastrarTreino(FILE *ftreino, FILE *fexerc, FILE *fcli) {
     }
 }
 
-void buscarTreino(FILE *ftreino, FILE *fcli) {
+void buscarTreino(FILE *ftreino, FILE *fexerc) {
     printf("Buscar Treino:\n");
     unsigned long cpk;
 
     printf("Cliente PK: ");
-    scanf("%lu", &cpk);
-    cClearInputBuffer();
+    if (!readUnsigned(&cpk)) return;
 
-    int err = cSearchPrintTreinoFullByCpk(ftreino, fcli, cpk);
+    int err = cSearchPrintTreinoFullByCpk(ftreino, fexerc, cpk);
     if (err < 0) {
         printf("Treino nao encontrado. (err: %d)\n", err);
     }
@@ -490,8 +521,7 @@ void updateTreino(FILE *file) {
 
     printf("PK: ");
     unsigned long pk;
-    scanf("%lu", &pk);
-    cClearInputBuffer();
+    if (!readUnsigned(&pk)) return;
 
     TTreino treino;
     treino.pk = pk;
@@ -505,14 +535,17 @@ void updateTreino(FILE *file) {
     }
 
     printf("Nome: ");
-    fgets(nome, sizeof(nome), stdin);
-    nome[strcspn(nome, "\n")] = 0;
+    if (!readText(nome, sizeof(nome))) return;
 
     printf("Tipo: ");
-    fgets(tipo, sizeof(tipo), stdin);
-    tipo[strcspn(tipo, "\n")] = 0;
+    if (!readText(tipo, sizeof(tipo))) return;
 
-    treino = TTreino_New(0, nome, tipo, 1, 1, 45, 0, 0);
+    printf("Duracao do Exercicio (segundos): ");
+    char durationStr[20];
+    if (!readText(durationStr, sizeof(durationStr))) return;
+    int duration = evaluateArithmeticExpression(durationStr);
+
+    treino = TTreino_New(0, nome, tipo, treino.cpk, treino.epk, duration, 0, 0);
 
     err = cdbUpdate(file, TREINOS, pk, &treino, sizeof(TTreino), offsetof(TTreino, pk),
         offsetof(TTreino, next_pk), offsetof(TTreino, status), generic_write);
@@ -527,8 +560,7 @@ void deletarTreino(FILE *file) {
     printf("Deletar Treino:\n");
     printf("PK: ");
     unsigned long pk;
-    scanf("%lu", &pk);
-    cClearInputBuffer();
+    if (!readUnsigned(&pk)) return;
 
     TTreino treino;
     treino.pk = pk;
@@ -674,8 +706,7 @@ void submenuCliente(FILE *fcli) {
         printf("5. Exibir Todos os Clientes\n");
         printf("9. Voltar\n");
         printf("Escolha uma opcao: ");
-        scanf("%d", &opcao);
-        cClearInputBuffer();
+        if (!readInt(&opcao)) return;
 
         switch (opcao) {
             case 1:
@@ -713,8 +744,7 @@ void submenuFuncionario(FILE *ffunc) {
         printf("5. Exibir Todos os Funcionarios\n");
         printf("9. Voltar\n");
         printf("Escolha uma opcao: ");
-        scanf("%d", &opcao);
-        cClearInputBuffer();
+        if (!readInt(&opcao)) return;
 
         switch (opcao) {
             case 1:
@@ -752,8 +782,7 @@ void submenuExercicio(FILE *fexerc) {
         printf("5. Exibir Todos os Exercicios\n");
         printf("9. Voltar\n");
         printf("Escolha uma opcao: ");
-        scanf("%d", &opcao);
-        cClearInputBuffer();
+        if (!readInt(&opcao)) return;
 
         switch (opcao) {
             case 1:
@@ -791,8 +820,7 @@ void submenuTreino(FILE *ftreino, FILE *fexerc, FILE *fcli) {
         printf("5. Exibir Todos os Treinos\n");
         printf("9. Voltar\n");
         printf("Escolha uma opcao: ");
-        scanf("%d", &opcao);
-        cClearInputBuffer();
+        if (!readInt(&opcao)) return;
 
         switch (opcao) {
             case 1:
@@ -830,17 +858,16 @@ void subMenuDebug(FILE **fcli, FILE **ffunc, FILE **ftreino, FILE **fexerc) {
         printf("9. Voltar ao Menu Principal\n");
 
         printf("Escolha uma opcao: ");
-        scanf("%d", &opcao);
-        cClearInputBuffer();
+        if (!readInt(&opcao)) return;
 
         switch (opcao) {
             case 1: {
                 printf("Criando base de teste...\n");
                 int size, trocas;
                 printf("Tamanho da base: ");
-                scanf("%d", &size);
+                if (!readInt(&size)) return;
                 printf("Quantidade de trocas: ");
-                scanf("%d", &trocas);
+                if (!readInt(&trocas)) return;
                 createBase(size, trocas);
                 break;
             }
@@ -921,8 +948,7 @@ int cli_main_menu() {
         printf("5. Debug\n");
         printf("9. Sair\n");
         printf("Escolha uma opcao: ");
-        scanf("%d", &opcao);
-        cClearInputBuffer();
+        if (!readInt(&opcao)) return cCloseDatabase(fcli, ffunc, ftreino, fexerc);
 
         switch (opcao) {
             case 1:

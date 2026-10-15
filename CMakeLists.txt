@@ -33,5 +33,10 @@ add_executable(db_hash_test
 )
 target_include_directories(db_hash_test PRIVATE src/kmldb)
 add_test(NAME db_hash_test COMMAND db_hash_test)
+add_test(NAME cli_cadastro_test
+    COMMAND ${CMAKE_COMMAND}
+        -DPROGRAM=$<TARGET_FILE:programa>
+        -DTEST_ROOT=${CMAKE_CURRENT_BINARY_DIR}
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/cli_cadastro_test.cmake)
 
 install(TARGETS programa RUNTIME DESTINATION bin)
